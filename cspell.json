@@ -1,0 +1,22 @@
+{
+	"version": "0.2",
+	"useGitignore": true,
+	"language": "es, es-ES, en, en-us, en-gb, lorem, lorem-ipsum",
+	"words": [],
+	"dictionaries": [
+		"software-term-suggestions",
+		"softwareTerms",
+		"software-tools",
+		"networking-terms",
+		"web-services",
+		"computing-acronyms",
+		"coding-compound-terms",
+		"software-terms-alternative"
+	],
+	"ignorePaths": [
+		".devcontainer/compose.yaml",
+		".devcontainer/devcontainer.json",
+		".devcontainer/Dockerfile",
+		".gitignore"
+	]
+}
