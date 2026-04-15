@@ -1,0 +1,9 @@
+name: soa-practical-work-2026_devcontainer
+
+services:
+  devcontainer:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    volumes:
+      - ../:/workspaces/SOA-Practical-Work-2026:cached

@@ -6,12 +6,23 @@
 # Settings
 .vscode/*
 !.vscode/tasks.json
-!.vscode/launch.json
 !.vscode/*.code-snippets
 
 # Local history
 .history
 .ionide
+
+
+
+# ---------------------------------------------------------------------------- #
+#                                  PLATFORM IO                                 #
+# ---------------------------------------------------------------------------- #
+
+.pioenvs
+.piolibdeps
+.clang_complete
+.gcc-flags.json
+.pio
 
 
 

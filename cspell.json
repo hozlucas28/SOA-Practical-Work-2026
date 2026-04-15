@@ -2,7 +2,10 @@
 	"version": "0.2",
 	"useGitignore": true,
 	"language": "es, es-ES, en, en-us, en-gb, lorem, lorem-ipsum",
-	"words": [],
+	"words": [
+		"getopt",
+		"wokwi"
+	],
 	"dictionaries": [
 		"software-term-suggestions",
 		"softwareTerms",
@@ -17,6 +20,8 @@
 		".devcontainer/compose.yaml",
 		".devcontainer/devcontainer.json",
 		".devcontainer/Dockerfile",
+		"diagram.json",
+		"platformio.ini",
 		".gitignore"
 	]
 }

@@ -1,0 +1,115 @@
+{
+	"service": "devcontainer",
+	"dockerComposeFile": "compose.yaml",
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+	"features": {
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {
+			"version": "latest", // To match the host's Docker version.
+			"dockerDashComposeVersion": "v2"
+		}
+	},
+	"remoteUser": "root",
+	"onCreateCommand": "chmod +x .devcontainer/setup-tools.sh",
+	"postCreateCommand": ".devcontainer/setup-tools.sh",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-vscode.cpptools-extension-pack",
+				"platformio.platformio-ide",
+				"Wokwi.wokwi-vscode",
+				"eamodio.gitlens",
+				"GitHub.copilot-chat",
+				"docker.docker",
+				"ms-azuretools.vscode-docker",
+				"EditorConfig.EditorConfig",
+				"stackbreak.comment-divider",
+				"bierner.markdown-checkbox",
+				"bierner.markdown-preview-github-styles",
+				"streetsidesoftware.code-spell-checker",
+				"streetsidesoftware.code-spell-checker-spanish",
+				"GitHub.vscode-pull-request-github",
+				"bierner.markdown-mermaid",
+				"redhat.vscode-yaml",
+				"tamasfe.even-better-toml",
+				"pflannery.vscode-versionlens"
+			],
+			"settings": {
+				"editor.formatOnSave": true,
+				"telemetry.telemetryLevel": "off",
+				"telemetry.feedback.enabled": false,
+				"files.exclude": {
+					"**/.DS_Store": true,
+					"**/.git": false,
+					"**/.hg": true,
+					"**/.svn": true,
+					"**/Thumbs.db": true
+				},
+				"search.exclude": {
+					"**/.DS_Store": true,
+					"**/.git": true,
+					"**/.hg": true,
+					"**/.svn": true,
+					"**/Thumbs.db": true,
+					"**/bower_components": true,
+					"**/*.code-search": true
+				},
+        "C_Cpp.copilotHover": "disabled",
+				"gitlens.codeLens.enabled": false,
+				"gitlens.currentLine.enabled": false,
+				"gitlens.graph.allowMultiple": false,
+				"gitlens.graph.dateFormat": "hh:mm:ss a - MMMM DD, YYYY",
+				"gitlens.graph.dimMergeCommits": true,
+				"gitlens.graph.layout": "editor",
+				"gitlens.graph.minimap.enabled": false,
+				"gitlens.graph.minimap.additionalTypes": [
+					"localBranches",
+					"pullRequests",
+					"stashes",
+					"remoteBranches",
+					"tags"
+				],
+				"gitlens.graph.showRemoteNames": true,
+				"gitlens.showWhatsNewAfterUpgrades": false,
+				"gitlens.views.branches.files.icon": "status",
+				"gitlens.views.branches.files.layout": "tree",
+				"gitlens.views.commits.files.icon": "status",
+				"gitlens.views.commits.files.layout": "tree",
+				"gitlens.views.formats.commits.description": "${agoOrDate}",
+				"gitlens.views.formats.commits.label": "${( authorNotYou )} ${message}",
+				"gitlens.views.remotes.files.icon": "status",
+				"gitlens.views.remotes.files.layout": "tree",
+				"gitlens.views.repositories.files.icon": "status",
+				"gitlens.views.repositories.files.layout": "tree",
+				"gitlens.views.stashes.files.icon": "status",
+				"gitlens.views.stashes.files.layout": "tree",
+				"gitlens.views.tags.files.icon": "status",
+				"gitlens.views.tags.files.layout": "tree",
+				"chat.agent.enabled": true,
+				"chat.editing.confirmEditRequestRemoval": false,
+				"github.copilot.chat.agent.thinkingTool": true,
+				"github.copilot.chat.codesearch.enabled": true,
+				"github.copilot.chat.generateTests.codeLens": true,
+				"github.copilot.chat.scopeSelection": true,
+				"docker.extension.enableComposeLanguageServer": true,
+				"containers.images.sortBy": "Label",
+				"containers.images.description": ["CreatedTime", "Size"],
+				"containers.containers.label": "ContainerName",
+				"containers.containers.sortBy": "Label",
+				"containers.containers.description": [
+					"ContainerName",
+					"CreatedTime",
+					"Image",
+					"Ports",
+					"Status"
+				],
+				"containers.networks.sortBy": "Label",
+				"containers.networks.description": ["CreatedTime", "NetworkDriver"],
+				"yaml.schemas": {
+					"https://raw.githubusercontent.com/docker/vscode-extension/6a88caada42b57090df7ce91ec2a6561b422afe1/misc/empty.json": [
+						"compose.yaml"
+					]
+				}
+			}
+		}
+	}
+}
