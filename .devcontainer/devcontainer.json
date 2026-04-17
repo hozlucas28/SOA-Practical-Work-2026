@@ -29,7 +29,6 @@
 				"tamasfe.even-better-toml"
 			],
 			"settings": {
-				"editor.formatOnSave": true,
 				"telemetry.telemetryLevel": "off",
 				"telemetry.feedback.enabled": false,
 				"files.exclude": {
