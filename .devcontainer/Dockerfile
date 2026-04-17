@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/devcontainers/python:3-bookworm
+FROM python:3.12-slim-bookworm
 
 # Install gnupg2 for share GPG keys
 RUN <<EOF
