@@ -2,7 +2,20 @@
 	"version": "0.2",
 	"useGitignore": true,
 	"language": "es, es-ES, en, en-us, en-gb, lorem, lorem-ipsum",
-	"words": ["getopt", "github", "GITHUB", "wokwi"],
+	"words": [
+		"choosealicense",
+		"Farias",
+		"getopt",
+		"github",
+		"GITHUB",
+		"hozlucas",
+		"Lautaro",
+		"lautarocasas",
+		"maifarias",
+		"Maira",
+		"Raimo",
+		"wokwi"
+	],
 	"dictionaries": [
 		"software-term-suggestions",
 		"softwareTerms",
