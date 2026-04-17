@@ -1,24 +1,18 @@
+
 #include <Arduino.h>
 
+// Defines (ESP32 pin's designations, structs, etc.)
 #include "pins.h"
 #include "enums.h"
 #include "structs.h"
-#include "utilities.h"
-#include "global-structs.h"
 
-void printLCD(LCDMessage *message) {
-  LCD.clear();
+// Constants and variables (structs, variables, etc.)
+#include "constants.h"
 
-  if (message->row01.length() < LCD_COLS) {
-    LCD.setCursor(0, 0);
-    LCD.print(message->row01);
-  }
+// User functions (converters, utilities, etc.)
+#include "user_functions.h"
 
-  if (message->row02.length() < LCD_COLS) {
-    LCD.setCursor(0, 1);
-    LCD.print(message->row02);
-  }
-}
+
 
 ////////////////////////////////////////////////////
 // TODO: mejorar
@@ -77,7 +71,7 @@ void playBuzzer() {
 void stopBuzzer() {
   // Solo ejecutamos el apagado y el reinicio si la alarma estaba corriendo
   if (alarmaIniciada) {
-    noTone(BUZZER);
+    noTone(BUZZER_PIN);
     alarmaIniciada = false;
     pasoActual = 0;
     // tiempoAnterior no necesita reinicio porque se sobrescribe al iniciar
@@ -87,9 +81,9 @@ void stopBuzzer() {
 // Función auxiliar para aplicar el tono o silencio
 void aplicarTono(unsigned int freq) {
   if (freq > 0) {
-    tone(BUZZER, freq);
+    tone(BUZZER_PIN, freq);
   } else {
-    noTone(BUZZER);
+    noTone(BUZZER_PIN);
   }
 }
 
@@ -123,7 +117,7 @@ void setup() {
   LCD.backlight();
 
   // Buzzer
-  pinMode(BUZZER, OUTPUT);
+  pinMode(BUZZER_PIN, OUTPUT);
 
   // Weight sensors
   WeightSensor01.device.begin(WeightSensor01.dtPin, WeightSensor01.sckPin);

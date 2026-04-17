@@ -1,5 +1,7 @@
+
 #include "structs.h"
-#include "utilities.h"
+#include "constants.h"
+#include "user_functions.h"
 
 void switchBtnState(Button *btn) {
   int btnRead = digitalRead(btn->pin);
@@ -18,4 +20,18 @@ void switchBtnState(Button *btn) {
   }
 
   btn->lastState = btnRead;
+}
+
+void lcdPrint(LCDMessage *message) {
+  LCD.clear();
+
+  if (message->row01.length() < LCD_COLS) {
+    LCD.setCursor(0, 0);
+    LCD.print(message->row01);
+  }
+
+  if (message->row02.length() < LCD_COLS) {
+    LCD.setCursor(0, 1);
+    LCD.print(message->row02);
+  }
 }
