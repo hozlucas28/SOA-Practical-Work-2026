@@ -3,6 +3,10 @@
 	"dockerComposeFile": "compose.yaml",
 	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
 	"features": {
+		"ghcr.io/devcontainers/features/node:1": {
+			"version": "24", // Equivalent to the latest version of Node.js v24.x.x.
+			"pnpmVersion": "latest"
+		},
 		"ghcr.io/devcontainers/features/docker-in-docker:2": {
 			"version": "latest", // To match the host's Docker version.
 			"dockerDashComposeVersion": "v2"
@@ -26,7 +30,8 @@
 				"streetsidesoftware.code-spell-checker-spanish",
 				"bierner.markdown-mermaid",
 				"redhat.vscode-yaml",
-				"tamasfe.even-better-toml"
+				"tamasfe.even-better-toml",
+				"oxc.oxc-vscode"
 			],
 			"settings": {
 				"telemetry.telemetryLevel": "off",
@@ -36,7 +41,11 @@
 					"**/.git": false,
 					"**/.hg": true,
 					"**/.svn": true,
-					"**/Thumbs.db": true
+					"**/Thumbs.db": true,
+					"**/.pnpm-store": true,
+					"**/node_modules": true,
+					"package.json": true,
+					"pnpm-lock.yaml": true
 				},
 				"search.exclude": {
 					"**/.DS_Store": true,
@@ -44,10 +53,15 @@
 					"**/.hg": true,
 					"**/.svn": true,
 					"**/Thumbs.db": true,
+					"**/node_modules": true,
 					"**/bower_components": true,
-					"**/*.code-search": true
+					"**/*.code-search": true,
+					"**/.pnpm-store": true,
+					"package.json": true,
+					"pnpm-lock.yaml": true
 				},
 				"C_Cpp.copilotHover": "disabled",
+				"oxc.requireConfig": true,
 				"chat.agent.enabled": true,
 				"chat.editing.confirmEditRequestRemoval": false,
 				"docker.extension.enableComposeLanguageServer": true,
@@ -55,13 +69,7 @@
 				"containers.images.description": ["CreatedTime", "Size"],
 				"containers.containers.label": "ContainerName",
 				"containers.containers.sortBy": "Label",
-				"containers.containers.description": [
-					"ContainerName",
-					"CreatedTime",
-					"Image",
-					"Ports",
-					"Status"
-				],
+				"containers.containers.description": ["ContainerName", "CreatedTime", "Image", "Ports", "Status"],
 				"containers.networks.sortBy": "Label",
 				"containers.networks.description": ["CreatedTime", "NetworkDriver"],
 				"yaml.schemas": {

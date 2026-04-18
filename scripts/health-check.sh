@@ -69,10 +69,45 @@ else
 	exit_code=1
 fi
 
+if command -v node > /dev/null 2>&1; then
+	echo -e "\e[32m- Node.js $(command_version node --version) installed.\e[0m"
+else
+	echo -e "\e[31m- Node.js is not installed or not found in PATH.\e[0m" >&2
+	exit_code=1
+fi
+
+if command -v pnpm > /dev/null 2>&1; then
+	echo -e "\e[32m- PNPM $(command_version pnpm --version) installed.\e[0m"
+else
+	echo -e "\e[31m- PNPM is not installed or not found in PATH.\e[0m" >&2
+	exit_code=1
+fi
+
 if command -v docker > /dev/null 2>&1; then
 	echo -e "\e[32m- Docker $(command_version docker --version) installed.\e[0m"
 else
 	echo -e "\e[31m- Docker is not installed, not found in PATH, or not running.\e[0m" >&2
+	exit_code=1
+fi
+
+if version=$(command_version pnpm exec oxfmt --version); then
+	echo -e "\e[32m- Oxfmt $version installed.\e[0m"
+else
+	echo -e "\e[31m- Oxfmt is not installed.\e[0m" >&2
+	exit_code=1
+fi
+
+if version=$(command_version pnpm exec lefthook --version); then
+	echo -e "\e[32m- Lefthook $version installed.\e[0m"
+else
+	echo -e "\e[31m- Lefthook is not installed.\e[0m" >&2
+	exit_code=1
+fi
+
+if command -v zizmor > /dev/null 2>&1; then
+	echo -e "\e[32m- Zizmor $(command_version zizmor --version) installed.\e[0m"
+else
+	echo -e "\e[31m- Zizmor is not installed or not found in PATH.\e[0m" >&2
 	exit_code=1
 fi
 
