@@ -10,9 +10,8 @@
 
 <p align="center">
     <a href="#summary">Summary</a> •
-    <a href="#features">Features</a> •
     <a href="#installation">Installation</a> •
-    <a href="#diagrams">Diagrams</a> •
+    <a href="#diagrams">Diagrams</a>
     <br>
     <a href="#application-structure">Application structure</a> •
     <a href="#development-team">Development team</a> •
@@ -26,11 +25,21 @@
 
 ## Summary
 
-This repository contains the practical work for the Advanced Operating Systems (SOA) subject at the [National University of La Matanza (UNLaM)](https://www.unlam.edu.ar/). This practical work consists of TODO.
+This repository contains our practical work for the Advanced Operating Systems (SOA) subject at the [National University of La Matanza (UNLaM)](https://www.unlam.edu.ar/). It consists of an embedded system based on an ESP32, which has two operating modes (activated by push buttons):
 
-## Features
+- **Stock Mode:** Reports the current stock and alerts if the quantity on the shelves is below the established minimum. It uses an LCD screen to show the existing stock or the shortage, LED lights to visually indicate which shelf needs restocking, and weight sensors to calculate the stock on each shelf.
 
-- TODO
+- **Security Mode:** Detects variations in the weight of the shelves. It employs an LCD screen to report on which shelf the alteration was detected, a buzzer as an audible alarm, LED lights to visually indicate the affected shelf, and weight sensors to register these variations.
+
+> Security mode has a higher priority than stock mode, so if both modes are activated at the same time, the system will execute security mode.
+
+### Features
+
+- Code conventions and standards
+- Design and development of a finite state machine (FSM) to act according to the operating mode.
+- Handling of sensors and actuators on an ESP32.
+- Integration between an embedded system and a mobile application developed in Android.
+- Real-time monitoring of stock and security alerts.
 
 ## Installation
 
@@ -49,25 +58,6 @@ This repository contains the practical work for the Advanced Operating Systems (
 
 > [!IMPORTANT]
 > The first time you build the DevContainer, PlatformIO extension will request you to restart Visual Studio Code to finish the installation. Please do so, otherwise you won't be able to build the project.
-
-## Diagrams
-
-<details>
-<summary>State machine</summary>
-
-TODO
-
-```mermaid
----
-config:
-  theme: redux
-  look: neo
----
-stateDiagram-v2
-
-```
-
-</details>
 
 ## Application structure
 
