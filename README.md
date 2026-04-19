@@ -31,6 +31,7 @@ This repository contains our practical work for the Advanced Operating Systems (
 
 - **Security Mode:** Detects variations in the weight of the shelves. It employs an LCD screen to report on which shelf the alteration was detected, a buzzer as an audible alarm, LED lights to visually indicate the affected shelf, and weight sensors to register these variations.
 
+> [!NOTE]
 > Security mode has a higher priority than stock mode, so if both modes are activated at the same time, the system will execute security mode.
 
 ### Features
