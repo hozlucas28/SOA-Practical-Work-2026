@@ -45,7 +45,7 @@ This repository contains the practical work for the Advanced Operating Systems (
 - That's it! You should see the project running in the Wokwi simulator.
 
 > [!NOTE]
-> When rebuilding the DevContainer, you might encounter an error such as: "The container already exists or is in use." Don't worry, it's a known bug, simply ignore it and rebuild it again.
+> When rebuilding the DevContainer, you might encounter an error such as `The container already exists or is in use`. Don't worry, it's a known bug, simply ignore it and rebuild it again.
 
 > [!IMPORTANT]
 > The first time you build the DevContainer, PlatformIO extension will request you to restart Visual Studio Code to finish the installation. Please do so, otherwise you won't be able to build the project.
@@ -62,7 +62,6 @@ TODO
 config:
   theme: redux
   look: neo
-  layout: elk
 ---
 stateDiagram-v2
 
@@ -74,10 +73,12 @@ stateDiagram-v2
 
 ```bash
 SOA-Practical-Work-2026/
+│
 ├── .devcontainer/        # DevContainer configuration files.
 │
 ├── .github/
 │   ├── workflows/        # GitHub Actions (CI/CD) workflows.
+│   │
 │   └── CODEOWNERS        # File to assign Pull Request and Issue reviewers.
 │
 ├── docs/                 # Documentation files, such as diagrams, images, and other statics.
