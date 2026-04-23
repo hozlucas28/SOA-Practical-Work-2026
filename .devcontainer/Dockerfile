@@ -1,11 +1,3 @@
-FROM python:3.12-slim-bookworm
-
-# Install gnupg2 for share GPG keys
-RUN <<EOF
-	apt-get update
-	apt-get install --no-install-recommends gnupg2=2 --yes
-	apt-get clean
-	rm -rf /var/lib/apt/lists/*
-EOF
+FROM python:3-bookworm
 
 CMD [ "sleep", "infinity" ]
