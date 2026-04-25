@@ -3,8 +3,7 @@
 
 #include "structs.h"
 
-void switchBtnState(Button *btn);
-
-void lcdPrint(LCDMessage *message);
+void switchBtnState(Button* btn);
+void lcdPrint(LCDMessage* message);
 
 #endif  // SRC_USER_FUNCTIONS_H_INCLUDED

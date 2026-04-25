@@ -2,3 +2,10 @@
 BasedOnStyle: Google
 IndentWidth: 4
 ColumnLimit: 120
+BinPackArguments: false
+Cpp11BracedListStyle: false
+AlignAfterOpenBracket: BlockIndent
+AlignConsecutiveMacros:
+    Enabled: true
+    AcrossComments: false
+    AcrossEmptyLines: false
