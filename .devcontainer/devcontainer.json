@@ -7,6 +7,7 @@
 			"version": "24", // Equivalent to the latest version of Node.js v24.x.x.
 			"pnpmVersion": "latest"
 		},
+		"ghcr.io/devcontainer-community/devcontainer-features/clang-format:1": {},
 		"ghcr.io/devcontainers/features/docker-in-docker:2": {
 			"version": "latest", // To match the host's Docker version.
 			"dockerDashComposeVersion": "v2"

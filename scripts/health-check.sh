@@ -83,6 +83,13 @@ else
 	exit_code=1
 fi
 
+if command -v clang-format > /dev/null 2>&1; then
+	echo -e "\e[32m- Clang-format $(command_version clang-format --version) installed.\e[0m"
+else
+	echo -e "\e[31m- Clang-format is not installed or not found in PATH.\e[0m" >&2
+	exit_code=1
+fi
+
 if command -v docker > /dev/null 2>&1; then
 	echo -e "\e[32m- Docker $(command_version docker --version) installed.\e[0m"
 else
