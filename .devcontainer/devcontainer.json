@@ -60,8 +60,11 @@
 					"package.json": true,
 					"pnpm-lock.yaml": true
 				},
-				"C_Cpp.copilotHover": "disabled",
 				"oxc.requireConfig": true,
+				"C_Cpp.copilotHover": "disabled",
+				"[cpp]": {
+					"editor.defaultFormatter": "ms-vscode.cpptools"
+				},
 				"chat.agent.enabled": true,
 				"chat.editing.confirmEditRequestRemoval": false,
 				"docker.extension.enableComposeLanguageServer": true,
