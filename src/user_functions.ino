@@ -22,16 +22,30 @@ void switchBtnState(Button* btn) {
     btn->lastState = btnRead;
 }
 
-void lcdPrint(LCDMessage* message) {
-    LCD.clear();
+SystemEvent readStockBtn() { return StockBtn.status == ON ? STOCK_ON : STOCK_OFF; }
 
-    if (message->row01.length() < LCD_COLS) {
-        LCD.setCursor(0, 0);
-        LCD.print(message->row01);
-    }
-
-    if (message->row02.length() < LCD_COLS) {
-        LCD.setCursor(0, 1);
-        LCD.print(message->row02);
-    }
+SystemEvent readStockSensors() {
+    // TODO
+    return NO_MISSING_STOCK;
 }
+
+SystemEvent readSecurityBtn() { return SecurityBtn.status == ON ? SECURITY_ON : SECURITY_OFF; }
+
+SystemEvent readAnomalySensors() {
+    // TODO
+    return SECURITY_OFF;
+}
+
+void lcdClear() { LCD.clear(); }
+
+void lcdPrint(const String line01, const String line02) {
+    LCD.setCursor(0, 0);
+    LCD.print(line01);
+
+    LCD.setCursor(0, 1);
+    LCD.print(line02);
+}
+
+void ledOn(const uint8_t pin) { digitalWrite(pin, HIGH); }
+
+void ledOff(const uint8_t pin) { digitalWrite(pin, LOW); }

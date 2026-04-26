@@ -13,7 +13,7 @@
 #include "user_functions.h"
 
 ////////////////////////////////////////////////////
-// TODO: mejorar
+// TODO: Utilizar FreeRTOS para manejar la melodia del Buzzer.
 struct BuzzerStep {
     unsigned int frequency;
     unsigned long duration;
@@ -75,6 +75,23 @@ void aplicarTono(unsigned int freq) {
 
 ////////////////////////////////////////////////////
 
+SystemStatus Status = VIRGIN_EMBEDDED;
+
+SystemEvent (*eventCaptures[])() = {
+    readStockBtn,
+    readStockSensors,
+    readSecurityBtn,
+    readAnomalySensors,
+};
+
+uint8_t eventCaptureI = -1;
+const size_t eventCapturesLength = sizeof(eventCaptures) / sizeof(eventCaptures[0]);
+
+SystemEvent getSystemEvent() {
+    eventCaptureI = (eventCaptureI + 1) % eventCapturesLength;
+    return eventCaptures[eventCaptureI]();
+}
+
 void setup() {
     Serial.begin(57600);
 
@@ -117,20 +134,103 @@ void loop() {
     switchBtnState(&StockBtn);
     switchBtnState(&SecurityBtn);
 
-    // TODO: Utilizar una maquina de estados.
-    if (StockBtn.state == ON) {
-        // TODO:
-        //   - Mostrar por pantalla la cantidad de Stock en cada sensor de peso.
-    }
+    SystemEvent event = getSystemEvent();
 
-    if (SecurityBtn.status == ON) {
-        // TODO:
-        //   - Mostrar por pantalla si se detecta una anomalía en un sensor de peso.
-        //   - Mostrar por pantalla el/los tipo/s de anomalía/s detectada/s.
-        //   - Mostrar por pantalla el/los número/s de sensor/es que registro/registraron la/s anomalía/s.
-        //   - Reproducir por el Buzzer si algún sensor detecto una anomalía.
-        playBuzzer();
-    } else {
-        stopBuzzer();
+    // TODO:
+    // - Comprobar el correcto funcionamiento de la FSM en código.
+    // - Actualizar el diagrama FSM para que coincida con este código.
+    // (https://drive.google.com/drive/folders/1sVbpg8k7hKJE2epQFJ-_lZe8hzr9lcrr?usp=drive_link)
+    // - Pasar el diagrama FSM a un gráfico de nodos.
+    switch (Status) {
+        case VIRGIN_EMBEDDED:
+            switch (event) {
+                case STOCK_ON:
+                    Status = STOCK_MODE;
+                    break;
+
+                case SECURITY_ON:
+                    lcdPrint("Security mode", "");
+                    Status = SECURITY_MODE;
+                    break;
+
+                default:
+                    lcdPrint("SOA - Team L5", "Stock control");
+                    break;
+            }
+            break;
+
+        case STOCK_MODE:
+            switch (event) {
+                case STOCK_OFF:
+                    ledOff(WeightSensor01.led.pin);
+                    ledOff(WeightSensor02.led.pin);
+                    lcdClear();
+                    Status = VIRGIN_EMBEDDED;
+                    break;
+
+                case STOCK_MISSING_SENSOR_01:
+                    ledOn(WeightSensor01.led.pin);
+                    ledOff(WeightSensor02.led.pin);
+                    lcdPrint("Stock missing", "on sensor #01!");
+                    break;
+
+                case STOCK_MISSING_SENSOR_02:
+                    ledOff(WeightSensor01.led.pin);
+                    ledOn(WeightSensor02.led.pin);
+                    lcdPrint("Stock missing", "on sensor #02!");
+                    break;
+
+                case STOCK_MISSING_SENSORS:
+                    ledOn(WeightSensor01.led.pin);
+                    ledOn(WeightSensor02.led.pin);
+                    lcdPrint("Stock missing", "on all sensors!");
+                    break;
+
+                case NO_MISSING_STOCK:
+                    ledOff(WeightSensor01.led.pin);
+                    ledOff(WeightSensor02.led.pin);
+                    lcdPrint("Stock #01 = XXX", "Stock #02 = YYY");  // TODO: Mostrar el Stock medido por cada sensor.
+                    break;
+
+                case SECURITY_ON:
+                    ledOff(WeightSensor01.led.pin);
+                    ledOff(WeightSensor02.led.pin);
+                    lcdClear();
+                    lcdPrint("Security mode", "");
+                    Status = SECURITY_MODE;
+                    break;
+            }
+            break;
+
+        case SECURITY_MODE:
+            switch (event) {
+                case SECURITY_OFF:
+                    ledOff(WeightSensor01.led.pin);
+                    ledOff(WeightSensor02.led.pin);
+                    // TODO: Apagar el Buzzer.
+                    lcdClear();
+                    Status = VIRGIN_EMBEDDED;
+                    break;
+
+                case ANOMALY_SENSOR_01:
+                    ledOn(WeightSensor01.led.pin);
+                    // TODO: Reproducir sonido por el Buzzer.
+                    lcdPrint("Security alert", "on sensor #01!");
+                    break;
+
+                case ANOMALY_SENSOR_02:
+                    ledOn(WeightSensor02.led.pin);
+                    // TODO: Reproducir sonido por el Buzzer.
+                    lcdPrint("Security alert", "on sensor #02!");
+                    break;
+
+                case ANOMALY_SENSORS:
+                    ledOn(WeightSensor01.led.pin);
+                    ledOn(WeightSensor02.led.pin);
+                    // TODO: Reproducir sonido por el Buzzer.
+                    lcdPrint("Security alert", "on all sensors!");
+                    break;
+            }
+            break;
     }
 }

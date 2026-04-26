@@ -2,8 +2,28 @@
 #define SRC_ENUMS_H_INCLUDED
 
 enum Status {
-  ON = 1,
-  OFF = 0
+    ON = 1,
+    OFF = 0,
+};
+
+enum SystemStatus {
+    VIRGIN_EMBEDDED,
+    STOCK_MODE,
+    SECURITY_MODE,
+};
+
+enum SystemEvent {
+    STOCK_ON,
+    STOCK_OFF,
+    STOCK_MISSING_SENSOR_01,
+    STOCK_MISSING_SENSOR_02,
+    STOCK_MISSING_SENSORS,
+    NO_MISSING_STOCK,
+    SECURITY_ON,
+    SECURITY_OFF,
+    ANOMALY_SENSOR_01,
+    ANOMALY_SENSOR_02,
+    ANOMALY_SENSORS
 };
 
 #endif  // SRC_ENUMS_H_INCLUDED

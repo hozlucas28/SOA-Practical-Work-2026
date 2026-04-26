@@ -7,11 +7,11 @@
 #include "enums.h"
 
 struct Led {
-    const int pin;
+    const uint8_t pin;
 };
 
 struct Button {
-    const int pin;
+    const uint8_t pin;
     const Led led;
     int state;
     Status status;
@@ -20,15 +20,10 @@ struct Button {
     unsigned long lastDebounceTime;
 };
 
-struct LCDMessage {
-    String row01;
-    String row02;
-};
-
 struct WeightSensor {
     HX711 device;
-    const int dtPin;
-    const int sckPin;
+    const uint8_t dtPin;
+    const uint8_t sckPin;
     const Led led;
 };
 
