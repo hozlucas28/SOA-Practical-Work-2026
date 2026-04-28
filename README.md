@@ -13,7 +13,7 @@
     <a href="#installation">Installation</a> •
     <a href="#diagrams">Diagrams</a>
     <br>
-    <a href="#application-structure">Application structure</a> •
+    <a href="#project-structure">Project structure</a> •
     <a href="#development-team">Development team</a> •
     <a href="#license">License</a> •
     <a href="#acknowledgments">Acknowledgments</a>
@@ -60,7 +60,7 @@ This repository contains our practical work for the Advanced Operating Systems (
 > [!IMPORTANT]
 > The first time you build the DevContainer, PlatformIO extension will request you to restart Visual Studio Code to finish the installation. Please do so, otherwise you won't be able to build the project.
 
-## Application structure
+## Project structure
 
 ```bash
 SOA-Practical-Work-2026/
