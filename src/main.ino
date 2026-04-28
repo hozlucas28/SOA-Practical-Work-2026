@@ -138,6 +138,7 @@ void loop() {
     SystemEvent event = getSystemEvent();
 
     // TODO:
+    // - Agregar un LOG para mostrar el estado actual y el evento recibido.
     // - Comprobar el correcto funcionamiento de la FSM en código.
     // - Actualizar el diagrama FSM para que coincida con este código.
     // (https://drive.google.com/drive/folders/1sVbpg8k7hKJE2epQFJ-_lZe8hzr9lcrr?usp=drive_link)

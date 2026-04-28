@@ -10,12 +10,19 @@
 #define LCD_ROWS 2
 #define LCD_COLS 16
 
+/* TODO: Agregar documentación */
 extern Button StockBtn;
+
+/* TODO: Agregar documentación */
 extern Button SecurityBtn;
 
+/* TODO: Agregar documentación */
 extern LiquidCrystal_I2C LCD;
 
+/* TODO: Agregar documentación */
 extern WeightSensor WeightSensor01;
+
+/* TODO: Agregar documentación */
 extern WeightSensor WeightSensor02;
 
 #endif  // SRC_CONSTANTS_H_INCLUDED

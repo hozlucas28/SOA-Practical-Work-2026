@@ -6,10 +6,12 @@
 
 #include "enums.h"
 
+// TODO: Agregar documentación
 struct Led {
     const uint8_t pin;
 };
 
+// TODO: Agregar documentación
 struct Button {
     const uint8_t pin;
     const Led led;
@@ -20,6 +22,7 @@ struct Button {
     unsigned long lastDebounceTime;
 };
 
+// TODO: Agregar documentación
 struct WeightSensor {
     HX711 device;
     const uint8_t dtPin;
