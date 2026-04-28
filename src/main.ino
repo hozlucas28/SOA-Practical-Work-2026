@@ -92,6 +92,7 @@ SystemEvent getSystemEvent() {
     return eventCaptures[eventCaptureI]();
 }
 
+// TODO: Dos tareas deben hacerse utilizando FreeRTOS.
 void setup() {
     Serial.begin(57600);
 
