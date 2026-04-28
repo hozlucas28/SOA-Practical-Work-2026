@@ -79,6 +79,7 @@ SOA-Practical-Work-2026/
 │
 ├── src/                  # Source code of the project (`.h` and `.ino` files).
 │
+├── .clang-format         # Clang-format configuration (code formatter).
 ├── .editorconfig         # Configuration to standardize code style across different IDEs.
 ├── .gitattributes        # Configuration for Git attributes.
 ├── .gitignore            # List of all files and folders that Git should ignore.
