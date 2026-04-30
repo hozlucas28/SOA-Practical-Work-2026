@@ -5,10 +5,12 @@
 
 #include "structs.h"
 
-#define BUTTONS_DEBOUNCE_DELAY 25  // Miliseconds
+#define BUTTONS_DEBOUNCE_DELAY 25  // Miliseconds.
 
 #define LCD_ROWS 2
 #define LCD_COLS 16
+
+#define WEIGHT_SENSORS_CALIBRATION_FACTOR 0.42  // Grams.
 
 /* TODO: Agregar documentación */
 extern Button StockBtn;

@@ -7,6 +7,9 @@
 void switchBtnState(Button* btn);
 
 // TODO: Agregar documentación
+unsigned int getWeightInGrams(WeightSensor* weightSensor);
+
+// TODO: Agregar documentación
 SystemEvent readStockBtn();
 
 // TODO: Agregar documentación

@@ -22,6 +22,14 @@ void switchBtnState(Button* btn) {
     btn->lastState = btnRead;
 }
 
+unsigned int getWeightInGrams(WeightSensor* weightSensor) {
+    if (!weightSensor->device.is_ready()) return 0;
+
+    float currentWeight = weightSensor->device.get_units(10);
+
+    return round(currentWeight);
+}
+
 SystemEvent readStockBtn() { return StockBtn.status == ON ? STOCK_ON : STOCK_OFF; }
 
 SystemEvent readStockSensors() {

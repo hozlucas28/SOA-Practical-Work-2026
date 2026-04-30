@@ -125,9 +125,15 @@ void setup() {
 
     // Weight sensors
     WeightSensor01.device.begin(WeightSensor01.dtPin, WeightSensor01.sckPin);
+    WeightSensor01.device.set_scale(WEIGHT_SENSORS_CALIBRATION_FACTOR);
+    WeightSensor01.device.tare();
+
     pinMode(WeightSensor01.led.pin, OUTPUT);
 
     WeightSensor02.device.begin(WeightSensor02.dtPin, WeightSensor02.sckPin);
+    WeightSensor02.device.set_scale(WEIGHT_SENSORS_CALIBRATION_FACTOR);
+    WeightSensor02.device.tare();
+
     pinMode(WeightSensor02.led.pin, OUTPUT);
 }
 
