@@ -12,6 +12,9 @@
 // User functions (converters, utilities, etc.)
 #include "user_functions.h"
 
+// Debugging utilities
+#include "debuggers.h"
+
 ////////////////////////////////////////////////////
 // TODO: Utilizar FreeRTOS para manejar la melodia del Buzzer.
 struct BuzzerStep {
@@ -92,9 +95,10 @@ SystemEvent getSystemEvent() {
     return eventCaptures[eventCaptureI]();
 }
 
-// TODO: Dos tareas deben hacerse utilizando FreeRTOS.
 void setup() {
     Serial.begin(57600);
+
+    DEBUG("\r\nStarting setup...\r\n\n");
 
     // Stock button
     pinMode(StockBtn.pin, INPUT);
@@ -106,6 +110,9 @@ void setup() {
     StockBtn.lastState = HIGH;
     StockBtn.lastDebounceTime = 0;
 
+    DEBUG_BUTTON("StockBtn", StockBtn);
+    DEBUG("\r\n");
+
     // Security button
     pinMode(SecurityBtn.pin, INPUT);
     pinMode(SecurityBtn.led, OUTPUT);
@@ -116,9 +123,12 @@ void setup() {
     SecurityBtn.lastState = HIGH;
     SecurityBtn.lastDebounceTime = 0;
 
+    DEBUG_BUTTON("SecurityBtn", SecurityBtn);
+    DEBUG("\r\n");
+
     // LCD
     LCD.device.init();
-    LCD.backlight();
+    LCD.device.backlight();
 
     // Buzzer
     pinMode(BUZZER_PIN, OUTPUT);
@@ -130,11 +140,19 @@ void setup() {
 
     pinMode(WeightSensor01.led, OUTPUT);
 
+    DEBUG_WEIGHT_SENSOR("WeightSensor01", WeightSensor01);
+    DEBUG("\r\n");
+
     WeightSensor02.device.begin(WeightSensor02.dtPin, WeightSensor02.sckPin);
     WeightSensor02.device.set_scale(WEIGHT_SENSORS_CALIBRATION_FACTOR);
     WeightSensor02.device.tare();
 
     pinMode(WeightSensor02.led, OUTPUT);
+
+    DEBUG_WEIGHT_SENSOR("WeightSensor02", WeightSensor02);
+    DEBUG("\r\n");
+
+    DEBUG("Setup completed.\r\n\n");
 }
 
 void loop() {
@@ -144,26 +162,26 @@ void loop() {
     SystemEvent event = getSystemEvent();
 
     // TODO:
-    // - Agregar un LOG para mostrar el estado actual y el evento recibido.
-    // - Comprobar el correcto funcionamiento de la FSM en código.
-    // - Actualizar el diagrama FSM para que coincida con este código.
-    // (https://drive.google.com/drive/folders/1sVbpg8k7hKJE2epQFJ-_lZe8hzr9lcrr?usp=drive_link)
     // - Pasar el diagrama FSM a un gráfico de nodos.
+    // (https://drive.google.com/drive/folders/1sVbpg8k7hKJE2epQFJ-_lZe8hzr9lcrr?usp=drive_link)
     switch (Status) {
         case VIRGIN_EMBEDDED:
             switch (event) {
                 case STOCK_ON:
                     lcdClear(&LCD);
                     Status = STOCK_MODE;
+                    DEBUG_FSM(VIRGIN_EMBEDDED, event, Status);
                     break;
 
                 case SECURITY_ON:
                     lcdPrint(&LCD, "Security mode");
                     Status = SECURITY_MODE;
+                    DEBUG_FSM(VIRGIN_EMBEDDED, event, Status);
                     break;
 
                 default:
                     lcdPrint(&LCD, "SOA - Team L5", "S.S. control");
+                    DEBUG_FSM(VIRGIN_EMBEDDED, event, Status);
                     break;
             }
             break;
@@ -175,24 +193,28 @@ void loop() {
                     ledOff(WeightSensor02.led);
                     lcdClear(&LCD);
                     Status = VIRGIN_EMBEDDED;
+                    DEBUG_FSM(STOCK_MODE, event, Status);
                     break;
 
                 case STOCK_MISSING_SENSOR_01:
                     ledOn(WeightSensor01.led);
                     ledOff(WeightSensor02.led);
                     lcdPrint(&LCD, "Stock missing", "on sensor #01!");
+                    DEBUG_FSM(STOCK_MODE, event, Status);
                     break;
 
                 case STOCK_MISSING_SENSOR_02:
                     ledOff(WeightSensor01.led);
                     ledOn(WeightSensor02.led);
                     lcdPrint(&LCD, "Stock missing", "on sensor #02!");
+                    DEBUG_FSM(STOCK_MODE, event, Status);
                     break;
 
                 case STOCK_MISSING_SENSORS:
                     ledOn(WeightSensor01.led);
                     ledOn(WeightSensor02.led);
                     lcdPrint(&LCD, "Stock missing", "on all sensors!");
+                    DEBUG_FSM(STOCK_MODE, event, Status);
                     break;
 
                 case NO_MISSING_STOCK:
@@ -201,6 +223,7 @@ void loop() {
                     lcdPrint(
                         &LCD, "Stock #01 = XXX", "Stock #02 = YYY"
                     );  // TODO: Mostrar el Stock medido por cada sensor.
+                    DEBUG_FSM(STOCK_MODE, event, Status);
                     break;
 
                 case SECURITY_ON:
@@ -208,6 +231,7 @@ void loop() {
                     ledOff(WeightSensor02.led);
                     lcdPrint(&LCD, "Security mode");
                     Status = SECURITY_MODE;
+                    DEBUG_FSM(STOCK_MODE, event, Status);
                     break;
             }
             break;
@@ -220,18 +244,21 @@ void loop() {
                     // TODO: Apagar el Buzzer.
                     lcdClear(&LCD);
                     Status = VIRGIN_EMBEDDED;
+                    DEBUG_FSM(SECURITY_MODE, event, Status);
                     break;
 
                 case ANOMALY_SENSOR_01:
                     ledOn(WeightSensor01.led);
                     // TODO: Reproducir sonido por el Buzzer.
                     lcdPrint(&LCD, "Security alert", "on sensor #01!");
+                    DEBUG_FSM(SECURITY_MODE, event, Status);
                     break;
 
                 case ANOMALY_SENSOR_02:
                     ledOn(WeightSensor02.led);
                     // TODO: Reproducir sonido por el Buzzer.
                     lcdPrint(&LCD, "Security alert", "on sensor #02!");
+                    DEBUG_FSM(SECURITY_MODE, event, Status);
                     break;
 
                 case ANOMALY_SENSORS:
@@ -239,6 +266,7 @@ void loop() {
                     ledOn(WeightSensor02.led);
                     // TODO: Reproducir sonido por el Buzzer.
                     lcdPrint(&LCD, "Security alert", "on all sensors!");
+                    DEBUG_FSM(SECURITY_MODE, event, Status);
                     break;
             }
             break;
