@@ -118,6 +118,7 @@
             printMethod("UNKNOWN_SYSTEM_EVENT   "); \
     }
 
+/* TODO: Agregar documentación */
 #define DEBUG_FSM(status, event, nextStatus)   \
     DEBUG_SYSTEM_STATUS(status, Serial.print); \
     DEBUG_SYSTEM_EVENT(event, Serial.print);   \
