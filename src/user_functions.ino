@@ -12,8 +12,8 @@ void switchBtnState(Button* btn) {
             btn->state = btnRead;
 
             if (btn->state == HIGH) {
-                int ledRead = !digitalRead(btn->led.pin);
-                digitalWrite(btn->led.pin, ledRead);
+                int ledRead = !digitalRead(btn->led);
+                digitalWrite(btn->led, ledRead);
                 btn->status = ledRead == HIGH ? ON : OFF;
             }
         }

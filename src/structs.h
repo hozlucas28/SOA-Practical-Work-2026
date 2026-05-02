@@ -7,14 +7,9 @@
 #include "enums.h"
 
 // TODO: Agregar documentación
-struct Led {
-    const uint8_t pin;
-};
-
-// TODO: Agregar documentación
 struct Button {
     const uint8_t pin;
-    const Led led;
+    const uint8_t led;
     int state;
     Status status;
     int lastState;
@@ -27,7 +22,7 @@ struct WeightSensor {
     HX711 device;
     const uint8_t dtPin;
     const uint8_t sckPin;
-    const Led led;
+    const uint8_t led;
 };
 
 #endif  // SRC_STRUCTS_H_INCLUDED
