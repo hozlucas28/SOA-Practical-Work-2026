@@ -3,6 +3,7 @@
 #include "structs.h"
 #include "user_functions.h"
 
+// TODO: Utilizar FreeRTOS
 void switchBtnState(Button* btn) {
     int btnRead = digitalRead(btn->pin);
     if (btnRead != btn->lastState) btn->lastDebounceTime = millis();

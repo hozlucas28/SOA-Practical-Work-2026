@@ -1,11 +1,13 @@
 #ifndef SRC_ENUMS_H_INCLUDED
 #define SRC_ENUMS_H_INCLUDED
 
+/* TODO: Agregar documentación */
 enum ButtonStatus {
     OFF,
     ON,
 };
 
+/* TODO: Agregar documentación */
 enum SystemStatus {
     VIRGIN_EMBEDDED,
     STOCK_MODE,
@@ -13,6 +15,7 @@ enum SystemStatus {
     UNKNOWN_SYSTEM_STATUS,
 };
 
+/* TODO: Agregar documentación */
 enum SystemEvent {
     STOCK_ON,
     STOCK_OFF,
