@@ -33,4 +33,8 @@ void ledOn(const uint8_t pin);
 // TODO: Agregar documentación
 void ledOff(const uint8_t pin);
 
+const char* statusToString(SystemStatus s);
+
+const char* eventToString(SystemEvent e);
+
 #endif  // SRC_USER_FUNCTIONS_H_INCLUDED

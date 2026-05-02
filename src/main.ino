@@ -149,6 +149,12 @@ void loop() {
     // - Actualizar el diagrama FSM para que coincida con este código.
     // (https://drive.google.com/drive/folders/1sVbpg8k7hKJE2epQFJ-_lZe8hzr9lcrr?usp=drive_link)
     // - Pasar el diagrama FSM a un gráfico de nodos.
+
+    Serial.print("[Status]: ");
+    Serial.print(statusToString(Status));
+    Serial.print(" | [Event]: ");
+    Serial.println(eventToString(event));
+
     switch (Status) {
         case VIRGIN_EMBEDDED:
             switch (event) {
