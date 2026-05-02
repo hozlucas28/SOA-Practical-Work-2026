@@ -35,14 +35,14 @@ SystemEvent readStockBtn() { return StockBtn.status == ON ? STOCK_ON : STOCK_OFF
 
 SystemEvent readStockSensors() {
     // TODO
-    return NO_MISSING_STOCK;
+    return UNKNOWN_SYSTEM_EVENT;
 }
 
 SystemEvent readSecurityBtn() { return SecurityBtn.status == ON ? SECURITY_ON : SECURITY_OFF; }
 
 SystemEvent readAnomalySensors() {
     // TODO
-    return SECURITY_OFF;
+    return UNKNOWN_SYSTEM_EVENT;
 }
 
 void lcdClear(LCD16x2* lcd) { lcd->device.clear(); }
