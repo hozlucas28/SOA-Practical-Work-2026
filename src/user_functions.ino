@@ -45,7 +45,11 @@ SystemEvent readAnomalySensors() {
     return UNKNOWN_SYSTEM_EVENT;
 }
 
-void lcdClear(LCD16x2* lcd) { lcd->device.clear(); }
+void lcdClear(LCD16x2* lcd) {
+    lcd->device.clear();
+    lcd->line01 = "";
+    lcd->line02 = "";
+}
 
 void lcdPrint(LCD16x2* lcd, const String line) {
     if (lcd->line01 != line || lcd->line02 != "") lcd->device.clear();
