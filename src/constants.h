@@ -19,7 +19,7 @@ extern Button StockBtn;
 extern Button SecurityBtn;
 
 /* TODO: Agregar documentación */
-extern LiquidCrystal_I2C LCD;
+extern LCD16x2 LCD;
 
 /* TODO: Agregar documentación */
 extern WeightSensor WeightSensor01;

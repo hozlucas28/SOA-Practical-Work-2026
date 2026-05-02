@@ -22,10 +22,11 @@ SystemEvent readSecurityBtn();
 SystemEvent readAnomalySensors();
 
 // TODO: Agregar documentación
-void lcdClear();
+void lcdClear(LCD16x2* lcd);
 
 // TODO: Agregar documentación
-void lcdPrint(const String line01, const String line02);
+void lcdPrint(LCD16x2* lcd, const String line);
+void lcdPrint(LCD16x2* lcd, const String line01, const String line02);
 
 // TODO: Agregar documentación
 void ledOn(const uint8_t pin);

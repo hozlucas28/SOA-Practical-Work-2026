@@ -44,14 +44,29 @@ SystemEvent readAnomalySensors() {
     return SECURITY_OFF;
 }
 
-void lcdClear() { LCD.clear(); }
+void lcdClear(LCD16x2* lcd) { lcd->device.clear(); }
 
-void lcdPrint(const String line01, const String line02) {
-    LCD.setCursor(0, 0);
-    LCD.print(line01);
+void lcdPrint(LCD16x2* lcd, const String line) {
+    if (lcd->line01 != line || lcd->line02 != "") lcd->device.clear();
 
-    LCD.setCursor(0, 1);
-    LCD.print(line02);
+    lcd->device.setCursor(0, 0);
+    lcd->device.print(line);
+
+    lcd->line01 = line;
+    lcd->line02 = "";
+}
+
+void lcdPrint(LCD16x2* lcd, String line01, const String line02) {
+    if (lcd->line01 != line01 || lcd->line02 != line02) lcd->device.clear();
+
+    lcd->device.setCursor(0, 0);
+    lcd->device.print(line01);
+
+    lcd->device.setCursor(0, 1);
+    lcd->device.print(line02);
+
+    lcd->line01 = line01;
+    lcd->line02 = line02;
 }
 
 void ledOn(const uint8_t pin) { digitalWrite(pin, HIGH); }

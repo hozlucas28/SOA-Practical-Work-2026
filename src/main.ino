@@ -98,8 +98,8 @@ void setup() {
 
     // Stock button
     pinMode(StockBtn.pin, INPUT);
-    pinMode(StockBtn.led.pin, OUTPUT);
-    digitalWrite(StockBtn.led.pin, LOW);
+    pinMode(StockBtn.led, OUTPUT);
+    digitalWrite(StockBtn.led, LOW);
 
     StockBtn.state = LOW;
     StockBtn.status = OFF;
@@ -108,8 +108,8 @@ void setup() {
 
     // Security button
     pinMode(SecurityBtn.pin, INPUT);
-    pinMode(SecurityBtn.led.pin, OUTPUT);
-    digitalWrite(SecurityBtn.led.pin, LOW);
+    pinMode(SecurityBtn.led, OUTPUT);
+    digitalWrite(SecurityBtn.led, LOW);
 
     SecurityBtn.state = LOW;
     SecurityBtn.status = OFF;
@@ -117,7 +117,7 @@ void setup() {
     SecurityBtn.lastDebounceTime = 0;
 
     // LCD
-    LCD.init();
+    LCD.device.init();
     LCD.backlight();
 
     // Buzzer
@@ -128,13 +128,13 @@ void setup() {
     WeightSensor01.device.set_scale(WEIGHT_SENSORS_CALIBRATION_FACTOR);
     WeightSensor01.device.tare();
 
-    pinMode(WeightSensor01.led.pin, OUTPUT);
+    pinMode(WeightSensor01.led, OUTPUT);
 
     WeightSensor02.device.begin(WeightSensor02.dtPin, WeightSensor02.sckPin);
     WeightSensor02.device.set_scale(WEIGHT_SENSORS_CALIBRATION_FACTOR);
     WeightSensor02.device.tare();
 
-    pinMode(WeightSensor02.led.pin, OUTPUT);
+    pinMode(WeightSensor02.led, OUTPUT);
 }
 
 void loop() {
@@ -153,16 +153,17 @@ void loop() {
         case VIRGIN_EMBEDDED:
             switch (event) {
                 case STOCK_ON:
+                    lcdClear(&LCD);
                     Status = STOCK_MODE;
                     break;
 
                 case SECURITY_ON:
-                    lcdPrint("Security mode", "");
+                    lcdPrint(&LCD, "Security mode");
                     Status = SECURITY_MODE;
                     break;
 
                 default:
-                    lcdPrint("SOA - Team L5", "Stock control");
+                    lcdPrint(&LCD, "SOA - Team L5", "S.S. control");
                     break;
             }
             break;
@@ -172,39 +173,40 @@ void loop() {
                 case STOCK_OFF:
                     ledOff(WeightSensor01.led);
                     ledOff(WeightSensor02.led);
-                    lcdClear();
+                    lcdClear(&LCD);
                     Status = VIRGIN_EMBEDDED;
                     break;
 
                 case STOCK_MISSING_SENSOR_01:
                     ledOn(WeightSensor01.led);
                     ledOff(WeightSensor02.led);
-                    lcdPrint("Stock missing", "on sensor #01!");
+                    lcdPrint(&LCD, "Stock missing", "on sensor #01!");
                     break;
 
                 case STOCK_MISSING_SENSOR_02:
                     ledOff(WeightSensor01.led);
                     ledOn(WeightSensor02.led);
-                    lcdPrint("Stock missing", "on sensor #02!");
+                    lcdPrint(&LCD, "Stock missing", "on sensor #02!");
                     break;
 
                 case STOCK_MISSING_SENSORS:
                     ledOn(WeightSensor01.led);
                     ledOn(WeightSensor02.led);
-                    lcdPrint("Stock missing", "on all sensors!");
+                    lcdPrint(&LCD, "Stock missing", "on all sensors!");
                     break;
 
                 case NO_MISSING_STOCK:
                     ledOff(WeightSensor01.led);
                     ledOff(WeightSensor02.led);
-                    lcdPrint("Stock #01 = XXX", "Stock #02 = YYY");  // TODO: Mostrar el Stock medido por cada sensor.
+                    lcdPrint(
+                        &LCD, "Stock #01 = XXX", "Stock #02 = YYY"
+                    );  // TODO: Mostrar el Stock medido por cada sensor.
                     break;
 
                 case SECURITY_ON:
                     ledOff(WeightSensor01.led);
                     ledOff(WeightSensor02.led);
-                    lcdClear();
-                    lcdPrint("Security mode", "");
+                    lcdPrint(&LCD, "Security mode");
                     Status = SECURITY_MODE;
                     break;
             }
@@ -216,27 +218,27 @@ void loop() {
                     ledOff(WeightSensor01.led);
                     ledOff(WeightSensor02.led);
                     // TODO: Apagar el Buzzer.
-                    lcdClear();
+                    lcdClear(&LCD);
                     Status = VIRGIN_EMBEDDED;
                     break;
 
                 case ANOMALY_SENSOR_01:
                     ledOn(WeightSensor01.led);
                     // TODO: Reproducir sonido por el Buzzer.
-                    lcdPrint("Security alert", "on sensor #01!");
+                    lcdPrint(&LCD, "Security alert", "on sensor #01!");
                     break;
 
                 case ANOMALY_SENSOR_02:
                     ledOn(WeightSensor02.led);
                     // TODO: Reproducir sonido por el Buzzer.
-                    lcdPrint("Security alert", "on sensor #02!");
+                    lcdPrint(&LCD, "Security alert", "on sensor #02!");
                     break;
 
                 case ANOMALY_SENSORS:
                     ledOn(WeightSensor01.led);
                     ledOn(WeightSensor02.led);
                     // TODO: Reproducir sonido por el Buzzer.
-                    lcdPrint("Security alert", "on all sensors!");
+                    lcdPrint(&LCD, "Security alert", "on all sensors!");
                     break;
             }
             break;

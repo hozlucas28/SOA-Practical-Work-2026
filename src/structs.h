@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include <HX711.h>
+#include <LiquidCrystal_I2C.h>
 
 #include "enums.h"
 
@@ -15,6 +16,13 @@ struct Button {
     int lastState;
     const unsigned long debounceDelay;
     unsigned long lastDebounceTime;
+};
+
+// TODO: Agregar documentación
+struct LCD16x2 {
+    LiquidCrystal_I2C device;
+    String line01;
+    String line02;
 };
 
 // TODO: Agregar documentación

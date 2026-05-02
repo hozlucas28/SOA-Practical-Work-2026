@@ -16,7 +16,11 @@ Button SecurityBtn = {
     .debounceDelay = BUTTONS_DEBOUNCE_DELAY,
 };
 
-LiquidCrystal_I2C LCD(0x27, LCD_COLS, LCD_ROWS);
+LCD16x2 LCD = {
+    .device = LiquidCrystal_I2C(0x27, LCD_COLS, LCD_ROWS),
+    .line01 = "",
+    .line02 = "",
+};
 
 WeightSensor WeightSensor01 = {
     .dtPin = WEIGHT_SENSOR_01_DT_PIN,
