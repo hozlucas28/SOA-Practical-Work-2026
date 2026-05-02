@@ -12,7 +12,7 @@ struct Button {
     const uint8_t pin;
     const uint8_t led;
     int state;
-    Status status;
+    ButtonStatus status;
     int lastState;
     const unsigned long debounceDelay;
     unsigned long lastDebounceTime;
