@@ -1,6 +1,7 @@
 #ifndef SRC_USER_FUNCTIONS_H_INCLUDED
 #define SRC_USER_FUNCTIONS_H_INCLUDED
 
+#include "enums.h"
 #include "structs.h"
 
 // TODO: Agregar documentación

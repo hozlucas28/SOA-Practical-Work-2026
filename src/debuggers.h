@@ -1,6 +1,8 @@
 #ifndef SRC_DEBUGGERS_H_INCLUDED
 #define SRC_DEBUGGERS_H_INCLUDED
 
+#include "enums.h"
+
 #define DEBUG_MODE true
 
 #if DEBUG_MODE
