@@ -82,6 +82,8 @@ SOA-Practical-Work-2026/
 │   ├── constants.ino       # Implementation of global constants.
 │   ├── debuggers.h         # Debugging macros.
 │   ├── enums.h             # Global enums, and system status and events.
+│   ├── event_captures.h    # Definitions of event captures for the FSM.
+│   ├── event_captures.ino  # Implementation of event captures for the FSM.
 │   ├── main.ino            # Entry point.
 │   ├── pins.h              # ESP32 pin's designations.
 │   ├── structs.h           # Structs for global constants.
