@@ -12,6 +12,9 @@
 
 #define WEIGHT_SENSORS_CALIBRATION_FACTOR 0.42  // Grams.
 
+#define STOCK_MIN_WEIGHT  200  // gramos mínimos para considerar que hay stock
+#define ANOMALY_THRESHOLD 150  // variación en gramos para considerar anomalía
+
 /* TODO: Agregar documentación */
 extern Button StockBtn;
 

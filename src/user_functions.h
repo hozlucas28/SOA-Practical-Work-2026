@@ -3,6 +3,9 @@
 
 #include "structs.h"
 
+static int baselineWeight01 = -1;
+static int baselineWeight02 = -1;
+
 // TODO: Agregar documentación
 void switchBtnState(Button* btn);
 
@@ -36,5 +39,9 @@ void ledOff(const uint8_t pin);
 const char* statusToString(SystemStatus s);
 
 const char* eventToString(SystemEvent e);
+
+void captureAnomalyBaseline();
+
+void resetAnomalyBaseline();
 
 #endif  // SRC_USER_FUNCTIONS_H_INCLUDED

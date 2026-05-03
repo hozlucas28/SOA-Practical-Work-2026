@@ -30,18 +30,50 @@ unsigned int getWeightInGrams(WeightSensor* weightSensor) {
     return round(currentWeight);
 }
 
-SystemEvent readStockBtn() { return StockBtn.status == ON ? STOCK_ON : STOCK_OFF; }
+SystemEvent readStockBtn() {
+    static int lastStatus = OFF;
+    if (StockBtn.status == lastStatus) return NO_EVENT;
+    lastStatus = StockBtn.status;
+    return StockBtn.status == ON ? STOCK_ON : STOCK_OFF;
+}
 
 SystemEvent readStockSensors() {
     // TODO
+    if (Status != STOCK_MODE) return NO_MISSING_STOCK;
+    unsigned int weight01 = getWeightInGrams(&WeightSensor01);
+    unsigned int weight02 = getWeightInGrams(&WeightSensor02);
+
+    bool missing01 = weight01 < STOCK_MIN_WEIGHT;
+    bool missing02 = weight02 < STOCK_MIN_WEIGHT;
+
+    if (missing01 && missing02) return STOCK_MISSING_SENSORS;
+    if (missing01) return STOCK_MISSING_SENSOR_01;
+    if (missing02) return STOCK_MISSING_SENSOR_02;
     return NO_MISSING_STOCK;
 }
 
-SystemEvent readSecurityBtn() { return SecurityBtn.status == ON ? SECURITY_ON : SECURITY_OFF; }
+SystemEvent readSecurityBtn() {
+    static int lastStatus = OFF;
+    if (SecurityBtn.status == lastStatus) return NO_EVENT;
+    lastStatus = SecurityBtn.status;
+    return SecurityBtn.status == ON ? SECURITY_ON : SECURITY_OFF;
+}
 
 SystemEvent readAnomalySensors() {
     // TODO
-    return SECURITY_OFF;
+    if (Status != SECURITY_MODE) return NO_MISSING_STOCK;
+    if (baselineWeight01 < 0 || baselineWeight02 < 0) return NO_MISSING_STOCK;
+
+    int weight01 = getWeightInGrams(&WeightSensor01);
+    int weight02 = getWeightInGrams(&WeightSensor02);
+
+    bool anomaly01 = abs(weight01 - baselineWeight01) > ANOMALY_THRESHOLD;
+    bool anomaly02 = abs(weight02 - baselineWeight02) > ANOMALY_THRESHOLD;
+
+    if (anomaly01 && anomaly02) return ANOMALY_SENSORS;
+    if (anomaly01) return ANOMALY_SENSOR_01;
+    if (anomaly02) return ANOMALY_SENSOR_02;
+    return NO_MISSING_STOCK;
 }
 
 void lcdClear() { LCD.clear(); }
@@ -95,7 +127,19 @@ const char* eventToString(SystemEvent e) {
             return "ANOMALY_SENSOR_02";
         case ANOMALY_SENSORS:
             return "ANOMALY_SENSORS";
+        case NO_EVENT:
+            return "NO_EVENT";
         default:
             return "UNKNOWN";
     }
+}
+
+void captureAnomalyBaseline() {
+    baselineWeight01 = getWeightInGrams(&WeightSensor01);
+    baselineWeight02 = getWeightInGrams(&WeightSensor02);
+}
+
+void resetAnomalyBaseline() {
+    baselineWeight01 = -1;
+    baselineWeight02 = -1;
 }

@@ -163,6 +163,7 @@ void loop() {
                     break;
 
                 case SECURITY_ON:
+                    captureAnomalyBaseline();
                     lcdPrint("Security mode", "");
                     Status = SECURITY_MODE;
                     break;
@@ -210,6 +211,7 @@ void loop() {
                     ledOff(WeightSensor01.led.pin);
                     ledOff(WeightSensor02.led.pin);
                     lcdClear();
+                    captureAnomalyBaseline();
                     lcdPrint("Security mode", "");
                     Status = SECURITY_MODE;
                     break;
@@ -222,6 +224,7 @@ void loop() {
                     ledOff(WeightSensor01.led.pin);
                     ledOff(WeightSensor02.led.pin);
                     // TODO: Apagar el Buzzer.
+                    resetAnomalyBaseline();
                     lcdClear();
                     Status = VIRGIN_EMBEDDED;
                     break;
