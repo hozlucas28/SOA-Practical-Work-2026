@@ -23,28 +23,6 @@ void switchBtnState(Button* btn) {
     btn->lastState = btnRead;
 }
 
-unsigned int getWeightInGrams(WeightSensor* weightSensor) {
-    if (!weightSensor->device.is_ready()) return 0;
-
-    float currentWeight = weightSensor->device.get_units(10);
-
-    return round(currentWeight);
-}
-
-SystemEvent readStockBtn() { return StockBtn.status == ON ? STOCK_ON : STOCK_OFF; }
-
-SystemEvent readStockSensors() {
-    // TODO
-    return UNKNOWN_SYSTEM_EVENT;
-}
-
-SystemEvent readSecurityBtn() { return SecurityBtn.status == ON ? SECURITY_ON : SECURITY_OFF; }
-
-SystemEvent readAnomalySensors() {
-    // TODO
-    return UNKNOWN_SYSTEM_EVENT;
-}
-
 void lcdClear(LCD16x2* lcd) {
     lcd->device.clear();
     lcd->line01 = "";
@@ -74,6 +52,20 @@ void lcdPrint(LCD16x2* lcd, String line01, const String line02) {
     lcd->line02 = line02;
 }
 
-void ledOn(const uint8_t pin) { digitalWrite(pin, HIGH); }
+unsigned int getWeightInGrams(WeightSensor* weightSensor) {
+    if (!weightSensor->device.is_ready()) return 0;
 
-void ledOff(const uint8_t pin) { digitalWrite(pin, LOW); }
+    float currentWeight = weightSensor->device.get_units(10);
+
+    return round(currentWeight);
+}
+
+void ledOn(WeightSensor* weightSensor) {
+    if (!weightSensor->device.is_ready() || digitalRead(weightSensor->led) == HIGH) return;
+    digitalWrite(weightSensor->led, HIGH);
+}
+
+void ledOff(WeightSensor* weightSensor) {
+    if (!weightSensor->device.is_ready() || digitalRead(weightSensor->led) == LOW) return;
+    digitalWrite(weightSensor->led, LOW);
+}

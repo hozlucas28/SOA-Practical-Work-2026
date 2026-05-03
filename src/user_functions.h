@@ -8,26 +8,14 @@
 void switchBtnState(Button* btn);
 
 // TODO: Agregar documentación
-unsigned int getWeightInGrams(WeightSensor* weightSensor);
-
-// TODO: Agregar documentación
-SystemEvent readStockBtn();
-
-// TODO: Agregar documentación
-SystemEvent readStockSensors();
-
-// TODO: Agregar documentación
-SystemEvent readSecurityBtn();
-
-// TODO: Agregar documentación
-SystemEvent readAnomalySensors();
-
-// TODO: Agregar documentación
 void lcdClear(LCD16x2* lcd);
 
 // TODO: Agregar documentación
 void lcdPrint(LCD16x2* lcd, const String line);
 void lcdPrint(LCD16x2* lcd, const String line01, const String line02);
+
+// TODO: Agregar documentación
+unsigned int getWeightInGrams(WeightSensor* weightSensor);
 
 // TODO: Agregar documentación
 void ledOn(const uint8_t pin);

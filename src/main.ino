@@ -6,11 +6,14 @@
 #include "pins.h"
 #include "structs.h"
 
-// Constants and variables (structs, variables, etc.)
+// Constants (global constants, structs, etc.)
 #include "constants.h"
 
-// User functions (converters, utilities, etc.)
+// User functions (utilities for sensors and actuators)
 #include "user_functions.h"
+
+// Event capture functions
+#include "event_captures.h"
 
 // Debugging utilities
 #include "debuggers.h"
@@ -81,10 +84,10 @@ void aplicarTono(unsigned int freq) {
 SystemStatus Status = VIRGIN_EMBEDDED;
 
 SystemEvent (*eventCaptures[])() = {
-    readStockBtn,
-    readStockSensors,
-    readSecurityBtn,
-    readAnomalySensors,
+    getStockBtnEvent,
+    getStockSensorsEvent,
+    getSecurityBtnEvent,
+    getAnomalySensorsEvent,
 };
 
 uint8_t eventCaptureI = -1;
