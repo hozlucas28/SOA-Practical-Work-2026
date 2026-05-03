@@ -36,12 +36,16 @@ void ledOn(const uint8_t pin);
 // TODO: Agregar documentación
 void ledOff(const uint8_t pin);
 
+// TODO: Agregar documentación
 const char* statusToString(SystemStatus s);
 
+// TODO: Agregar documentación
 const char* eventToString(SystemEvent e);
 
+// TODO: Agregar documentación
 void captureAnomalyBaseline();
 
+// TODO: Agregar documentación
 void resetAnomalyBaseline();
 
 #endif  // SRC_USER_FUNCTIONS_H_INCLUDED

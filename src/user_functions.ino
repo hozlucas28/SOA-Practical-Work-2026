@@ -40,7 +40,6 @@ SystemEvent readStockBtn() {
 }
 
 SystemEvent readStockSensors() {
-    // TODO
     if (Status != STOCK_MODE) return NO_MISSING_STOCK;
     unsigned int weight01 = getWeightInGrams(&WeightSensor01);
     unsigned int weight02 = getWeightInGrams(&WeightSensor02);
@@ -62,7 +61,6 @@ SystemEvent readSecurityBtn() {
 }
 
 SystemEvent readAnomalySensors() {
-    // TODO
     if (Status != SECURITY_MODE) return NO_MISSING_STOCK;
     if (baselineWeight01 < 0 || baselineWeight02 < 0) return NO_MISSING_STOCK;
 
