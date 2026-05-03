@@ -3,6 +3,8 @@
 #include "structs.h"
 #include "user_functions.h"
 
+extern SystemStatus Status;
+
 void switchBtnState(Button* btn) {
     int btnRead = digitalRead(btn->pin);
     if (btnRead != btn->lastState) btn->lastDebounceTime = millis();
