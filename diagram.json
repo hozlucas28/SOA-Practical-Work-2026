@@ -97,7 +97,7 @@
             "top": 261,
             "left": -22.4,
             "rotate": 270,
-            "attrs": { "color": "green", "xray": "1", "bounce": "0", "key": "1" }
+            "attrs": { "color": "green", "xray": "1", "bounce": "1", "key": "1" }
         },
         { "type": "wokwi-text", "id": "text6", "top": -38.4, "left": 0, "attrs": { "text": "LCD" } },
         {
@@ -129,7 +129,7 @@
             "top": 261,
             "left": 92.8,
             "rotate": 270,
-            "attrs": { "color": "blue", "xray": "1", "bounce": "0", "key": "2" }
+            "attrs": { "color": "blue", "xray": "1", "bounce": "1", "key": "2" }
         },
         {
             "type": "wokwi-led",
