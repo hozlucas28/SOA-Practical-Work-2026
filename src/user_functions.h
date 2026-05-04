@@ -1,51 +1,32 @@
 #ifndef SRC_USER_FUNCTIONS_H_INCLUDED
 #define SRC_USER_FUNCTIONS_H_INCLUDED
 
+#include "enums.h"
 #include "structs.h"
-
-static int baselineWeight01 = -1;
-static int baselineWeight02 = -1;
 
 // TODO: Agregar documentación
 void switchBtnState(Button* btn);
 
 // TODO: Agregar documentación
-unsigned int getWeightInGrams(WeightSensor* weightSensor);
+void lcdClear(LCD16x2* lcd);
 
 // TODO: Agregar documentación
-SystemEvent readStockBtn();
+void lcdPrint(LCD16x2* lcd, const String line);
+void lcdPrint(LCD16x2* lcd, const String line01, const String line02);
 
 // TODO: Agregar documentación
-SystemEvent readStockSensors();
+unsigned int getWeight(WeightSensor* weightSensor);
 
 // TODO: Agregar documentación
-SystemEvent readSecurityBtn();
+unsigned int getStock(WeightSensor* weightSensor);
 
 // TODO: Agregar documentación
-SystemEvent readAnomalySensors();
+void setBaselineWeight(WeightSensor* weightSensor);
 
 // TODO: Agregar documentación
-void lcdClear();
+void ledOn(WeightSensor* weightSensor);
 
 // TODO: Agregar documentación
-void lcdPrint(const String line01, const String line02);
-
-// TODO: Agregar documentación
-void ledOn(const uint8_t pin);
-
-// TODO: Agregar documentación
-void ledOff(const uint8_t pin);
-
-// TODO: Agregar documentación
-const char* statusToString(SystemStatus s);
-
-// TODO: Agregar documentación
-const char* eventToString(SystemEvent e);
-
-// TODO: Agregar documentación
-void captureAnomalyBaseline();
-
-// TODO: Agregar documentación
-void resetAnomalyBaseline();
+void ledOff(WeightSensor* weightSensor);
 
 #endif  // SRC_USER_FUNCTIONS_H_INCLUDED

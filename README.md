@@ -65,33 +65,44 @@ This repository contains our practical work for the Advanced Operating Systems (
 ```bash
 SOA-Practical-Work-2026/
 │
-├── .devcontainer/        # DevContainer configuration files.
+├── .devcontainer/          # DevContainer configuration files.
 │
 ├── .github/
-│   ├── workflows/        # GitHub Actions (CI/CD) workflows.
+│   ├── workflows/          # GitHub Actions (CI/CD) workflows.
 │   │
-│   └── CODEOWNERS        # File to assign Pull Request and Issue reviewers.
+│   └── CODEOWNERS          # File to assign Pull Request and Issue reviewers.
 │
-├── docs/                 # Documentation files, such as diagrams, images, and other statics.
+├── docs/                   # Documentation files, such as diagrams, images, and other statics.
 │
 ├── scripts/
-│   └── health-check.sh   # Script to check that the necessary tools are installed.
+│   └── health-check.sh     # Script to check that the necessary tools are installed.
 │
-├── src/                  # Source code of the project (`.h` and `.ino` files).
+├── src/
+│   ├── constants.h         # Definitions of global constants.
+│   ├── constants.ino       # Implementation of global constants.
+│   ├── debuggers.h         # Debugging macros.
+│   ├── enums.h             # Global enums, and system status and events.
+│   ├── event_captures.h    # Definitions of event captures for the FSM.
+│   ├── event_captures.ino  # Implementation of event captures for the FSM.
+│   ├── main.ino            # Entry point.
+│   ├── pins.h              # ESP32 pin's designations.
+│   ├── structs.h           # Structs for global constants.
+│   ├── user_functions.h    # Definitions of utility functions for sensors and actuators.
+│   └── user_functions.ino  # Implementation of utility functions for sensors and actuators.
 │
-├── .clang-format         # Clang-format configuration (code formatter).
-├── .editorconfig         # Configuration to standardize code style across different IDEs.
-├── .gitattributes        # Configuration for Git attributes.
-├── .gitignore            # List of all files and folders that Git should ignore.
-├── .oxfmtrc              # Oxfmt configuration (code formatter).
-├── cspell.json           # Code Spell Checker extension configuration.
-├── diagram.json          # Circuit diagram of the project, exported from Wokwi.
-├── lefthook.yaml         # Lefthook configuration (Git hooks manager).
-├── LICENSE               # Project license.
-├── platformio.ini        # PlatformIO configuration file.
-├── README.md             # This file.
-├── wokwi.toml            # Wokwi configuration file.
-└── zizmor.yml            # Zizmor configuration (linter for GitHub Actions workflows).
+├── .clang-format           # Clang-format configuration (code formatter).
+├── .editorconfig           # Configuration to standardize code style across different IDEs.
+├── .gitattributes          # Configuration for Git attributes.
+├── .gitignore              # List of all files and folders that Git should ignore.
+├── .oxfmtrc                # Oxfmt configuration (code formatter).
+├── cspell.json             # Code Spell Checker extension configuration.
+├── diagram.json            # Circuit diagram of the project, exported from Wokwi.
+├── lefthook.yaml           # Lefthook configuration (Git hooks manager).
+├── LICENSE                 # Project license.
+├── platformio.ini          # PlatformIO configuration file.
+├── README.md               # This file.
+├── wokwi.toml              # Wokwi configuration file.
+└── zizmor.yml              # Zizmor configuration (linter for GitHub Actions workflows).
 ```
 
 ## Development team

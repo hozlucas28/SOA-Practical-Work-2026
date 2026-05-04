@@ -1,17 +1,21 @@
 #ifndef SRC_ENUMS_H_INCLUDED
 #define SRC_ENUMS_H_INCLUDED
 
-enum Status {
-    ON = 1,
-    OFF = 0,
+/* TODO: Agregar documentación */
+enum ButtonStatus {
+    OFF,
+    ON,
 };
 
+/* TODO: Agregar documentación */
 enum SystemStatus {
     VIRGIN_EMBEDDED,
     STOCK_MODE,
     SECURITY_MODE,
+    UNKNOWN_SYSTEM_STATUS,
 };
 
+/* TODO: Agregar documentación */
 enum SystemEvent {
     STOCK_ON,
     STOCK_OFF,
@@ -24,7 +28,8 @@ enum SystemEvent {
     ANOMALY_SENSOR_01,
     ANOMALY_SENSOR_02,
     ANOMALY_SENSORS,
-    NO_EVENT
+    NO_ANOMALY,
+    UNKNOWN_SYSTEM_EVENT,
 };
 
 #endif  // SRC_ENUMS_H_INCLUDED
