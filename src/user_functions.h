@@ -15,6 +15,15 @@ void lcdPrint(LCD16x2* lcd, const String line);
 void lcdPrint(LCD16x2* lcd, const String line01, const String line02);
 
 // TODO: Agregar documentación
+void applyTone(Buzzer* buzzer, unsigned int frequency);
+
+// TODO: Agregar documentación
+void playBuzzer(Buzzer* buzzer);
+
+// TODO: Agregar documentación
+void stopBuzzer(Buzzer* buzzer);
+
+// TODO: Agregar documentación
 unsigned int getWeight(WeightSensor* weightSensor);
 
 // TODO: Agregar documentación

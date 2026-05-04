@@ -24,6 +24,20 @@ LCD16x2 LCD = {
     .line02 = "",
 };
 
+const BuzzerStep AlarmSteps[] = {
+    { .frequency = 700, .duration = 500 },
+    { .frequency = 560, .duration = 500 },
+    { .frequency = 700, .duration = 500 },
+    { .frequency = 560, .duration = 500 },
+};
+
+Buzzer Alarm = {
+    .pin = BUZZER_PIN,
+    .steps = AlarmSteps,
+    .stepsLength = sizeof(AlarmSteps) / sizeof(AlarmSteps[0]),
+    .playing = false,
+};
+
 WeightSensor WeightSensor01 = {
     .dtPin = WEIGHT_SENSOR_01_DT_PIN,
     .sckPin = WEIGHT_SENSOR_01_SCK_PIN,

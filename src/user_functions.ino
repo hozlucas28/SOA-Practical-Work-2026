@@ -54,6 +54,25 @@ void lcdPrint(LCD16x2* lcd, String line01, const String line02) {
     lcd->line02 = line02;
 }
 
+void applyTone(Buzzer* buzzer, unsigned int frequency) {
+    if (frequency > 0) {
+        tone(buzzer->pin, frequency);
+    } else {
+        noTone(buzzer->pin);
+    };
+}
+
+void playBuzzer(Buzzer* buzzer) {
+    if (!buzzer->playing) buzzer->playing = true;
+}
+
+void stopBuzzer(Buzzer* buzzer) {
+    if (buzzer->playing) {
+        buzzer->playing = false;
+        applyTone(buzzer, 0);
+    };
+}
+
 unsigned int getWeight(WeightSensor* weightSensor) {
     if (!weightSensor->device.is_ready()) return 0;
 

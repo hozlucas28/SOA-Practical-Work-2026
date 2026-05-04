@@ -43,6 +43,9 @@ extern Button SecurityBtn;
 extern LCD16x2 LCD;
 
 /* TODO: Agregar documentación */
+extern Buzzer Alarm;
+
+/* TODO: Agregar documentación */
 extern WeightSensor WeightSensor01;
 
 /* TODO: Agregar documentación */

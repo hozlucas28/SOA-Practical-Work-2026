@@ -1,5 +1,6 @@
-
 #include <Arduino.h>
+#include <freertos/FreeRTOS.h>
+#include <freertos/task.h>
 
 // Defines (ESP32 pin's designations, structs, etc.)
 #include "enums.h"
@@ -12,74 +13,14 @@
 // User functions (utilities for sensors and actuators)
 #include "user_functions.h"
 
+// FreeRTOS tasks
+#include "tasks.h"
+
 // Event capture functions
 #include "event_captures.h"
 
 // Debugging utilities
 #include "debuggers.h"
-
-////////////////////////////////////////////////////
-// TODO: Utilizar FreeRTOS para manejar la melodia del Buzzer.
-struct BuzzerStep {
-    unsigned int frequency;
-    unsigned long duration;
-};
-
-const BuzzerStep BuzzerSteps[] = {
-    { .frequency = 700, .duration = 500 },
-    { .frequency = 560, .duration = 500 },
-    { .frequency = 700, .duration = 500 },
-    { .frequency = 560, .duration = 500 },
-};
-
-const int BuzzerStepsLength = sizeof(BuzzerSteps) / sizeof(BuzzerSteps[0]);
-
-// 3. Variables de estado (deben ser globales o estáticas)
-int pasoActual = 0;
-unsigned long tiempoAnterior = 0;
-bool alarmaIniciada = false;
-
-void playBuzzer() {
-    unsigned long currentTime = millis();
-
-    // Arranque inicial
-    if (!alarmaIniciada) {
-        aplicarTono(BuzzerSteps[pasoActual].frequency);
-        tiempoAnterior = currentTime;
-        alarmaIniciada = true;
-    }
-
-    // Comprobar si ya pasó el tiempo del paso actual
-    if (currentTime - tiempoAnterior >= BuzzerSteps[pasoActual].duration) {
-        tiempoAnterior = currentTime;  // Reiniciar el cronómetro
-
-        // Avanzar al siguiente paso, volviendo a 0 al terminar
-        pasoActual = (pasoActual + 1) % BuzzerStepsLength;
-
-        aplicarTono(BuzzerSteps[pasoActual].frequency);
-    }
-}
-
-void stopBuzzer() {
-    // Solo ejecutamos el apagado y el reinicio si la alarma estaba corriendo
-    if (alarmaIniciada) {
-        noTone(BUZZER_PIN);
-        alarmaIniciada = false;
-        pasoActual = 0;
-        // tiempoAnterior no necesita reinicio porque se sobrescribe al iniciar
-    }
-}
-
-// Función auxiliar para aplicar el tono o silencio
-void aplicarTono(unsigned int freq) {
-    if (freq > 0) {
-        tone(BUZZER_PIN, freq);
-    } else {
-        noTone(BUZZER_PIN);
-    }
-}
-
-////////////////////////////////////////////////////
 
 SystemStatus Status = VIRGIN_EMBEDDED;
 
@@ -134,7 +75,7 @@ void setup() {
     LCD.device->backlight();
 
     // Buzzer
-    pinMode(BUZZER_PIN, OUTPUT);
+    pinMode(Alarm.pin, OUTPUT);
 
     // Weight sensors
     WeightSensor01.device.begin(WeightSensor01.dtPin, WeightSensor01.sckPin);
@@ -154,6 +95,9 @@ void setup() {
 
     DEBUG_WEIGHT_SENSOR("WeightSensor02", WeightSensor02);
     DEBUG("\r\n");
+
+    // FreeRTOS tasks
+    xTaskCreate(xBuzzerTask, "Alarm", 2048, &Alarm, 1, NULL);
 
     DEBUG("Setup completed.\r\n\n");
 }
@@ -248,11 +192,11 @@ void loop() {
         case SECURITY_MODE:
             switch (event) {
                 case SECURITY_OFF:
+                    stopBuzzer(&Alarm);
                     setBaselineWeight(&WeightSensor01);
                     setBaselineWeight(&WeightSensor02);
                     ledOff(&WeightSensor01);
                     ledOff(&WeightSensor02);
-                    // TODO: Apagar el Buzzer.
                     lcdClear(&LCD);
                     Status = VIRGIN_EMBEDDED;
                     DEBUG_FSM(SECURITY_MODE, event, Status);
@@ -260,14 +204,14 @@ void loop() {
 
                 case ANOMALY_SENSOR_01:
                     ledOn(&WeightSensor01);
-                    // TODO: Reproducir sonido por el Buzzer.
+                    playBuzzer(&Alarm);
                     lcdPrint(&LCD, "Security alert", "on sensor #01!");
                     DEBUG_FSM(SECURITY_MODE, event, Status);
                     break;
 
                 case ANOMALY_SENSOR_02:
                     ledOn(&WeightSensor02);
-                    // TODO: Reproducir sonido por el Buzzer.
+                    playBuzzer(&Alarm);
                     lcdPrint(&LCD, "Security alert", "on sensor #02!");
                     DEBUG_FSM(SECURITY_MODE, event, Status);
                     break;
@@ -275,7 +219,7 @@ void loop() {
                 case ANOMALY_SENSORS:
                     ledOn(&WeightSensor01);
                     ledOn(&WeightSensor02);
-                    // TODO: Reproducir sonido por el Buzzer.
+                    playBuzzer(&Alarm);
                     lcdPrint(&LCD, "Security alert", "on all sensors!");
                     DEBUG_FSM(SECURITY_MODE, event, Status);
                     break;

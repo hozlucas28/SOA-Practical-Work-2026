@@ -42,4 +42,18 @@ struct WeightSensor {
     unsigned int minimumAcceptableStock;
 };
 
+// TODO: Agregar documentación
+struct BuzzerStep {
+    unsigned int frequency;
+    unsigned long duration;
+};
+
+// TODO: Agregar documentación
+struct Buzzer {
+    const uint8_t pin;
+    const BuzzerStep* steps;
+    const size_t stepsLength;
+    bool playing;
+};
+
 #endif  // SRC_STRUCTS_H_INCLUDED
