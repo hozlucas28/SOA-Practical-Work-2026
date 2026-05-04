@@ -47,6 +47,7 @@ WeightSensor WeightSensor01 = {
         .weight = WEIGHT_SENSOR_01_PRODUCT_WEIGHT,
     },
     .minimumAcceptableStock = WEIGHT_SENSOR_01_MINIMUM_ACCEPTABLE_STOCK,
+    .sample = { .weight = 0, .valid = false },
 };
 
 WeightSensor WeightSensor02 = {
@@ -58,4 +59,5 @@ WeightSensor WeightSensor02 = {
         .weight = WEIGHT_SENSOR_02_PRODUCT_WEIGHT,
     },
     .minimumAcceptableStock = WEIGHT_SENSOR_02_MINIMUM_ACCEPTABLE_STOCK,
+    .sample = { .weight = 0, .valid = false },
 };
