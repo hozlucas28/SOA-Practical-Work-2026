@@ -3,7 +3,6 @@
 #include "structs.h"
 #include "user_functions.h"
 
-// TODO: Utilizar FreeRTOS
 void switchBtnState(Button* btn) {
     int btnRead = digitalRead(btn->pin);
     if (btnRead != btn->lastState) btn->lastDebounceTime = millis();
@@ -13,14 +12,31 @@ void switchBtnState(Button* btn) {
             btn->state = btnRead;
 
             if (btn->state == HIGH) {
-                int ledRead = !digitalRead(btn->led);
-                digitalWrite(btn->led, ledRead);
-                btn->status = ledRead == HIGH ? ON : OFF;
+                btn->status = (btn->status == ON) ? OFF : ON;
+                digitalWrite(btn->led, btn->status == ON ? HIGH : LOW);
             }
         }
     }
 
     btn->lastState = btnRead;
+}
+
+void sampleWeight(WeightSensor* weightSensor) {
+    if (!weightSensor->device.is_ready()) {
+        weightSensor->sample.valid = false;
+        return;
+    }
+
+    float weight = weightSensor->device.get_units(WEIGHT_SENSORS_SAMPLES);
+
+    // HX711 noise can dip slightly below zero near the tared baseline. Casting
+    // a negative float to `unsigned int` wraps around to ~UINT_MAX, which then
+    // makes `stock = weight / product.weight` huge and breaks both the stock
+    // display and the "below minimum" check. Clamp before the cast.
+    if (weight < 0.0f) weight = 0.0f;
+
+    weightSensor->sample.weight = (unsigned int)floor(weight);
+    weightSensor->sample.valid = true;
 }
 
 void lcdClear(LCD16x2* lcd) {
@@ -39,7 +55,7 @@ void lcdPrint(LCD16x2* lcd, const String line) {
     lcd->line02 = "";
 }
 
-void lcdPrint(LCD16x2* lcd, String line01, const String line02) {
+void lcdPrint(LCD16x2* lcd, const String line01, const String line02) {
     if ((lcd->line01 != "" && lcd->line01 != line01) || (lcd->line02 != "" && lcd->line02 != line02)) {
         lcd->device->clear();
     }
@@ -67,33 +83,34 @@ void playBuzzer(Buzzer* buzzer) {
 }
 
 void stopBuzzer(Buzzer* buzzer) {
-    if (buzzer->playing) {
-        buzzer->playing = false;
-        applyTone(buzzer, 0);
-    };
+    buzzer->playing = false;
 }
 
 unsigned int getWeight(WeightSensor* weightSensor) {
-    if (!weightSensor->device.is_ready()) return 0;
-
-    float weight = weightSensor->device.get_units(10);
-
-    return floor(weight);
+    if (!weightSensor->sample.valid) return 0;
+    return weightSensor->sample.weight;
 }
 
 unsigned int getStock(WeightSensor* weightSensor) {
-    if (!weightSensor->device.is_ready()) return 0;
+    if (!weightSensor->sample.valid) return 0;
+    return weightSensor->sample.weight / weightSensor->product.weight;
+}
 
-    float weight = weightSensor->device.get_units(10);
+bool tryGetWeight(WeightSensor* weightSensor, unsigned int* outWeight) {
+    if (!weightSensor->sample.valid) return false;
+    *outWeight = weightSensor->sample.weight;
+    return true;
+}
 
-    return floor(weight / weightSensor->product.weight);
+bool tryGetStock(WeightSensor* weightSensor, unsigned int* outStock) {
+    if (!weightSensor->sample.valid) return false;
+    *outStock = weightSensor->sample.weight / weightSensor->product.weight;
+    return true;
 }
 
 void setBaselineWeight(WeightSensor* weightSensor) {
-    if (!weightSensor->device.is_ready()) return;
-
-    float weight = weightSensor->device.get_units(10);
-    weightSensor->baselineWeight = floor(weight);
+    if (!weightSensor->sample.valid) return;
+    weightSensor->baselineWeight = weightSensor->sample.weight;
 }
 
 void ledOn(WeightSensor* weightSensor) {

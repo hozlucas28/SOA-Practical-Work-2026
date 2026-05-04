@@ -12,11 +12,13 @@ SystemEvent getStockBtnEvent(SystemStatus systemStatus) {
 SystemEvent getStockSensorsEvent(SystemStatus systemStatus) {
     if (systemStatus != STOCK_MODE) return NO_MISSING_STOCK;
 
-    unsigned int stock01 = getStock(&WeightSensor01);
-    unsigned int stock02 = getStock(&WeightSensor02);
+    unsigned int stock01 = 0;
+    unsigned int stock02 = 0;
+    bool valid01 = tryGetStock(&WeightSensor01, &stock01);
+    bool valid02 = tryGetStock(&WeightSensor02, &stock02);
 
-    bool missingStock01 = stock01 < WeightSensor01.minimumAcceptableStock;
-    bool missingStock02 = stock02 < WeightSensor02.minimumAcceptableStock;
+    bool missingStock01 = valid01 && stock01 < WeightSensor01.minimumAcceptableStock;
+    bool missingStock02 = valid02 && stock02 < WeightSensor02.minimumAcceptableStock;
 
     if (missingStock01 && missingStock02) return STOCK_MISSING_SENSORS;
     if (missingStock01) return STOCK_MISSING_SENSOR_01;
@@ -30,8 +32,8 @@ SystemEvent getSecurityBtnEvent(SystemStatus systemStatus) {
     return SECURITY_OFF;
 }
 
-bool anomaly01 = false;
-bool anomaly02 = false;
+static bool anomaly01 = false;
+static bool anomaly02 = false;
 
 SystemEvent getAnomalySensorsEvent(SystemStatus systemStatus) {
     if (systemStatus != SECURITY_MODE) {
@@ -40,11 +42,17 @@ SystemEvent getAnomalySensorsEvent(SystemStatus systemStatus) {
         return NO_ANOMALY;
     };
 
-    unsigned int weight01 = getWeight(&WeightSensor01);
-    unsigned int weight02 = getWeight(&WeightSensor02);
+    unsigned int weight01 = 0;
+    unsigned int weight02 = 0;
+    bool valid01 = tryGetWeight(&WeightSensor01, &weight01);
+    bool valid02 = tryGetWeight(&WeightSensor02, &weight02);
 
-    anomaly01 = anomaly01 || abs((int)weight01 - (int)WeightSensor01.baselineWeight) > ANOMALY_THRESHOLD;
-    anomaly02 = anomaly02 || abs((int)weight02 - (int)WeightSensor02.baselineWeight) > ANOMALY_THRESHOLD;
+    if (valid01) {
+        anomaly01 = anomaly01 || abs((int)weight01 - (int)WeightSensor01.baselineWeight) > ANOMALY_THRESHOLD;
+    }
+    if (valid02) {
+        anomaly02 = anomaly02 || abs((int)weight02 - (int)WeightSensor02.baselineWeight) > ANOMALY_THRESHOLD;
+    }
 
     if (anomaly01 && anomaly02) return ANOMALY_SENSORS;
     if (anomaly01) return ANOMALY_SENSOR_01;

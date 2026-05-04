@@ -1,13 +1,13 @@
 #ifndef SRC_ENUMS_H_INCLUDED
 #define SRC_ENUMS_H_INCLUDED
 
-/* TODO: Agregar documentación */
+/** Logical button state: ON when the user has it latched, OFF otherwise. */
 enum ButtonStatus {
     OFF,
     ON,
 };
 
-/* TODO: Agregar documentación */
+/** FSM state. Only one is active at a time; Security wins over Stock. */
 enum SystemStatus {
     VIRGIN_EMBEDDED,
     STOCK_MODE,
@@ -15,7 +15,7 @@ enum SystemStatus {
     UNKNOWN_SYSTEM_STATUS,
 };
 
-/* TODO: Agregar documentación */
+/** Event consumed by the FSM. Produced by the four capture functions. */
 enum SystemEvent {
     STOCK_ON,
     STOCK_OFF,
