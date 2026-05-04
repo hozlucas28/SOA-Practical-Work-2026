@@ -15,12 +15,18 @@ void lcdPrint(LCD16x2* lcd, const String line);
 void lcdPrint(LCD16x2* lcd, const String line01, const String line02);
 
 // TODO: Agregar documentación
-unsigned int getWeightInGrams(WeightSensor* weightSensor);
+unsigned int getWeight(WeightSensor* weightSensor);
 
 // TODO: Agregar documentación
-void ledOn(const uint8_t pin);
+unsigned int getStock(WeightSensor* weightSensor);
 
 // TODO: Agregar documentación
-void ledOff(const uint8_t pin);
+void setBaselineWeight(WeightSensor* weightSensor);
+
+// TODO: Agregar documentación
+void ledOn(WeightSensor* weightSensor);
+
+// TODO: Agregar documentación
+void ledOff(WeightSensor* weightSensor);
 
 #endif  // SRC_USER_FUNCTIONS_H_INCLUDED

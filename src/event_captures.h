@@ -4,15 +4,15 @@
 #include "enums.h"
 
 // TODO: Agregar documentación
-SystemEvent getStockBtnEvent();
+SystemEvent getStockBtnEvent(SystemStatus systemStatus);
 
 // TODO: Agregar documentación
-SystemEvent getStockSensorsEvent();
+SystemEvent getStockSensorsEvent(SystemStatus systemStatus);
 
 // TODO: Agregar documentación
-SystemEvent getSecurityBtnEvent();
+SystemEvent getSecurityBtnEvent(SystemStatus systemStatus);
 
 // TODO: Agregar documentación
-SystemEvent getAnomalySensorsEvent();
+SystemEvent getAnomalySensorsEvent(SystemStatus systemStatus);
 
 #endif  // SRC_EVENT_CAPTURES_H_INCLUDED

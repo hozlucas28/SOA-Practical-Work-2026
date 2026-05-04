@@ -20,9 +20,15 @@ struct Button {
 
 // TODO: Agregar documentación
 struct LCD16x2 {
-    LiquidCrystal_I2C device;
+    LiquidCrystal_I2C* device;
     String line01;
     String line02;
+};
+
+// TODO: Agregar documentación
+struct Product {
+    String name;
+    unsigned int weight;
 };
 
 // TODO: Agregar documentación
@@ -31,6 +37,9 @@ struct WeightSensor {
     const uint8_t dtPin;
     const uint8_t sckPin;
     const uint8_t led;
+    Product product;
+    unsigned int baselineWeight;
+    unsigned int minimumAcceptableStock;
 };
 
 #endif  // SRC_STRUCTS_H_INCLUDED

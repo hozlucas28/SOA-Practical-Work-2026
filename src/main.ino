@@ -83,19 +83,19 @@ void aplicarTono(unsigned int freq) {
 
 SystemStatus Status = VIRGIN_EMBEDDED;
 
-SystemEvent (*eventCaptures[])() = {
+SystemEvent (*eventCaptures[])(SystemStatus systemStatus) = {
     getStockBtnEvent,
     getStockSensorsEvent,
     getSecurityBtnEvent,
     getAnomalySensorsEvent,
 };
 
-uint8_t eventCaptureI = -1;
+int8_t eventCaptureI = -1;
 const size_t eventCapturesLength = sizeof(eventCaptures) / sizeof(eventCaptures[0]);
 
 SystemEvent getSystemEvent() {
     eventCaptureI = (eventCaptureI + 1) % eventCapturesLength;
-    return eventCaptures[eventCaptureI]();
+    return eventCaptures[eventCaptureI](Status);
 }
 
 void setup() {
@@ -130,8 +130,8 @@ void setup() {
     DEBUG("\r\n");
 
     // LCD
-    LCD.device.init();
-    LCD.device.backlight();
+    LCD.device->init();
+    LCD.device->backlight();
 
     // Buzzer
     pinMode(BUZZER_PIN, OUTPUT);
@@ -164,9 +164,6 @@ void loop() {
 
     SystemEvent event = getSystemEvent();
 
-    // TODO:
-    // - Pasar el diagrama FSM a un gráfico de nodos.
-    // (https://drive.google.com/drive/folders/1sVbpg8k7hKJE2epQFJ-_lZe8hzr9lcrr?usp=drive_link)
     switch (Status) {
         case VIRGIN_EMBEDDED:
             switch (event) {
@@ -178,6 +175,8 @@ void loop() {
 
                 case SECURITY_ON:
                     lcdPrint(&LCD, "Security mode");
+                    setBaselineWeight(&WeightSensor01);
+                    setBaselineWeight(&WeightSensor02);
                     Status = SECURITY_MODE;
                     DEBUG_FSM(VIRGIN_EMBEDDED, event, Status);
                     break;
@@ -192,49 +191,56 @@ void loop() {
         case STOCK_MODE:
             switch (event) {
                 case STOCK_OFF:
-                    ledOff(WeightSensor01.led);
-                    ledOff(WeightSensor02.led);
+                    ledOff(&WeightSensor01);
+                    ledOff(&WeightSensor02);
                     lcdClear(&LCD);
                     Status = VIRGIN_EMBEDDED;
                     DEBUG_FSM(STOCK_MODE, event, Status);
                     break;
 
                 case STOCK_MISSING_SENSOR_01:
-                    ledOn(WeightSensor01.led);
-                    ledOff(WeightSensor02.led);
+                    ledOn(&WeightSensor01);
+                    ledOff(&WeightSensor02);
                     lcdPrint(&LCD, "Stock missing", "on sensor #01!");
                     DEBUG_FSM(STOCK_MODE, event, Status);
                     break;
 
                 case STOCK_MISSING_SENSOR_02:
-                    ledOff(WeightSensor01.led);
-                    ledOn(WeightSensor02.led);
+                    ledOff(&WeightSensor01);
+                    ledOn(&WeightSensor02);
                     lcdPrint(&LCD, "Stock missing", "on sensor #02!");
                     DEBUG_FSM(STOCK_MODE, event, Status);
                     break;
 
                 case STOCK_MISSING_SENSORS:
-                    ledOn(WeightSensor01.led);
-                    ledOn(WeightSensor02.led);
+                    ledOn(&WeightSensor01);
+                    ledOn(&WeightSensor02);
                     lcdPrint(&LCD, "Stock missing", "on all sensors!");
                     DEBUG_FSM(STOCK_MODE, event, Status);
                     break;
 
                 case NO_MISSING_STOCK:
-                    ledOff(WeightSensor01.led);
-                    ledOff(WeightSensor02.led);
+                    ledOff(&WeightSensor01);
+                    ledOff(&WeightSensor02);
                     lcdPrint(
-                        &LCD, "Stock #01 = XXX", "Stock #02 = YYY"
-                    );  // TODO: Mostrar el Stock medido por cada sensor.
+                        &LCD,
+                        "Stock #01 = " + String(getStock(&WeightSensor01)),
+                        "Stock #02 = " + String(getStock(&WeightSensor02))
+                    );
                     DEBUG_FSM(STOCK_MODE, event, Status);
                     break;
 
                 case SECURITY_ON:
-                    ledOff(WeightSensor01.led);
-                    ledOff(WeightSensor02.led);
+                    setBaselineWeight(&WeightSensor01);
+                    setBaselineWeight(&WeightSensor02);
+                    ledOff(&WeightSensor01);
+                    ledOff(&WeightSensor02);
                     lcdPrint(&LCD, "Security mode");
                     Status = SECURITY_MODE;
                     DEBUG_FSM(STOCK_MODE, event, Status);
+                    break;
+
+                default:
                     break;
             }
             break;
@@ -242,8 +248,10 @@ void loop() {
         case SECURITY_MODE:
             switch (event) {
                 case SECURITY_OFF:
-                    ledOff(WeightSensor01.led);
-                    ledOff(WeightSensor02.led);
+                    setBaselineWeight(&WeightSensor01);
+                    setBaselineWeight(&WeightSensor02);
+                    ledOff(&WeightSensor01);
+                    ledOff(&WeightSensor02);
                     // TODO: Apagar el Buzzer.
                     lcdClear(&LCD);
                     Status = VIRGIN_EMBEDDED;
@@ -251,27 +259,33 @@ void loop() {
                     break;
 
                 case ANOMALY_SENSOR_01:
-                    ledOn(WeightSensor01.led);
+                    ledOn(&WeightSensor01);
                     // TODO: Reproducir sonido por el Buzzer.
                     lcdPrint(&LCD, "Security alert", "on sensor #01!");
                     DEBUG_FSM(SECURITY_MODE, event, Status);
                     break;
 
                 case ANOMALY_SENSOR_02:
-                    ledOn(WeightSensor02.led);
+                    ledOn(&WeightSensor02);
                     // TODO: Reproducir sonido por el Buzzer.
                     lcdPrint(&LCD, "Security alert", "on sensor #02!");
                     DEBUG_FSM(SECURITY_MODE, event, Status);
                     break;
 
                 case ANOMALY_SENSORS:
-                    ledOn(WeightSensor01.led);
-                    ledOn(WeightSensor02.led);
+                    ledOn(&WeightSensor01);
+                    ledOn(&WeightSensor02);
                     // TODO: Reproducir sonido por el Buzzer.
                     lcdPrint(&LCD, "Security alert", "on all sensors!");
                     DEBUG_FSM(SECURITY_MODE, event, Status);
                     break;
+
+                default:
+                    break;
             }
+            break;
+
+        default:
             break;
     }
 }

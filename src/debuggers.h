@@ -42,10 +42,10 @@
     Serial.printf("%s.lastDebounceTime = %ums\r\n", name, button.lastDebounceTime)
 
 /* TODO: Agregar documentación */
-#define DEBUG_WEIGHT_SENSOR(name, sensor)                        \
-    Serial.printf("%s.device = %p\r\n", name, &(sensor.device)); \
-    Serial.printf("%s.dtPin = %u\r\n", name, sensor.dtPin);      \
-    Serial.printf("%s.sckPin = %u\r\n", name, sensor.sckPin);    \
+#define DEBUG_WEIGHT_SENSOR(name, sensor)                     \
+    Serial.printf("%s.device = %p\r\n", name, sensor.device); \
+    Serial.printf("%s.dtPin = %u\r\n", name, sensor.dtPin);   \
+    Serial.printf("%s.sckPin = %u\r\n", name, sensor.sckPin); \
     Serial.printf("%s.led = %u\r\n", name, sensor.led)
 
 /* TODO: Agregar documentación */
