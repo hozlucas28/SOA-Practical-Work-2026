@@ -1,6 +1,7 @@
 
 #include "constants.h"
 #include "structs.h"
+#include "sync.h"
 #include "user_functions.h"
 
 void switchBtnState(Button* btn) {
@@ -79,38 +80,85 @@ void applyTone(Buzzer* buzzer, unsigned int frequency) {
 }
 
 void playBuzzer(Buzzer* buzzer) {
+    lockBuzzer();
+
     if (!buzzer->playing) buzzer->playing = true;
+
+    unlockBuzzer();
 }
 
 void stopBuzzer(Buzzer* buzzer) {
+    lockBuzzer();
+
     buzzer->playing = false;
+
+    unlockBuzzer();
 }
 
 unsigned int getWeight(WeightSensor* weightSensor) {
-    if (!weightSensor->sample.valid) return 0;
-    return weightSensor->sample.weight;
+    unsigned int weight = 0;
+
+    lockWeightSensors();
+
+    if (weightSensor->sample.valid) weight = weightSensor->sample.weight;
+
+    unlockWeightSensors();
+
+    return weight;
 }
 
 unsigned int getStock(WeightSensor* weightSensor) {
-    if (!weightSensor->sample.valid) return 0;
-    return weightSensor->sample.weight / weightSensor->product.weight;
+    unsigned int stock = 0;
+
+    lockWeightSensors();
+
+    if (weightSensor->sample.valid) {
+        stock = weightSensor->sample.weight / weightSensor->product.weight;
+    }
+
+    unlockWeightSensors();
+
+    return stock;
 }
 
 bool tryGetWeight(WeightSensor* weightSensor, unsigned int* outWeight) {
-    if (!weightSensor->sample.valid) return false;
-    *outWeight = weightSensor->sample.weight;
-    return true;
+    bool valid = false;
+
+    lockWeightSensors();
+
+    if (weightSensor->sample.valid) {
+        *outWeight = weightSensor->sample.weight;
+        valid = true;
+    }
+
+    unlockWeightSensors();
+
+    return valid;
 }
 
 bool tryGetStock(WeightSensor* weightSensor, unsigned int* outStock) {
-    if (!weightSensor->sample.valid) return false;
-    *outStock = weightSensor->sample.weight / weightSensor->product.weight;
-    return true;
+    bool valid = false;
+
+    lockWeightSensors();
+
+    if (weightSensor->sample.valid) {
+        *outStock = weightSensor->sample.weight / weightSensor->product.weight;
+        valid = true;
+    }
+
+    unlockWeightSensors();
+
+    return valid;
 }
 
 void setBaselineWeight(WeightSensor* weightSensor) {
-    if (!weightSensor->sample.valid) return;
-    weightSensor->baselineWeight = weightSensor->sample.weight;
+    lockWeightSensors();
+
+    if (weightSensor->sample.valid) {
+        weightSensor->baselineWeight = weightSensor->sample.weight;
+    }
+
+    unlockWeightSensors();
 }
 
 void ledOn(WeightSensor* weightSensor) {

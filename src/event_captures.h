@@ -14,7 +14,7 @@ SystemEvent getStockBtnEvent(SystemStatus systemStatus);
  */
 SystemEvent getStockSensorsEvent(SystemStatus systemStatus);
 
-/** Maps the cached `SecurityBtn.status` to `SECURITY_ON` / `SECURITY_OFF`. */
+/** Maps the cached `SecurityBtn.status` to `SECURITY_*` events. */
 SystemEvent getSecurityBtnEvent(SystemStatus systemStatus);
 
 /**

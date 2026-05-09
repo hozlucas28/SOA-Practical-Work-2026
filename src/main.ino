@@ -14,6 +14,7 @@
 #include "user_functions.h"
 
 // FreeRTOS tasks
+#include "sync.h"
 #include "tasks.h"
 
 // Event capture functions
@@ -22,6 +23,7 @@
 // Debugging utilities
 #include "debuggers.h"
 
+// FSM
 SystemStatus Status = VIRGIN_EMBEDDED;
 
 void handleEvent(SystemEvent event) {
@@ -113,13 +115,16 @@ void handleEvent(SystemEvent event) {
                     ledOff(&WeightSensor01);
                     ledOff(&WeightSensor02);
                     lcdClear(&LCD);
+                    Status = VIRGIN_EMBEDDED;
+                    DEBUG_FSM(SECURITY_MODE, event, Status);
+                    break;
 
-                    if (StockBtn.status == ON) {
-                        Status = STOCK_MODE;
-                    } else {
-                        Status = VIRGIN_EMBEDDED;
-                    }
-
+                case SECURITY_OFF_TO_STOCK:
+                    stopBuzzer(&Alarm);
+                    ledOff(&WeightSensor01);
+                    ledOff(&WeightSensor02);
+                    lcdClear(&LCD);
+                    Status = STOCK_MODE;
                     DEBUG_FSM(SECURITY_MODE, event, Status);
                     break;
 
@@ -212,13 +217,14 @@ void setup() {
     DEBUG_WEIGHT_SENSOR("WeightSensor02", WeightSensor02);
     DEBUG("\r\n");
 
-    // Prime the weight cache so the first SECURITY_MODE entry has a valid
-    // baseline and the first STOCK_MODE entry has a valid stock readout.
+    // FreeRTOS tasks
+    initSyncObjects();
+
+    lockWeightSensors();
     sampleWeight(&WeightSensor01);
     sampleWeight(&WeightSensor02);
+    unlockWeightSensors();
 
-    // FreeRTOS tasks. Buttons run at higher priority than sampling/buzzer
-    // because user input must be reflected in the FSM as quickly as possible.
     xTaskCreate(xButtonsTask, "Buttons", 2048, NULL, 2, NULL);
     xTaskCreate(xWeightSampleTask, "WeightSample", 2048, NULL, 1, NULL);
     xTaskCreate(xBuzzerTask, "Alarm", 2048, &Alarm, 1, NULL);
@@ -227,9 +233,6 @@ void setup() {
 }
 
 void loop() {
-    // Evaluate every event source in priority order so Security wins over
-    // Stock and a transition triggered by one source is observed by the
-    // next within the same loop iteration.
     handleEvent(getSecurityBtnEvent(Status));
     handleEvent(getAnomalySensorsEvent(Status));
     handleEvent(getStockBtnEvent(Status));

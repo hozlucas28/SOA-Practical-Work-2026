@@ -102,6 +102,10 @@
             printMethod("SECURITY_OFF           "); \
             break;                                  \
                                                     \
+        case SECURITY_OFF_TO_STOCK:                 \
+            printMethod("SECURITY_OFF_TO_STOCK  "); \
+            break;                                  \
+                                                    \
         case ANOMALY_SENSOR_01:                     \
             printMethod("ANOMALY_SENSOR_01      "); \
             break;                                  \
