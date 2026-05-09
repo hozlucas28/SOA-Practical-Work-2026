@@ -57,6 +57,7 @@
                     "**/node_modules": true,
                     "**/bower_components": true,
                     "**/*.code-search": true,
+                    "**/.pio": true,
                     "**/.pnpm-store": true,
                     "package.json": true,
                     "pnpm-lock.yaml": true
