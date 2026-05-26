@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 #include <HX711.h>
-#include <LiquidCrystal_I2C.h>
+#include <rgb_lcd.h>
 
 #include "enums.h"
 
@@ -23,11 +23,11 @@ struct Button {
 };
 
 /**
- * I2C 16x2 LCD wrapper. `line01` and `line02` cache the last printed text so
- * `lcdPrint` can skip a full clear when the content is unchanged.
+ * Grove RGB 16x2 LCD wrapper. `line01` and `line02` cache the last printed
+ * text so `lcdPrint` can skip a full clear when the content is unchanged.
  */
 struct LCD16x2 {
-    LiquidCrystal_I2C* device;
+    rgb_lcd* device;
     String line01;
     String line02;
 };

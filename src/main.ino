@@ -192,8 +192,8 @@ void setup() {
     DEBUG("\r\n");
 
     // LCD
-    LCD.device->init();
-    LCD.device->backlight();
+    LCD.device->begin(LCD_COLS, LCD_ROWS);
+    LCD.device->setRGB(255, 255, 255);
 
     // Buzzer
     pinMode(Alarm.pin, OUTPUT);

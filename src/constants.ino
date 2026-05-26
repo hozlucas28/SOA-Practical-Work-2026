@@ -1,5 +1,5 @@
 
-#include <LiquidCrystal_I2C.h>
+#include <rgb_lcd.h>
 
 #include "constants.h"
 #include "pins.h"
@@ -16,7 +16,7 @@ Button SecurityBtn = {
     .debounceDelay = BUTTONS_DEBOUNCE_DELAY,
 };
 
-LiquidCrystal_I2C lcdDevice(0x27, LCD_COLS, LCD_ROWS);
+rgb_lcd lcdDevice;
 
 LCD16x2 LCD = {
     .device = &lcdDevice,

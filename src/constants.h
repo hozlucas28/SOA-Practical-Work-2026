@@ -1,8 +1,6 @@
 #ifndef SRC_CONSTANTS_H_INCLUDED
 #define SRC_CONSTANTS_H_INCLUDED
 
-#include <LiquidCrystal_I2C.h>
-
 #include "structs.h"
 
 /** Debounce delay for the stock and security buttons, in milliseconds. */
@@ -53,7 +51,7 @@ extern Button StockBtn;
 /** Push button that toggles Security mode on/off. Has priority over Stock. */
 extern Button SecurityBtn;
 
-/** Shared 16x2 I2C LCD instance. */
+/** Shared 16x2 Grove RGB LCD instance. */
 extern LCD16x2 LCD;
 
 /** Buzzer used as Security-mode audible alarm. Driven by `xBuzzerTask`. */
