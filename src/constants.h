@@ -1,6 +1,7 @@
 #ifndef SRC_CONSTANTS_H_INCLUDED
 #define SRC_CONSTANTS_H_INCLUDED
 
+#include "enums.h"
 #include "structs.h"
 
 /** Debounce delay for the stock and security buttons, in milliseconds. */
@@ -45,6 +46,15 @@
  */
 #define ANOMALY_THRESHOLD 200
 
+/**
+ * Period between iterations of `xMqttTask`, in milliseconds. Each tick services
+ * `mqttClient.loop()` and publishes any state that changed since the last tick.
+ */
+#define MQTT_TASK_PERIOD_MS 100
+
+/** Minimum delay between broker reconnection attempts, in milliseconds. */
+#define MQTT_RECONNECT_INTERVAL_MS 5000
+
 /** Push button that toggles Stock mode on/off. */
 extern Button StockBtn;
 
@@ -62,5 +72,11 @@ extern WeightSensor WeightSensor01;
 
 /** Second-shelf load cell. Sampled by `xWeightSampleTask`. */
 extern WeightSensor WeightSensor02;
+
+/**
+ * Current FSM state. Written only by the FSM loop in `main.ino`; read from
+ * `xMqttTask` to publish the device mode, hence `volatile`.
+ */
+extern volatile SystemStatus Status;
 
 #endif  // SRC_CONSTANTS_H_INCLUDED

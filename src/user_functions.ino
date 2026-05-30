@@ -13,13 +13,17 @@ void switchBtnState(Button* btn) {
             btn->state = btnRead;
 
             if (btn->state == HIGH) {
-                btn->status = (btn->status == ON) ? OFF : ON;
-                digitalWrite(btn->led, btn->status == ON ? HIGH : LOW);
+                applyButtonStatus(btn, (btn->status == ON) ? OFF : ON);
             }
         }
     }
 
     btn->lastState = btnRead;
+}
+
+void applyButtonStatus(Button* btn, ButtonStatus status) {
+    btn->status = status;
+    digitalWrite(btn->led, status == ON ? HIGH : LOW);
 }
 
 void sampleWeight(WeightSensor* weightSensor) {
@@ -93,6 +97,23 @@ void stopBuzzer(Buzzer* buzzer) {
     buzzer->playing = false;
 
     unlockBuzzer();
+}
+
+// Remote mute flag for the alarm. Written from the MQTT `cmd/alarm` handler
+// (xMqttTask) and read by `triggerAlarm` from the FSM loop, hence `volatile`.
+static volatile bool AlarmMuted = false;
+
+void setAlarmMuted(bool muted) {
+    AlarmMuted = muted;
+}
+
+void triggerAlarm(Buzzer* buzzer) {
+    if (!AlarmMuted) playBuzzer(buzzer);
+}
+
+void silenceAlarm(Buzzer* buzzer) {
+    stopBuzzer(buzzer);
+    setAlarmMuted(false);
 }
 
 unsigned int getWeight(WeightSensor* weightSensor) {

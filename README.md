@@ -11,7 +11,8 @@
 <p align="center">
     <a href="#summary">Summary</a> •
     <a href="#installation">Installation</a> •
-    <a href="#diagrams">Diagrams</a>
+    <a href="#diagrams">Diagrams</a> •
+    <a href="#mqtt-integration">MQTT integration</a>
     <br>
     <a href="#project-structure">Project structure</a> •
     <a href="#development-team">Development team</a> •
@@ -40,7 +41,33 @@ This repository contains our practical work for the Advanced Operating Systems (
 - Design and development of a finite state machine (FSM) to act according to the operating mode.
 - Handling of sensors and actuators on an ESP32.
 - Integration between an embedded system and a mobile application developed in Android.
-- Real-time monitoring of stock and security alerts.
+- [Real-time monitoring of stock and security alerts](#mqtt-integration) over MQTT, with remote control.
+
+## MQTT integration
+
+The embedded system connects to an **MQTT broker** (Mosquitto, bridged to the Android app through
+Node-RED) to enable **real-time monitoring and remote control**. It is a parallel channel: the two
+physical buttons keep working exactly as before, and a remote command produces the same effect as a
+physical press. The two app screens map one-to-one to the per-shelf topics:
+
+- **Real-time inventory** (Stock mode) → `shelf/{NN}/stock` (weight and availability).
+- **Active security** (Security mode) → `shelf/{NN}/security` (secure / alert).
+
+All topics live under the `soa/{deviceId}/...` prefix.
+
+| Direction | Topics | Purpose |
+|---|---|---|
+| ESP32 → app | `availability`, `status`, `shelf/{NN}/stock`, `shelf/{NN}/security` | Telemetry: liveness, mode, per-shelf stock and security state |
+| app → ESP32 | `cmd/mode`, `cmd/alarm`, `cmd/tare` | Remote control: switch mode, mute/restore the buzzer, re-tare the load cells |
+
+> [!NOTE]
+> The full contract (payload schemas, retain/QoS, credentials and test commands) lives in
+> [docs/mqtt-topics.md](docs/mqtt-topics.md).
+
+> [!IMPORTANT]
+> Copy `src/secrets.example.h` to `src/secrets.h` and fill in your WiFi and broker credentials before
+> building (`src/secrets.h` is git-ignored). In the Wokwi simulator use the `Wokwi-GUEST` network and
+> run the Wokwi Gateway (`wokwigw`) on the host so the virtual ESP32 can reach your broker.
 
 ## Installation
 
