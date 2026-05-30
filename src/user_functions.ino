@@ -103,9 +103,7 @@ void stopBuzzer(Buzzer* buzzer) {
 // (xMqttTask) and read by `triggerAlarm` from the FSM loop, hence `volatile`.
 static volatile bool AlarmMuted = false;
 
-void setAlarmMuted(bool muted) {
-    AlarmMuted = muted;
-}
+void setAlarmMuted(bool muted) { AlarmMuted = muted; }
 
 void triggerAlarm(Buzzer* buzzer) {
     if (!AlarmMuted) playBuzzer(buzzer);
@@ -180,6 +178,20 @@ void setBaselineWeight(WeightSensor* weightSensor) {
     }
 
     unlockWeightSensors();
+}
+
+void setSensorOffset(WeightSensor* weightSensor, int32_t offset) {
+    lockWeightSensors();
+    weightSensor->device.set_offset(offset);
+    unlockWeightSensors();
+}
+
+int32_t tareAndGetOffset(WeightSensor* weightSensor) {
+    lockWeightSensors();
+    weightSensor->device.tare();
+    int32_t offset = weightSensor->device.get_offset();
+    unlockWeightSensors();
+    return offset;
 }
 
 void ledOn(WeightSensor* weightSensor) {

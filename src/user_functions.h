@@ -86,6 +86,19 @@ bool tryGetStock(WeightSensor* weightSensor, unsigned int* outStock);
  */
 void setBaselineWeight(WeightSensor* weightSensor);
 
+/**
+ * Restore a previously saved HX711 zero offset (persisted tare). Skips a fresh
+ * `tare()`, so a reboot with product already on the shelf does not corrupt the
+ * zero. Runs under `lockWeightSensors()`.
+ */
+void setSensorOffset(WeightSensor* weightSensor, int32_t offset);
+
+/**
+ * Tare the load cell now and return the resulting zero offset (to be persisted).
+ * Runs under `lockWeightSensors()`.
+ */
+int32_t tareAndGetOffset(WeightSensor* weightSensor);
+
 /** Light the per-shelf LED if it is currently off. */
 void ledOn(WeightSensor* weightSensor);
 

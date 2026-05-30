@@ -55,10 +55,10 @@ physical press. The two app screens map one-to-one to the per-shelf topics:
 
 All topics live under the `soa/{deviceId}/...` prefix.
 
-| Direction | Topics | Purpose |
-|---|---|---|
-| ESP32 → app | `availability`, `status`, `shelf/{NN}/stock`, `shelf/{NN}/security` | Telemetry: liveness, mode, per-shelf stock and security state |
-| app → ESP32 | `cmd/mode`, `cmd/alarm`, `cmd/tare` | Remote control: switch mode, mute/restore the buzzer, re-tare the load cells |
+| Direction   | Topics                                                              | Purpose                                                                                                           |
+| ----------- | ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| ESP32 → app | `availability`, `status`, `shelf/{NN}/stock`, `shelf/{NN}/security` | Telemetry: liveness, mode, per-shelf stock and security state                                                     |
+| app → ESP32 | `cmd/stock`, `cmd/security`, `cmd/alarm`, `cmd/tare`                | Remote control: toggle each mode (both can be on, Security wins), mute/restore the buzzer, re-tare the load cells |
 
 > [!NOTE]
 > The full contract (payload schemas, retain/QoS, credentials and test commands) lives in
@@ -76,6 +76,7 @@ All topics live under the `soa/{deviceId}/...` prefix.
 - Open the repository folder in Visual Studio Code.
 - Reopen the project in a Dev Container, pressing `F1` and selecting `Dev Containers: Rebuild and Reopen in Container`.
 - Wait for the container to be built and started.
+- Copy `src/secrets.example.h` to `src/secrets.h` and fill in your WiFi and MQTT credentials. This file is git-ignored and **required to build** (see [MQTT integration](#mqtt-integration)).
 - Press `F1` and select `Wokwi: Request a new License` option to get a free license for build the project.
 - When you have the license, press `F1` and select `PlatformIO: Build` to build the source code.
 - After the build is finished, press `F1` and select `Wokwi: Start Simulator` to run the project.

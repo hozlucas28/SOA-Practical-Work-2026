@@ -55,6 +55,27 @@
 /** Minimum delay between broker reconnection attempts, in milliseconds. */
 #define MQTT_RECONNECT_INTERVAL_MS 5000
 
+/**
+ * MQTT keepalive, in seconds. Broker drops the client after ~1.5x this without
+ * any packet. Kept generous because the Wokwi simulator runs slower than real
+ * time, so `millis()`-based timing lags the broker's wall clock.
+ */
+#define MQTT_KEEPALIVE_S 30
+
+/**
+ * Period between forced "availability=online" heartbeats, in milliseconds.
+ * Guarantees frequent outbound activity (well under the keepalive window) so the
+ * broker never times the client out, even when the simulation clock is slow.
+ */
+#define MQTT_HEARTBEAT_MS 5000
+
+/**
+ * Time to wait for the persisted tare offsets (`tare/state` from Node-RED) after
+ * requesting them on connect, in milliseconds. On timeout the boot-time tare
+ * stands and the handshake is given up (retried on the next boot).
+ */
+#define TARE_RESPONSE_TIMEOUT_MS 4000
+
 /** Push button that toggles Stock mode on/off. */
 extern Button StockBtn;
 

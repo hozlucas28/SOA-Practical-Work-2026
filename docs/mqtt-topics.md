@@ -1,60 +1,60 @@
 <h1 align="center">MQTT Topic Contract</h1>
 
 <p align="center">
-    <strong>Contrato de comunicación MQTT entre el embebido ESP32 y la app / Node-RED</strong>
+    <strong>MQTT communication contract between the ESP32 device and the app / Node-RED</strong>
     <br>
     <strong>- SOA Practical Work [2026] · UNLaM -</strong>
 </p>
 
-## Resumen
+## Summary
 
-El embebido (góndolas ESP32 con FSM Stock/Security) se integra de forma **bidireccional** con la
-aplicación a través de un broker **Mosquitto** (con **Node-RED** como puente hacia la app). Este
-documento es la **fuente única de verdad** del contrato: define los topics, su dirección,
-`retain`/`QoS`, el esquema de cada payload y cuándo se publica.
+The device (ESP32 shelves with a Stock/Security FSM) integrates **bidirectionally** with the
+application through a **Mosquitto** broker (with **Node-RED** as the bridge to the app). This document
+is the **single source of truth** for the contract: it defines the topics, their direction,
+`retain`/`QoS`, the schema of each payload, and when it is published.
 
-La app tiene dos pantallas que mapean directo a los topics **por sensor**:
+The app has two screens that map directly to the **per-shelf** topics:
 
-- **"Inventario en Tiempo Real"** (modo Stock) → una tarjeta por sensor con peso y disponibilidad
+- **"Inventario en Tiempo Real"** (Stock mode) → one card per sensor with weight and availability
   (`shelf/NN/stock`).
-- **"Seguridad Activa"** (modo Security) → una tarjeta por sensor con estado seguro/alerta
+- **"Seguridad Activa"** (Security mode) → one card per sensor with secure/alert state
   (`shelf/NN/security`).
 
 > [!NOTE]
-> El broker (Mosquitto), Node-RED y la infraestructura los provee el equipo por fuera de este
-> repositorio. Este documento solo fija el contrato que ambos lados deben respetar.
+> The broker (Mosquitto), Node-RED, and the infrastructure are provided by the team outside this
+> repository. This document only fixes the contract that both sides must respect.
 
-## Convención general
+## General conventions
 
-- **Prefijo de topic:** `soa/{deviceId}/...` — `deviceId` es configurable por dispositivo
-  (`MQTT_CLIENT_ID`, ej. `gondola-01`), para soportar varias góndolas sin colisión de topics.
-- **Payloads:** JSON UTF-8 (salvo `availability`, texto plano). Bajo 512 bytes (límite configurado en
-  PubSubClient con `-DMQTT_MAX_PACKET_SIZE=512`).
-- **Estado por sensor:** cada sensor publica en su propio topic (`shelf/01/...`, `shelf/02/...`), todos
-  `retain`, así un suscriptor que se conecta tarde recupera el estado de **ambos** sensores.
-- **Representación: booleans + números.** El firmware manda `available`/`secure` como `true`/`false`
-  y la app los mapea a su propio texto/color (DISPONIBLE/AGOTADO, SEGURO/ALERTA).
-- **Los nombres de producto los maneja la app** (no viajan por MQTT).
+- **Topic prefix:** `soa/{deviceId}/...` — `deviceId` is configurable per device (`MQTT_CLIENT_ID`,
+  e.g. `gondola-01`), so several shelves can coexist without topic collisions.
+- **Payloads:** UTF-8 JSON (except `availability`, which is plain text). Under 512 bytes (the limit set
+  in PubSubClient with `-DMQTT_MAX_PACKET_SIZE=512`).
+- **Per-sensor state:** each sensor publishes to its own topic (`shelf/01/...`, `shelf/02/...`), all
+  `retain`, so a late subscriber recovers the state of **both** sensors.
+- **Representation: booleans + numbers.** The firmware sends `available`/`secure` as `true`/`false`
+  and the app maps them to its own text/color (DISPONIBLE/AGOTADO, SEGURO/ALERTA).
+- **Product names are handled by the app** (they do not travel over MQTT).
 
 ---
 
-## Topics que PUBLICA el ESP32
+## Topics PUBLISHED by the ESP32
 
-La app / Node-RED se **suscribe** a estos topics.
+The app / Node-RED **subscribes** to these topics.
 
-| Topic | Retain | QoS | Cuándo se publica | Payload |
-|---|:---:|:---:|---|---|
-| `soa/{id}/availability` | ✅ | 1 | Al conectar (`online`) y como **Last Will (LWT)** (`offline`) | texto plano |
-| `soa/{id}/status` | ✅ | 0 | En cada transición de la FSM (on-change) | JSON |
-| `soa/{id}/shelf/{NN}/stock` | ✅ | 0 | On-change de peso/stock/disponibilidad | JSON |
-| `soa/{id}/shelf/{NN}/security` | ✅ | 0 | On-change del estado de seguridad | JSON |
+| Topic                          | Retain | QoS | When it is published                                         | Payload    |
+| ------------------------------ | :----: | :-: | ------------------------------------------------------------ | ---------- |
+| `soa/{id}/availability`        |   ✅   |  1  | On connect (`online`) and as **Last Will (LWT)** (`offline`) | plain text |
+| `soa/{id}/status`              |   ✅   |  0  | On every FSM transition (on-change)                          | JSON       |
+| `soa/{id}/shelf/{NN}/stock`    |   ✅   |  0  | On-change of weight/stock/availability                       | JSON       |
+| `soa/{id}/shelf/{NN}/security` |   ✅   |  0  | On-change of the security state                              | JSON       |
 
 `{NN}` ∈ `01` | `02`.
 
 ### `availability`
 
-Texto plano. `online` al conectar; `offline` lo publica el broker automáticamente vía LWT si el
-embebido se desconecta sin avisar.
+Plain text. `online` on connect; `offline` is published automatically by the broker via the LWT if the
+device disconnects ungracefully.
 
 ```
 online
@@ -62,75 +62,112 @@ online
 
 ### `status`
 
-Refleja el estado de la FSM. Mapeo: `VIRGIN_EMBEDDED → IDLE`, `STOCK_MODE → STOCK`,
-`SECURITY_MODE → SECURITY`. Le dice a la app qué pantalla está activa.
+Reports the **two mode toggles** (Stock and Security can be active at the same time) plus the mode the
+FSM is actually running in `active` (Security has **priority** over Stock). `active` mapping:
+`VIRGIN_EMBEDDED → IDLE`, `STOCK_MODE → STOCK`, `SECURITY_MODE → SECURITY`.
 
 ```json
-{ "mode": "STOCK" }
+{ "stock": true, "security": true, "active": "SECURITY" }
 ```
 
-| Campo | Tipo | Valores |
-|---|---|---|
-| `mode` | string | `IDLE` \| `STOCK` \| `SECURITY` |
+| Field      | Type   | Description                                                 |
+| ---------- | ------ | ----------------------------------------------------------- |
+| `stock`    | bool   | The user activated Stock mode (toggle / Stock button)       |
+| `security` | bool   | The user activated Security mode (toggle / Security button) |
+| `active`   | string | Mode running by priority: `IDLE` \| `STOCK` \| `SECURITY`   |
+
+> Examples: `{"stock":true,"security":false,"active":"STOCK"}` (stock only) ·
+> `{"stock":true,"security":true,"active":"SECURITY"}` (both active, security runs) ·
+> `{"stock":false,"security":false,"active":"IDLE"}` (nothing active).
 
 ### `shelf/{NN}/stock`
 
-Estado de inventario de una góndola (pantalla "Inventario en Tiempo Real"). Se publica solo
-**on-change** (la celda se muestrea cada 200 ms; publicar en cada muestra inundaría el broker).
+Inventory state of a shelf ("Inventario en Tiempo Real" screen). Published only **on-change** (the load
+cell is sampled every 200 ms; publishing every sample would flood the broker).
 
 ```json
 { "weight": 3000, "stock": 3, "min": 1, "available": true }
 ```
 
-| Campo | Tipo | Descripción | Uso en la app |
-|---|---|---|---|
-| `weight` | int | Peso medido total, en gramos | "Peso Actual: 3000 g" |
-| `stock` | int | Unidades calculadas (`weight / unitWeight`) | — |
-| `min` | int | Stock mínimo aceptable | — |
-| `available` | bool | `stock >= min` | "Estado: DISPONIBLE / AGOTADO" |
+| Field       | Type | Description                           | Used in the app for            |
+| ----------- | ---- | ------------------------------------- | ------------------------------ |
+| `weight`    | int  | Total measured weight, in grams       | "Peso Actual: 3000 g"          |
+| `stock`     | int  | Units derived (`weight / unitWeight`) | —                              |
+| `min`       | int  | Minimum acceptable stock              | —                              |
+| `available` | bool | `stock >= min`                        | "Estado: DISPONIBLE / AGOTADO" |
 
 ### `shelf/{NN}/security`
 
-Estado de seguridad de una góndola (pantalla "Seguridad Activa"). Se publica solo **on-change**.
-`secure` refleja el latch de anomalía: `false` cuando el peso se desvió del baseline más que el umbral
-(lo mismo que dispara el buzzer/LED).
+Security state of a shelf ("Seguridad Activa" screen). Published only **on-change**. `secure` reflects
+the anomaly latch: `false` when the weight deviated from the baseline by more than the threshold (the
+same thing that drives the buzzer/LED).
 
 ```json
 { "secure": true, "baseline": 3000, "current": 3000, "delta": 0 }
 ```
 
-| Campo | Tipo | Descripción | Uso en la app |
-|---|---|---|---|
-| `secure` | bool | `true` = sin anomalía, `false` = anomalía detectada | "Estado: SEGURO / ALERTA" |
-| `baseline` | int | Peso de referencia, en gramos | — |
-| `current` | int | Peso actual, en gramos | — |
-| `delta` | int | `current - baseline`, en gramos | — |
+| Field      | Type | Description                                     | Used in the app for       |
+| ---------- | ---- | ----------------------------------------------- | ------------------------- |
+| `secure`   | bool | `true` = no anomaly, `false` = anomaly detected | "Estado: SEGURO / ALERTA" |
+| `baseline` | int  | Reference weight, in grams                      | —                         |
+| `current`  | int  | Current weight, in grams                        | —                         |
+| `delta`    | int  | `current - baseline`, in grams                  | —                         |
 
 ---
 
-## Topics a los que SE SUSCRIBE el ESP32
+## Tare persistence (ESP32 ⇄ Node-RED/SQLite)
 
-La app / Node-RED **publica** en estos topics para controlar el dispositivo de forma remota. Un
-comando produce el **mismo efecto** que accionar el botón/sensor físico (es "la misma acción, pero
-remota"): los botones físicos siguen funcionando igual.
+Each load cell's **zero offset (tare)** is persisted in **Node-RED's SQLite** database, so a reboot
+with product already on the shelf **does not corrupt the zero**. On boot, the ESP32 performs a
+handshake:
 
-| Topic | QoS | Efecto en el embebido | Payload |
-|---|:---:|---|---|
-| `soa/{id}/cmd/mode` | 1 | Cambiar de modo (equivale a los botones físicos) | texto plano |
-| `soa/{id}/cmd/alarm` | 1 | Silenciar / reactivar el buzzer en modo Security | texto plano |
-| `soa/{id}/cmd/tare` | 1 | Re-tarar / fijar baseline de las celdas | JSON |
+| Topic                   | Direction        | Payload                                             | When                                             |
+| ----------------------- | ---------------- | --------------------------------------------------- | ------------------------------------------------ |
+| `soa/{id}/tare/request` | ESP32 → Node-RED | (empty)                                             | On connect (once per boot)                       |
+| `soa/{id}/tare/state`   | Node-RED → ESP32 | `{"01":{"offset":N}\|null,"02":{"offset":N}\|null}` | Response of the `SELECT` against SQLite          |
+| `soa/{id}/tare/save`    | ESP32 → Node-RED | `{"shelf":"01","offset":N}`                         | When the ESP32 tares a cell with no saved offset |
 
-### `cmd/mode`
+**ESP32 logic, per cell, on receiving `tare/state`:**
+
+- A saved `offset` exists → `set_offset(offset)` (restores the zero, does **not** re-tare).
+- It is `null` → `tare()` now → `get_offset()` → publishes `tare/save` (Node-RED does an `UPSERT`).
+- If `tare/state` does not arrive within `TARE_RESPONSE_TIMEOUT_MS` → the boot-time tare stands (retried
+  on the next boot).
+
+> SQLite table: `tare(device_id, shelf, offset, updated_at, PRIMARY KEY(device_id, shelf))`.
+> Node-RED also exposes tare status in `GET /api/{id}/state` (`tare.NN.done` + `ts`) for the app.
+
+---
+
+## Topics the ESP32 SUBSCRIBES to
+
+The app / Node-RED **publishes** to these topics to control the device remotely. A command has the
+**same effect** as operating the physical button/sensor (it is "the same action, but remote"): the
+physical buttons keep working the same.
+
+| Topic                   | QoS | Effect on the device                                   | Payload    |
+| ----------------------- | :-: | ------------------------------------------------------ | ---------- |
+| `soa/{id}/cmd/stock`    |  1  | Activate/deactivate Stock mode (independent toggle)    | plain text |
+| `soa/{id}/cmd/security` |  1  | Activate/deactivate Security mode (independent toggle) | plain text |
+| `soa/{id}/cmd/alarm`    |  1  | Mute / restore the buzzer in Security mode             | plain text |
+
+### `cmd/stock` and `cmd/security`
+
+Two **independent** toggles, one per mode, that mirror the two physical buttons exactly. **Both can be
+`ON` at once**; the FSM gives **Security priority** (it runs Security and leaves Stock waiting; when
+Security is turned off it automatically falls back to Stock if it was still active).
 
 ```
-SECURITY
+ON
 ```
 
-| Valor | Efecto | Equivale a |
-|---|---|---|
-| `STOCK` | Activa modo Stock | Botón Stock ON, Security OFF |
-| `SECURITY` | Activa modo Security (prioritario) | Botón Security ON |
-| `OFF` | Vuelve a IDLE | Ambos botones OFF ("Desactivar Stock/Seguridad") |
+| Topic          | Value        | Effect                       | Equivalent to   |
+| -------------- | ------------ | ---------------------------- | --------------- |
+| `cmd/stock`    | `ON` / `OFF` | Activate/deactivate Stock    | Stock button    |
+| `cmd/security` | `ON` / `OFF` | Activate/deactivate Security | Security button |
+
+> To "turn everything off", the app sends `cmd/stock OFF` **and** `cmd/security OFF`. The effective
+> result is shown in `status.active`.
 
 ### `cmd/alarm`
 
@@ -138,66 +175,58 @@ SECURITY
 OFF
 ```
 
-| Valor | Efecto |
-|---|---|
-| `OFF` | Silencia el buzzer (la alerta sigue visible en LCD/LED y en `secure:false`) |
-| `ON` | Reactiva el buzzer |
+| Value | Effect                                                                      |
+| ----- | --------------------------------------------------------------------------- |
+| `OFF` | Mutes the buzzer (the alert stays visible on LCD/LED and in `secure:false`) |
+| `ON`  | Restores the buzzer                                                         |
 
 > [!NOTE]
-> Por diseño de "mute simple": silenciar no apaga la alerta, solo el sonido. La alerta persiste hasta
-> salir de Security mode.
+> By "simple mute" design: muting does not clear the alert, only the sound. The alert persists until
+> leaving Security mode.
 
-### `cmd/tare`
-
-Re-tara una celda o todas, fijando el baseline al peso actual.
-
-```json
-{ "sensor": 1 }
-```
-
-| Campo | Tipo | Valores |
-|---|---|---|
-| `sensor` | int \| string | `1` \| `2` \| `"all"` |
+> [!NOTE]
+> Re-taring the load cells is **not** a remote command: the device resolves the tare on its own (see
+> [Tare persistence](#tare-persistence-esp32--node-redsqlite)).
 
 ---
 
-## Credenciales / autenticación
+## Credentials / authentication
 
-La autenticación es **a nivel de conexión al broker**, no por topic: el embebido se autentica una
-sola vez al conectar y los **ACLs** del broker deciden a qué topics puede publicar/suscribirse.
+Authentication is **at the broker-connection level**, not per topic: the device authenticates once on
+connect and the broker's **ACLs** decide which topics it may publish/subscribe to.
 
-### Lado broker (Mosquitto)
+### Broker side (Mosquitto)
 
-- **Recomendado — usuario + contraseña.** En `mosquitto.conf`:
+- **Recommended — username + password.** In `mosquitto.conf`:
   ```conf
   allow_anonymous false
   password_file /mosquitto/config/passwd
   ```
-  Usuario creado con:
+  User created with:
   ```bash
   mosquitto_passwd -c /mosquitto/config/passwd esp32
   ```
-- **Opcional — ACLs.** Restringir el usuario del ESP32 a su propio prefijo (`acl_file`):
+- **Optional — ACLs.** Restrict the ESP32 user to its own prefix (`acl_file`):
   ```conf
   user esp32
   topic write soa/gondola-01/#
   topic read  soa/gondola-01/cmd/#
   ```
-- Para una demo rápida sin credenciales se puede usar `allow_anonymous true` (no recomendado).
+- For a quick credential-less demo you can use `allow_anonymous true` (not recommended).
 
-### Lado firmware (`src/secrets.h`, git-ignored)
+### Firmware side (`src/secrets.h`, git-ignored)
 
-Las credenciales **nunca** se versionan: viven en `src/secrets.h` (ignorado por git) y se pasan a
-`mqttClient.connect()`. Se versiona `src/secrets.example.h` como plantilla.
+Credentials are **never** versioned: they live in `src/secrets.h` (ignored by git) and are passed to
+`mqttClient.connect()`. `src/secrets.example.h` is versioned as a template.
 
-| Constante | Uso |
-|---|---|
-| `WIFI_SSID`, `WIFI_PASS` | Red WiFi (en Wokwi: `Wokwi-GUEST`, sin contraseña) |
-| `MQTT_HOST`, `MQTT_PORT` | Endpoint del broker (IP LAN del host del Docker, `1883`) |
-| `MQTT_USER`, `MQTT_PASS` | Credenciales pasadas a `mqttClient.connect()` |
-| `MQTT_CLIENT_ID` | Identificador único por dispositivo = `{id}` de los topics (ej. `gondola-01`) |
+| Constant                 | Use                                                                 |
+| ------------------------ | ------------------------------------------------------------------- |
+| `WIFI_SSID`, `WIFI_PASS` | WiFi network (in Wokwi: `Wokwi-GUEST`, no password)                 |
+| `MQTT_HOST`, `MQTT_PORT` | Broker endpoint (LAN IP of the Docker host, `1883`)                 |
+| `MQTT_USER`, `MQTT_PASS` | Credentials passed to `mqttClient.connect()`                        |
+| `MQTT_CLIENT_ID`         | Unique per-device id = the `{id}` of the topics (e.g. `gondola-01`) |
 
-Conexión con autenticación + Last Will integrado (PubSubClient v2.8):
+Connection with authentication + integrated Last Will (PubSubClient v2.8):
 
 ```cpp
 mqttClient.connect(
@@ -209,34 +238,35 @@ mqttClient.connect(
 
 ---
 
-## Diagrama del flujo
+## Flow diagram
 
 ```
                      soa/{id}/status, /shelf/+/stock, /shelf/+/security, /availability
    ESP32  ─────────────────────────────────────────────────────────────────►  Mosquitto ─► Node-RED ─► App
    (FSM)  ◄─────────────────────────────────────────────────────────────────  Mosquitto ◄─ Node-RED ◄─ App
-                     soa/{id}/cmd/mode, /cmd/alarm, /cmd/tare
+                     soa/{id}/cmd/stock, /cmd/security, /cmd/alarm
 ```
 
 ---
 
-## Pruebas rápidas
+## Quick tests
 
-Suscribirse a todo lo que publica el dispositivo:
+Subscribe to everything the device publishes:
 
 ```bash
 mosquitto_sub -h <broker> -u esp32 -P <pass> -t 'soa/#' -v
 ```
 
-Forzar un cambio de modo remoto (debe reaccionar igual que el botón físico):
+Activate both modes at once (it must react the same as pressing both buttons; security runs):
 
 ```bash
-mosquitto_pub -h <broker> -u esp32 -P <pass> -t 'soa/gondola-01/cmd/mode' -m SECURITY
+mosquitto_pub -h <broker> -u esp32 -P <pass> -t 'soa/gondola-01/cmd/stock'    -m ON
+mosquitto_pub -h <broker> -u esp32 -P <pass> -t 'soa/gondola-01/cmd/security' -m ON
+# status -> {"stock":true,"security":true,"active":"SECURITY"}
 ```
 
-Silenciar el buzzer y re-tarar la celda 1:
+Mute the buzzer:
 
 ```bash
 mosquitto_pub -h <broker> -u esp32 -P <pass> -t 'soa/gondola-01/cmd/alarm' -m OFF
-mosquitto_pub -h <broker> -u esp32 -P <pass> -t 'soa/gondola-01/cmd/tare'  -m '{"sensor":1}'
 ```
