@@ -14,7 +14,7 @@ void xButtonsTask(void* parameters);
 void xWeightSampleTask(void* parameters);
 
 /**
- * Drives the alarm buzzer through its melody steps while `Buzzer.playing` is
+ * Drives the buzzer through its melody steps while `Buzzer.playing` is
  * true; silences the GPIO when it transitions to false. Param: pointer to
  * the target `Buzzer`.
  */

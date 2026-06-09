@@ -17,7 +17,7 @@ void switchBtnState(Button* btn);
  * unready; sets it `true` after a successful read. Called from
  * `xWeightSampleTask` and once during `setup()` to prime the cache.
  */
-void sampleWeight(WeightSensor* weightSensor);
+void sampleWeight(WeightSensor* sensor);
 
 /** Clear the LCD and the cached `line01`/`line02`. */
 void lcdClear(LCD16x2* lcd);
@@ -38,31 +38,31 @@ void playBuzzer(Buzzer* buzzer);
 void stopBuzzer(Buzzer* buzzer);
 
 /** Cached weight in grams (0 if no valid sample yet). */
-unsigned int getWeight(WeightSensor* weightSensor);
+unsigned int getWeight(WeightSensor* sensor);
 
 /** Cached stock count derived from the cached weight. 0 if no valid sample. */
-unsigned int getStock(WeightSensor* weightSensor);
+unsigned int getStock(WeightSensor* sensor);
 
 /**
  * Snapshot the cached weight into `*outWeight`. Returns `false` (and leaves
  * the out-param untouched) when the cache is invalid, so callers can skip
  * the tick instead of treating an unready sensor as `0 g`.
  */
-bool tryGetWeight(WeightSensor* weightSensor, unsigned int* outWeight);
+bool tryGetWeight(WeightSensor* sensor, unsigned int* outWeight);
 
 /** Snapshot the cached stock count. Same skip-on-invalid contract as `tryGetWeight`. */
-bool tryGetStock(WeightSensor* weightSensor, unsigned int* outStock);
+bool tryGetStock(WeightSensor* sensor, unsigned int* outStock);
 
 /**
  * Take the current cached weight as the new baseline used by Security-mode
  * anomaly detection. No-op when the cache is invalid.
  */
-void setBaselineWeight(WeightSensor* weightSensor);
+void setBaselineWeight(WeightSensor* sensor);
 
 /** Light the per-shelf LED if it is currently off. */
-void ledOn(WeightSensor* weightSensor);
+void ledOn(WeightSensor* sensor);
 
 /** Turn off the per-shelf LED if it is currently on. */
-void ledOff(WeightSensor* weightSensor);
+void ledOff(WeightSensor* sensor);
 
 #endif  // SRC_USER_FUNCTIONS_H_INCLUDED

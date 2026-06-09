@@ -9,7 +9,7 @@ SystemEvent getStockBtnEvent(SystemStatus systemStatus) {
     ButtonStatus status = OFF;
 
     lockButtons();
-    status = StockBtn.status;
+    status = stockBtn.status;
     unlockButtons();
 
     return status == ON ? STOCK_ON : STOCK_OFF;
@@ -18,34 +18,23 @@ SystemEvent getStockBtnEvent(SystemStatus systemStatus) {
 SystemEvent getStockSensorsEvent(SystemStatus systemStatus) {
     if (systemStatus != STOCK_MODE) return NO_MISSING_STOCK;
 
-    unsigned int stock01 = 0;
-    unsigned int stock02 = 0;
-    unsigned int minimum01 = 0;
-    unsigned int minimum02 = 0;
-    bool valid01 = false;
-    bool valid02 = false;
+    unsigned int stock = 0;
+    unsigned int minimum = 0;
+    bool valid = false;
 
     lockWeightSensors();
 
-    if (WeightSensor01.sample.valid) {
-        stock01 = WeightSensor01.sample.weight / WeightSensor01.product.weight;
-        valid01 = true;
+    if (weightSensor.sample.valid) {
+        stock = weightSensor.sample.weight / weightSensor.product.weight;
+        valid = true;
     }
-    if (WeightSensor02.sample.valid) {
-        stock02 = WeightSensor02.sample.weight / WeightSensor02.product.weight;
-        valid02 = true;
-    }
-    minimum01 = WeightSensor01.minimumAcceptableStock;
-    minimum02 = WeightSensor02.minimumAcceptableStock;
+    minimum = weightSensor.minimumAcceptableStock;
 
     unlockWeightSensors();
 
-    bool missingStock01 = valid01 && stock01 < minimum01;
-    bool missingStock02 = valid02 && stock02 < minimum02;
+    bool missingStock = valid && stock < minimum;
 
-    if (missingStock01 && missingStock02) return STOCK_MISSING_SENSORS;
-    if (missingStock01) return STOCK_MISSING_SENSOR_01;
-    if (missingStock02) return STOCK_MISSING_SENSOR_02;
+    if (missingStock) return STOCK_MISSING_SENSOR;
 
     return NO_MISSING_STOCK;
 }
@@ -56,8 +45,8 @@ SystemEvent getSecurityBtnEvent(SystemStatus systemStatus) {
 
     lockButtons();
 
-    securityStatus = SecurityBtn.status;
-    stockStatus = StockBtn.status;
+    securityStatus = securityBtn.status;
+    stockStatus = stockBtn.status;
 
     unlockButtons();
 
@@ -66,48 +55,33 @@ SystemEvent getSecurityBtnEvent(SystemStatus systemStatus) {
     return SECURITY_OFF;
 }
 
-static bool anomaly01 = false;
-static bool anomaly02 = false;
+static bool anomaly = false;
 
 SystemEvent getAnomalySensorsEvent(SystemStatus systemStatus) {
     if (systemStatus != SECURITY_MODE) {
-        anomaly01 = false;
-        anomaly02 = false;
+        anomaly = false;
         return NO_ANOMALY;
     };
 
-    unsigned int weight01 = 0;
-    unsigned int weight02 = 0;
-    unsigned int baseline01 = 0;
-    unsigned int baseline02 = 0;
-    bool valid01 = false;
-    bool valid02 = false;
+    unsigned int weight = 0;
+    unsigned int baseline = 0;
+    bool valid = false;
 
     lockWeightSensors();
 
-    if (WeightSensor01.sample.valid) {
-        weight01 = WeightSensor01.sample.weight;
-        valid01 = true;
+    if (weightSensor.sample.valid) {
+        weight = weightSensor.sample.weight;
+        valid = true;
     }
-    if (WeightSensor02.sample.valid) {
-        weight02 = WeightSensor02.sample.weight;
-        valid02 = true;
-    }
-    baseline01 = WeightSensor01.baselineWeight;
-    baseline02 = WeightSensor02.baselineWeight;
+    baseline = weightSensor.baselineWeight;
 
     unlockWeightSensors();
 
-    if (valid01) {
-        anomaly01 = anomaly01 || abs((int)weight01 - (int)baseline01) > ANOMALY_THRESHOLD;
-    }
-    if (valid02) {
-        anomaly02 = anomaly02 || abs((int)weight02 - (int)baseline02) > ANOMALY_THRESHOLD;
+    if (valid) {
+        anomaly = anomaly || abs((int)weight - (int)baseline) > ANOMALY_THRESHOLD;
     }
 
-    if (anomaly01 && anomaly02) return ANOMALY_SENSORS;
-    if (anomaly01) return ANOMALY_SENSOR_01;
-    if (anomaly02) return ANOMALY_SENSOR_02;
+    if (anomaly) return ANOMALY_SENSOR;
 
     return NO_ANOMALY;
 }

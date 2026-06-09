@@ -22,13 +22,13 @@ void switchBtnState(Button* btn) {
     btn->lastState = btnRead;
 }
 
-void sampleWeight(WeightSensor* weightSensor) {
-    if (!weightSensor->device.is_ready()) {
-        weightSensor->sample.valid = false;
+void sampleWeight(WeightSensor* sensor) {
+    if (!sensor->device.is_ready()) {
+        sensor->sample.valid = false;
         return;
     }
 
-    float weight = weightSensor->device.get_units(WEIGHT_SENSORS_SAMPLES);
+    float weight = sensor->device.get_units(WEIGHT_SENSORS_SAMPLES);
 
     // HX711 noise can dip slightly below zero near the tared baseline. Casting
     // a negative float to `unsigned int` wraps around to ~UINT_MAX, which then
@@ -36,8 +36,8 @@ void sampleWeight(WeightSensor* weightSensor) {
     // display and the "below minimum" check. Clamp before the cast.
     if (weight < 0.0f) weight = 0.0f;
 
-    weightSensor->sample.weight = (unsigned int)floor(weight);
-    weightSensor->sample.valid = true;
+    sensor->sample.weight = (unsigned int)floor(weight);
+    sensor->sample.valid = true;
 }
 
 void lcdClear(LCD16x2* lcd) {
@@ -95,25 +95,25 @@ void stopBuzzer(Buzzer* buzzer) {
     unlockBuzzer();
 }
 
-unsigned int getWeight(WeightSensor* weightSensor) {
+unsigned int getWeight(WeightSensor* sensor) {
     unsigned int weight = 0;
 
     lockWeightSensors();
 
-    if (weightSensor->sample.valid) weight = weightSensor->sample.weight;
+    if (sensor->sample.valid) weight = sensor->sample.weight;
 
     unlockWeightSensors();
 
     return weight;
 }
 
-unsigned int getStock(WeightSensor* weightSensor) {
+unsigned int getStock(WeightSensor* sensor) {
     unsigned int stock = 0;
 
     lockWeightSensors();
 
-    if (weightSensor->sample.valid) {
-        stock = weightSensor->sample.weight / weightSensor->product.weight;
+    if (sensor->sample.valid) {
+        stock = sensor->sample.weight / sensor->product.weight;
     }
 
     unlockWeightSensors();
@@ -121,13 +121,13 @@ unsigned int getStock(WeightSensor* weightSensor) {
     return stock;
 }
 
-bool tryGetWeight(WeightSensor* weightSensor, unsigned int* outWeight) {
+bool tryGetWeight(WeightSensor* sensor, unsigned int* outWeight) {
     bool valid = false;
 
     lockWeightSensors();
 
-    if (weightSensor->sample.valid) {
-        *outWeight = weightSensor->sample.weight;
+    if (sensor->sample.valid) {
+        *outWeight = sensor->sample.weight;
         valid = true;
     }
 
@@ -136,13 +136,13 @@ bool tryGetWeight(WeightSensor* weightSensor, unsigned int* outWeight) {
     return valid;
 }
 
-bool tryGetStock(WeightSensor* weightSensor, unsigned int* outStock) {
+bool tryGetStock(WeightSensor* sensor, unsigned int* outStock) {
     bool valid = false;
 
     lockWeightSensors();
 
-    if (weightSensor->sample.valid) {
-        *outStock = weightSensor->sample.weight / weightSensor->product.weight;
+    if (sensor->sample.valid) {
+        *outStock = sensor->sample.weight / sensor->product.weight;
         valid = true;
     }
 
@@ -151,22 +151,22 @@ bool tryGetStock(WeightSensor* weightSensor, unsigned int* outStock) {
     return valid;
 }
 
-void setBaselineWeight(WeightSensor* weightSensor) {
+void setBaselineWeight(WeightSensor* sensor) {
     lockWeightSensors();
 
-    if (weightSensor->sample.valid) {
-        weightSensor->baselineWeight = weightSensor->sample.weight;
+    if (sensor->sample.valid) {
+        sensor->baselineWeight = sensor->sample.weight;
     }
 
     unlockWeightSensors();
 }
 
-void ledOn(WeightSensor* weightSensor) {
-    if (digitalRead(weightSensor->led) == HIGH) return;
-    digitalWrite(weightSensor->led, HIGH);
+void ledOn(WeightSensor* sensor) {
+    if (digitalRead(sensor->led) == HIGH) return;
+    digitalWrite(sensor->led, HIGH);
 }
 
-void ledOff(WeightSensor* weightSensor) {
-    if (digitalRead(weightSensor->led) == LOW) return;
-    digitalWrite(weightSensor->led, LOW);
+void ledOff(WeightSensor* sensor) {
+    if (digitalRead(sensor->led) == LOW) return;
+    digitalWrite(sensor->led, LOW);
 }

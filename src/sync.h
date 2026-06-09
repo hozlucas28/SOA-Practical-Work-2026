@@ -5,13 +5,13 @@
 #include <freertos/semphr.h>
 
 /** TODO: Añadir documentación  */
-extern SemaphoreHandle_t ButtonsMutex;
+extern SemaphoreHandle_t buttonsMutex;
 
 /** TODO: Añadir documentación  */
-extern SemaphoreHandle_t WeightSensorsMutex;
+extern SemaphoreHandle_t weightSensorMutex;
 
 /** TODO: Añadir documentación  */
-extern SemaphoreHandle_t BuzzerMutex;
+extern SemaphoreHandle_t buzzerMutex;
 
 /** TODO: Añadir documentación  */
 void initSyncObjects();

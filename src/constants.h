@@ -25,13 +25,9 @@
 /** Number of LCD columns. */
 #define LCD_COLS 16
 
-#define WEIGHT_SENSOR_01_PRODUCT_NAME             "Apples"
-#define WEIGHT_SENSOR_01_PRODUCT_WEIGHT           1000
-#define WEIGHT_SENSOR_01_MINIMUM_ACCEPTABLE_STOCK 1
-
-#define WEIGHT_SENSOR_02_PRODUCT_NAME             "Cookies"
-#define WEIGHT_SENSOR_02_PRODUCT_WEIGHT           500
-#define WEIGHT_SENSOR_02_MINIMUM_ACCEPTABLE_STOCK 3
+#define WEIGHT_SENSOR_PRODUCT_NAME             "Apples"
+#define WEIGHT_SENSOR_PRODUCT_WEIGHT           1000
+#define WEIGHT_SENSOR_MINIMUM_ACCEPTABLE_STOCK 1
 
 /**
  * Calibration factor for the weight sensors.
@@ -46,21 +42,18 @@
 #define ANOMALY_THRESHOLD 200
 
 /** Push button that toggles Stock mode on/off. */
-extern Button StockBtn;
+extern Button stockBtn;
 
 /** Push button that toggles Security mode on/off. Has priority over Stock. */
-extern Button SecurityBtn;
+extern Button securityBtn;
 
 /** Shared 16x2 Grove RGB LCD instance. */
 extern LCD16x2 LCD;
 
 /** Buzzer used as Security-mode audible alarm. Driven by `xBuzzerTask`. */
-extern Buzzer Alarm;
+extern Buzzer buzzer;
 
-/** First-shelf load cell. Sampled by `xWeightSampleTask`. */
-extern WeightSensor WeightSensor01;
-
-/** Second-shelf load cell. Sampled by `xWeightSampleTask`. */
-extern WeightSensor WeightSensor02;
+/** Load cell. Sampled by `xWeightSampleTask`. */
+extern WeightSensor weightSensor;
 
 #endif  // SRC_CONSTANTS_H_INCLUDED

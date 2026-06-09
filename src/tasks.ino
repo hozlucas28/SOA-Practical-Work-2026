@@ -8,8 +8,8 @@ void xButtonsTask(void* parameters) {
     while (true) {
         lockButtons();
 
-        switchBtnState(&StockBtn);
-        switchBtnState(&SecurityBtn);
+        switchBtnState(&stockBtn);
+        switchBtnState(&securityBtn);
 
         unlockButtons();
         vTaskDelay(pdMS_TO_TICKS(BUTTONS_TASK_PERIOD_MS));
@@ -19,10 +19,7 @@ void xButtonsTask(void* parameters) {
 void xWeightSampleTask(void* parameters) {
     while (true) {
         lockWeightSensors();
-
-        sampleWeight(&WeightSensor01);
-        sampleWeight(&WeightSensor02);
-
+        sampleWeight(&weightSensor);
         unlockWeightSensors();
 
         vTaskDelay(pdMS_TO_TICKS(WEIGHT_SAMPLE_TASK_PERIOD_MS));

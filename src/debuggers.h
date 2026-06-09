@@ -78,16 +78,8 @@
             printMethod("STOCK_OFF              "); \
             break;                                  \
                                                     \
-        case STOCK_MISSING_SENSOR_01:               \
-            printMethod("STOCK_MISSING_SENSOR_01"); \
-            break;                                  \
-                                                    \
-        case STOCK_MISSING_SENSOR_02:               \
-            printMethod("STOCK_MISSING_SENSOR_02"); \
-            break;                                  \
-                                                    \
-        case STOCK_MISSING_SENSORS:                 \
-            printMethod("STOCK_MISSING_SENSORS  "); \
+        case STOCK_MISSING_SENSOR:                  \
+            printMethod("STOCK_MISSING_SENSOR   "); \
             break;                                  \
                                                     \
         case NO_MISSING_STOCK:                      \
@@ -106,16 +98,8 @@
             printMethod("SECURITY_OFF_TO_STOCK  "); \
             break;                                  \
                                                     \
-        case ANOMALY_SENSOR_01:                     \
-            printMethod("ANOMALY_SENSOR_01      "); \
-            break;                                  \
-                                                    \
-        case ANOMALY_SENSOR_02:                     \
-            printMethod("ANOMALY_SENSOR_02      "); \
-            break;                                  \
-                                                    \
-        case ANOMALY_SENSORS:                       \
-            printMethod("ANOMALY_SENSORS        "); \
+        case ANOMALY_SENSOR:                        \
+            printMethod("ANOMALY_SENSOR         "); \
             break;                                  \
                                                     \
         default:                                    \
