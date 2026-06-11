@@ -7,13 +7,20 @@
 
 #if DEBUG_MODE
 
-/** printf-style serial logging. Compiles to nothing when DEBUG_MODE is 0. */
+/**
+ * Prints a formatted debug message to the serial monitor.
+ */
 #define DEBUG(message, ...) Serial.printf(message, ##__VA_ARGS__)
 
-/** Print a digital signal level as "HIGH" / "LOW" via `printMethod`. */
+/**
+ * Prints a signal value (e.g. `Button.state`) as `HIGH`, or `LOW`.
+ */
 #define DEBUG_SIGNAL(signal, printMethod) printMethod(signal ? "HIGH" : "LOW")
 
-/** Print a `ButtonStatus` value via `printMethod`. */
+/**
+ * Prints a `ButtonStatus` value as `ON`, or `OFF` to the serial monitor.
+ * Defaults to `UNKNOWN_BUTTON_STATUS`.
+ */
 #define DEBUG_BUTTON_STATUS(status, printMethod)  \
     switch (status) {                             \
         case ON:                                  \
@@ -28,7 +35,9 @@
             printMethod("UNKNOWN_BUTTON_STATUS"); \
     }
 
-/** Dump every field of a `Button` struct to the serial monitor. */
+/**
+ * Prints each field of a `Button` to the serial monitor.
+ */
 #define DEBUG_BUTTON(name, button)                                            \
     Serial.printf("%s.pin = %u\r\n", name, button.pin);                       \
     Serial.printf("%s.led = %u\r\n", name, button.led);                       \
@@ -41,14 +50,18 @@
     Serial.printf("%s.debounceDelay = %ums\r\n", name, button.debounceDelay); \
     Serial.printf("%s.lastDebounceTime = %ums\r\n", name, button.lastDebounceTime)
 
-/** Dump the wiring fields of a `WeightSensor` to the serial monitor. */
+/**
+ * Prints each field of a `WeightSensor` to the serial monitor.
+ */
 #define DEBUG_WEIGHT_SENSOR(name, sensor)                     \
     Serial.printf("%s.device = %p\r\n", name, sensor.device); \
     Serial.printf("%s.dtPin = %u\r\n", name, sensor.dtPin);   \
     Serial.printf("%s.sckPin = %u\r\n", name, sensor.sckPin); \
     Serial.printf("%s.led = %u\r\n", name, sensor.led)
 
-/** Print a `SystemStatus` value via `printMethod`, padded to a fixed width. */
+/**
+ * Prints a `SystemStatus` value.
+ */
 #define DEBUG_SYSTEM_STATUS(status, printMethod)  \
     switch (status) {                             \
         case VIRGIN_EMBEDDED:                     \
@@ -67,7 +80,9 @@
             printMethod("UNKNOWN_SYSTEM_STATUS"); \
     }
 
-/** Print a `SystemEvent` value via `printMethod`, padded to a fixed width. */
+/**
+ * Prints a `SystemEvent` value.
+ */
 #define DEBUG_SYSTEM_EVENT(event, printMethod)      \
     switch (event) {                                \
         case STOCK_ON:                              \
@@ -106,7 +121,9 @@
             printMethod("UNKNOWN_SYSTEM_EVENT   "); \
     }
 
-/** Print a single FSM transition line: "<status> <event> --> <nextStatus>". */
+/**
+ * Prints a FSM transition as `<status> <event> --> <nextStatus>`.
+ */
 #define DEBUG_FSM(status, event, nextStatus)   \
     DEBUG_SYSTEM_STATUS(status, Serial.print); \
     DEBUG_SYSTEM_EVENT(event, Serial.print);   \
