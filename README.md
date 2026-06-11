@@ -82,6 +82,17 @@ All topics live under the `soa/{deviceId}/...` prefix.
 - After the build is finished, press `F1` and select `Wokwi: Start Simulator` to run the project.
 - That's it! You should see the project running in the Wokwi simulator.
 
+<details>
+<summary>How can I upload the project to a physical ESP32?</summary>
+
+1. Open the project in Visual Studio Code and make sure you are in the Dev Container.
+2. Connect your ESP32 to your computer using a USB cable.
+3. Press `F1` and select `PlatformIO: Upload` to upload the project to the ESP32.
+4. Wait for the upload process to finish.
+5. Once the upload is complete, the project should start running on the ESP32.
+
+</details>
+
 > [!NOTE]
 > When rebuilding the DevContainer, you might encounter an error such as `The container already exists or is in use`. Don't worry, it's a known bug, simply ignore it and rebuild it again.
 

@@ -3,7 +3,7 @@
 
 #include "enums.h"
 
-/** Maps the cached `StockBtn.status` to `STOCK_ON` / `STOCK_OFF`. */
+/** Maps the cached `stockBtn.status` to `STOCK_ON` / `STOCK_OFF`. */
 SystemEvent getStockBtnEvent(SystemStatus systemStatus);
 
 /**
@@ -14,7 +14,7 @@ SystemEvent getStockBtnEvent(SystemStatus systemStatus);
  */
 SystemEvent getStockSensorsEvent(SystemStatus systemStatus);
 
-/** Maps the cached `SecurityBtn.status` to `SECURITY_*` events. */
+/** Maps the cached `securityBtn.status` to `SECURITY_*` events. */
 SystemEvent getSecurityBtnEvent(SystemStatus systemStatus);
 
 /**

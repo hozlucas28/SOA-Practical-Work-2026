@@ -19,38 +19,17 @@
             "attrs": { "type": "5kg" }
         },
         {
-            "type": "wokwi-hx711",
-            "id": "cell2",
-            "top": 386.6,
-            "left": 511.4,
-            "attrs": { "type": "5kg" }
-        },
-        {
-            "type": "wokwi-text",
-            "id": "text1",
-            "top": 470.4,
-            "left": 508.8,
-            "attrs": { "text": "WEIGHT_SENSOR_02" }
-        },
-        {
             "type": "wokwi-text",
             "id": "text2",
             "top": 470.4,
             "left": 220.8,
-            "attrs": { "text": "WEIGHT_SENSOR_01" }
+            "attrs": { "text": "WEIGHT_SENSOR" }
         },
         {
             "type": "wokwi-led",
             "id": "led1",
             "top": 188.4,
             "left": 417,
-            "attrs": { "color": "red", "flip": "1" }
-        },
-        {
-            "type": "wokwi-led",
-            "id": "led2",
-            "top": 188.4,
-            "left": 474.6,
             "attrs": { "color": "red", "flip": "1" }
         },
         {
@@ -80,14 +59,6 @@
             "id": "r3",
             "top": 283.2,
             "left": 412.25,
-            "rotate": 90,
-            "attrs": { "value": "330" }
-        },
-        {
-            "type": "wokwi-resistor",
-            "id": "r1",
-            "top": 283.2,
-            "left": 469.85,
             "rotate": 90,
             "attrs": { "value": "330" }
         },
@@ -189,13 +160,6 @@
         ["esp:D12", "cell1:SCK", "green", ["h-38.4", "v124.9"]],
         ["bb1:54t.e", "bb1:54b.f", "orange", ["v0"]],
         ["bb1:54b.j", "esp:D14", "orange", ["v182.4", "h-806.4", "v-211.3"]],
-        ["bb1:bn.50", "bb1:61b.j", "black", ["v0"]],
-        ["bb1:60b.f", "bb1:60t.e", "orange", ["v0"]],
-        ["cell2:DT", "esp:D27", "blue", ["h-76.8", "v95.5", "h-825.6", "v-230.1"]],
-        ["cell2:SCK", "esp:D26", "green", ["h-67.2", "v95.2", "h-844.8", "v-249.5"]],
-        ["bb1:60b.j", "esp:D25", "orange", ["v211.2", "h-892.8", "v-268.8"]],
-        ["cell2:GND", "bb1:bn.48", "black", ["h0"]],
-        ["cell2:VCC", "bb1:bp.47", "red", ["h0"]],
         ["vcc1:VCC", "bb1:tp.50", "red", ["v0"]],
         ["gnd1:GND", "bb1:tn.50", "black", ["v0"]],
         ["esp:GND.2", "bb1:tn.1", "black", ["h-19.2", "v-163.3", "h134.4", "v28.9"]],
@@ -203,16 +167,12 @@
         ["bb1:46t.b", "bb1:tn.34", "black", ["h-38.4", "v-38.3"]],
         ["led1:A", "bb1:54t.b", "", ["$bb"]],
         ["led1:C", "bb1:55t.b", "", ["$bb"]],
-        ["led2:A", "bb1:60t.b", "", ["$bb"]],
-        ["led2:C", "bb1:61t.b", "", ["$bb"]],
         ["bz1:1", "bb1:46t.a", "", ["$bb"]],
         ["bz1:2", "bb1:47t.a", "", ["$bb"]],
         ["r2:1", "bb1:46t.e", "", ["$bb"]],
         ["r2:2", "bb1:46b.i", "", ["$bb"]],
         ["r3:1", "bb1:55t.e", "", ["$bb"]],
         ["r3:2", "bb1:55b.i", "", ["$bb"]],
-        ["r1:1", "bb1:61t.e", "", ["$bb"]],
-        ["r1:2", "bb1:61b.i", "", ["$bb"]],
         ["btn1:1.l", "bb1:7b.f", "", ["$bb"]],
         ["btn1:2.l", "bb1:9b.f", "", ["$bb"]],
         ["btn1:1.r", "bb1:7t.e", "", ["$bb"]],

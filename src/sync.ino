@@ -1,36 +1,36 @@
 
 #include "sync.h"
 
-SemaphoreHandle_t ButtonsMutex = nullptr;
-SemaphoreHandle_t WeightSensorsMutex = nullptr;
-SemaphoreHandle_t BuzzerMutex = nullptr;
+SemaphoreHandle_t buttonsMutex = nullptr;
+SemaphoreHandle_t weightSensorMutex = nullptr;
+SemaphoreHandle_t buzzerMutex = nullptr;
 
 void initSyncObjects() {
-    ButtonsMutex = xSemaphoreCreateMutex();
-    WeightSensorsMutex = xSemaphoreCreateMutex();
-    BuzzerMutex = xSemaphoreCreateMutex();
+    buttonsMutex = xSemaphoreCreateMutex();
+    weightSensorMutex = xSemaphoreCreateMutex();
+    buzzerMutex = xSemaphoreCreateMutex();
 }
 
 void lockButtons() {
-    if (ButtonsMutex) xSemaphoreTake(ButtonsMutex, portMAX_DELAY);
+    if (buttonsMutex) xSemaphoreTake(buttonsMutex, portMAX_DELAY);
 }
 
 void unlockButtons() {
-    if (ButtonsMutex) xSemaphoreGive(ButtonsMutex);
+    if (buttonsMutex) xSemaphoreGive(buttonsMutex);
 }
 
 void lockWeightSensors() {
-    if (WeightSensorsMutex) xSemaphoreTake(WeightSensorsMutex, portMAX_DELAY);
+    if (weightSensorMutex) xSemaphoreTake(weightSensorMutex, portMAX_DELAY);
 }
 
 void unlockWeightSensors() {
-    if (WeightSensorsMutex) xSemaphoreGive(WeightSensorsMutex);
+    if (weightSensorMutex) xSemaphoreGive(weightSensorMutex);
 }
 
 void lockBuzzer() {
-    if (BuzzerMutex) xSemaphoreTake(BuzzerMutex, portMAX_DELAY);
+    if (buzzerMutex) xSemaphoreTake(buzzerMutex, portMAX_DELAY);
 }
 
 void unlockBuzzer() {
-    if (BuzzerMutex) xSemaphoreGive(BuzzerMutex);
+    if (buzzerMutex) xSemaphoreGive(buzzerMutex);
 }

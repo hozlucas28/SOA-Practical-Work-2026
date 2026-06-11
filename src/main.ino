@@ -27,30 +27,30 @@
 #include "debuggers.h"
 
 // FSM
-volatile SystemStatus Status = VIRGIN_EMBEDDED;
+SystemStatus status = VIRGIN_EMBEDDED;
 
 void handleEvent(SystemEvent event) {
-    SystemStatus prevStatus = Status;
+    SystemStatus prevStatus = status;
 
-    switch (Status) {
+    switch (status) {
         case VIRGIN_EMBEDDED:
             switch (event) {
                 case STOCK_ON:
                     lcdClear(&LCD);
-                    Status = STOCK_MODE;
-                    DEBUG_FSM(VIRGIN_EMBEDDED, event, Status);
+                    status = STOCK_MODE;
+                    DEBUG_FSM(VIRGIN_EMBEDDED, event, status);
                     break;
 
                 case SECURITY_ON:
                     lcdPrint(&LCD, "Security mode");
-                    setBaselineWeight(&WeightSensor01);
-                    setBaselineWeight(&WeightSensor02);
-                    Status = SECURITY_MODE;
-                    DEBUG_FSM(VIRGIN_EMBEDDED, event, Status);
+                    setBaselineWeight(&weightSensor);
+                    status = SECURITY_MODE;
+                    DEBUG_FSM(VIRGIN_EMBEDDED, event, status);
                     break;
 
                 default:
                     lcdPrint(&LCD, "SOA - Team L5", "S.S. control");
+                    DEBUG_FSM(VIRGIN_EMBEDDED, event, VIRGIN_EMBEDDED);
                     break;
             }
             break;
@@ -58,52 +58,30 @@ void handleEvent(SystemEvent event) {
         case STOCK_MODE:
             switch (event) {
                 case STOCK_OFF:
-                    ledOff(&WeightSensor01);
-                    ledOff(&WeightSensor02);
+                    ledOff(&weightSensor);
                     lcdClear(&LCD);
-                    Status = VIRGIN_EMBEDDED;
-                    DEBUG_FSM(STOCK_MODE, event, Status);
+                    status = VIRGIN_EMBEDDED;
+                    DEBUG_FSM(STOCK_MODE, event, status);
                     break;
 
-                case STOCK_MISSING_SENSOR_01:
-                    ledOn(&WeightSensor01);
-                    ledOff(&WeightSensor02);
-                    lcdPrint(&LCD, "Stock missing", "on sensor #01!");
-                    DEBUG_FSM(STOCK_MODE, event, Status);
-                    break;
-
-                case STOCK_MISSING_SENSOR_02:
-                    ledOff(&WeightSensor01);
-                    ledOn(&WeightSensor02);
-                    lcdPrint(&LCD, "Stock missing", "on sensor #02!");
-                    DEBUG_FSM(STOCK_MODE, event, Status);
-                    break;
-
-                case STOCK_MISSING_SENSORS:
-                    ledOn(&WeightSensor01);
-                    ledOn(&WeightSensor02);
-                    lcdPrint(&LCD, "Stock missing", "on all sensors!");
-                    DEBUG_FSM(STOCK_MODE, event, Status);
+                case STOCK_MISSING_SENSOR:
+                    ledOn(&weightSensor);
+                    lcdPrint(&LCD, "Stock missing", "on sensor!");
+                    DEBUG_FSM(STOCK_MODE, event, status);
                     break;
 
                 case NO_MISSING_STOCK:
-                    ledOff(&WeightSensor01);
-                    ledOff(&WeightSensor02);
-                    lcdPrint(
-                        &LCD,
-                        "Stock #01 = " + String(getStock(&WeightSensor01)),
-                        "Stock #02 = " + String(getStock(&WeightSensor02))
-                    );
+                    ledOff(&weightSensor);
+                    lcdPrint(&LCD, "Stock = " + String(getStock(&weightSensor)), "");
+                    DEBUG_FSM(STOCK_MODE, event, STOCK_MODE);
                     break;
 
                 case SECURITY_ON:
-                    setBaselineWeight(&WeightSensor01);
-                    setBaselineWeight(&WeightSensor02);
-                    ledOff(&WeightSensor01);
-                    ledOff(&WeightSensor02);
+                    setBaselineWeight(&weightSensor);
+                    ledOff(&weightSensor);
                     lcdPrint(&LCD, "Security mode");
-                    Status = SECURITY_MODE;
-                    DEBUG_FSM(STOCK_MODE, event, Status);
+                    status = SECURITY_MODE;
+                    DEBUG_FSM(STOCK_MODE, event, status);
                     break;
 
                 default:
@@ -118,8 +96,8 @@ void handleEvent(SystemEvent event) {
                     ledOff(&WeightSensor01);
                     ledOff(&WeightSensor02);
                     lcdClear(&LCD);
-                    Status = VIRGIN_EMBEDDED;
-                    DEBUG_FSM(SECURITY_MODE, event, Status);
+                    status = VIRGIN_EMBEDDED;
+                    DEBUG_FSM(SECURITY_MODE, event, status);
                     break;
 
                 case SECURITY_OFF_TO_STOCK:
@@ -127,8 +105,8 @@ void handleEvent(SystemEvent event) {
                     ledOff(&WeightSensor01);
                     ledOff(&WeightSensor02);
                     lcdClear(&LCD);
-                    Status = STOCK_MODE;
-                    DEBUG_FSM(SECURITY_MODE, event, Status);
+                    status = STOCK_MODE;
+                    DEBUG_FSM(SECURITY_MODE, event, status);
                     break;
 
                 case ANOMALY_SENSOR_01:
@@ -154,6 +132,7 @@ void handleEvent(SystemEvent event) {
                     break;
 
                 default:
+                    DEBUG_FSM(SECURITY_MODE, event, SECURITY_MODE);
                     break;
             }
             break;
@@ -169,76 +148,66 @@ void setup() {
     DEBUG("\r\nStarting setup...\r\n\n");
 
     // Stock button
-    pinMode(StockBtn.pin, INPUT);
-    pinMode(StockBtn.led, OUTPUT);
-    digitalWrite(StockBtn.led, LOW);
+    pinMode(stockBtn.pin, INPUT);
+    pinMode(stockBtn.led, OUTPUT);
+    digitalWrite(stockBtn.led, LOW);
 
-    StockBtn.state = HIGH;
-    StockBtn.status = OFF;
-    StockBtn.lastState = HIGH;
-    StockBtn.lastDebounceTime = 0;
+    stockBtn.state = HIGH;
+    stockBtn.status = OFF;
+    stockBtn.lastState = HIGH;
+    stockBtn.lastDebounceTime = 0;
 
-    DEBUG_BUTTON("StockBtn", StockBtn);
+    DEBUG_BUTTON("stockBtn", stockBtn);
     DEBUG("\r\n");
 
     // Security button
-    pinMode(SecurityBtn.pin, INPUT);
-    pinMode(SecurityBtn.led, OUTPUT);
-    digitalWrite(SecurityBtn.led, LOW);
+    pinMode(securityBtn.pin, INPUT);
+    pinMode(securityBtn.led, OUTPUT);
+    digitalWrite(securityBtn.led, LOW);
 
-    SecurityBtn.state = HIGH;
-    SecurityBtn.status = OFF;
-    SecurityBtn.lastState = HIGH;
-    SecurityBtn.lastDebounceTime = 0;
+    securityBtn.state = HIGH;
+    securityBtn.status = OFF;
+    securityBtn.lastState = HIGH;
+    securityBtn.lastDebounceTime = 0;
 
-    DEBUG_BUTTON("SecurityBtn", SecurityBtn);
+    DEBUG_BUTTON("securityBtn", securityBtn);
     DEBUG("\r\n");
 
     // LCD
     LCD.device->begin(LCD_COLS, LCD_ROWS);
     LCD.device->setRGB(255, 255, 255);
 
-    // Buzzer
-    pinMode(Alarm.pin, OUTPUT);
+    // Alarm
+    pinMode(buzzer.pin, OUTPUT);
 
-    // Weight sensors
-    WeightSensor01.device.begin(WeightSensor01.dtPin, WeightSensor01.sckPin);
-    WeightSensor01.device.set_scale(WEIGHT_SENSORS_CALIBRATION_FACTOR);
-    WeightSensor01.device.tare();
+    // Weight sensor
+    weightSensor.device.begin(weightSensor.dtPin, weightSensor.sckPin);
+    weightSensor.device.set_scale(WEIGHT_SENSORS_CALIBRATION_FACTOR);
+    weightSensor.device.tare();
 
-    pinMode(WeightSensor01.led, OUTPUT);
+    pinMode(weightSensor.led, OUTPUT);
 
-    DEBUG_WEIGHT_SENSOR("WeightSensor01", WeightSensor01);
-    DEBUG("\r\n");
-
-    WeightSensor02.device.begin(WeightSensor02.dtPin, WeightSensor02.sckPin);
-    WeightSensor02.device.set_scale(WEIGHT_SENSORS_CALIBRATION_FACTOR);
-    WeightSensor02.device.tare();
-
-    pinMode(WeightSensor02.led, OUTPUT);
-
-    DEBUG_WEIGHT_SENSOR("WeightSensor02", WeightSensor02);
+    DEBUG_WEIGHT_SENSOR("weightSensor", weightSensor);
     DEBUG("\r\n");
 
     // FreeRTOS tasks
     initSyncObjects();
 
     lockWeightSensors();
-    sampleWeight(&WeightSensor01);
-    sampleWeight(&WeightSensor02);
+    sampleWeight(&weightSensor);
     unlockWeightSensors();
 
     xTaskCreate(xButtonsTask, "Buttons", 2048, NULL, 2, NULL);
     xTaskCreate(xWeightSampleTask, "WeightSample", 2048, NULL, 1, NULL);
-    xTaskCreate(xBuzzerTask, "Alarm", 2048, &Alarm, 1, NULL);
-    xTaskCreate(xMqttTask, "Mqtt", 8192, NULL, 1, NULL);
+    xTaskCreate(xBuzzerTask, "Alarm", 2048, &alarm, 1, NULL);
+    xTaskCreate(xMQTTTask, "MQTT", 8192, NULL, 1, NULL);
 
     DEBUG("Setup completed.\r\n\n");
 }
 
 void loop() {
-    handleEvent(getSecurityBtnEvent(Status));
-    handleEvent(getAnomalySensorsEvent(Status));
-    handleEvent(getStockBtnEvent(Status));
-    handleEvent(getStockSensorsEvent(Status));
+    handleEvent(getSecurityBtnEvent(status));
+    handleEvent(getAnomalySensorsEvent(status));
+    handleEvent(getStockBtnEvent(status));
+    handleEvent(getStockSensorsEvent(status));
 }
