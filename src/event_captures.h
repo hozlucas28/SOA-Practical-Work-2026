@@ -26,4 +26,12 @@ SystemEvent getSecurityBtnEvent(SystemStatus systemStatus);
  */
 SystemEvent getAnomalySensorsEvent(SystemStatus systemStatus);
 
+/**
+ * Read-only snapshot of the latched per-sensor anomaly state maintained by
+ * `getAnomalySensorsEvent`. Lets `xMqttTask` publish the same security alert
+ * the buzzer/LED reflect, without re-deriving the latch logic. Does not modify
+ * any state.
+ */
+void getAnomalyLatch(bool* anomaly01, bool* anomaly02);
+
 #endif  // SRC_EVENT_CAPTURES_H_INCLUDED

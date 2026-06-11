@@ -17,6 +17,9 @@
 #include "sync.h"
 #include "tasks.h"
 
+// MQTT integration
+#include "mqtt.h"
+
 // Event capture functions
 #include "event_captures.h"
 
@@ -89,26 +92,43 @@ void handleEvent(SystemEvent event) {
         case SECURITY_MODE:
             switch (event) {
                 case SECURITY_OFF:
-                    stopBuzzer(&buzzer);
-                    ledOff(&weightSensor);
+                    silenceAlarm(&Alarm);
+                    ledOff(&WeightSensor01);
+                    ledOff(&WeightSensor02);
                     lcdClear(&LCD);
                     status = VIRGIN_EMBEDDED;
                     DEBUG_FSM(SECURITY_MODE, event, status);
                     break;
 
                 case SECURITY_OFF_TO_STOCK:
-                    stopBuzzer(&buzzer);
-                    ledOff(&weightSensor);
+                    silenceAlarm(&Alarm);
+                    ledOff(&WeightSensor01);
+                    ledOff(&WeightSensor02);
                     lcdClear(&LCD);
                     status = STOCK_MODE;
                     DEBUG_FSM(SECURITY_MODE, event, status);
                     break;
 
-                case ANOMALY_SENSOR:
-                    ledOn(&weightSensor);
-                    playBuzzer(&buzzer);
-                    lcdPrint(&LCD, "Security alert", "on sensor!");
-                    DEBUG_FSM(SECURITY_MODE, event, status);
+                case ANOMALY_SENSOR_01:
+                    ledOn(&WeightSensor01);
+                    triggerAlarm(&Alarm);
+                    lcdPrint(&LCD, "Security alert", "on sensor #01!");
+                    DEBUG_FSM(SECURITY_MODE, event, Status);
+                    break;
+
+                case ANOMALY_SENSOR_02:
+                    ledOn(&WeightSensor02);
+                    triggerAlarm(&Alarm);
+                    lcdPrint(&LCD, "Security alert", "on sensor #02!");
+                    DEBUG_FSM(SECURITY_MODE, event, Status);
+                    break;
+
+                case ANOMALY_SENSORS:
+                    ledOn(&WeightSensor01);
+                    ledOn(&WeightSensor02);
+                    triggerAlarm(&Alarm);
+                    lcdPrint(&LCD, "Security alert", "on all sensors!");
+                    DEBUG_FSM(SECURITY_MODE, event, Status);
                     break;
 
                 default:
@@ -179,7 +199,8 @@ void setup() {
 
     xTaskCreate(xButtonsTask, "Buttons", 2048, NULL, 2, NULL);
     xTaskCreate(xWeightSampleTask, "WeightSample", 2048, NULL, 1, NULL);
-    xTaskCreate(xBuzzerTask, "buzzer", 2048, &buzzer, 1, NULL);
+    xTaskCreate(xBuzzerTask, "Alarm", 2048, &alarm, 1, NULL);
+    xTaskCreate(xMQTTTask, "MQTT", 8192, NULL, 1, NULL);
 
     DEBUG("Setup completed.\r\n\n");
 }
