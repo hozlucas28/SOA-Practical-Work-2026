@@ -12,13 +12,6 @@
 void switchBtnState(Button* btn);
 
 /**
- * Set `btn->status` and drive its paired LED to match. Shared by the physical
- * button path (`switchBtnState`) and the remote MQTT command path, so a remote
- * command produces the exact same effect as a physical press (state + LED).
- */
-void applyButtonStatus(Button* btn, ButtonStatus status);
-
-/**
  * Read 10 raw HX711 samples and write the averaged weight (in grams) into
  * `weightSensor->sample`. Sets `sample.valid = false` while the device is
  * unready; sets it `true` after a successful read. Called from
@@ -44,26 +37,6 @@ void playBuzzer(Buzzer* buzzer);
 /** Request the buzzer task to stop playing. The task owns silencing the GPIO. */
 void stopBuzzer(Buzzer* buzzer);
 
-/**
- * Set the remote "muted" flag consulted by `triggerAlarm`. Set from the MQTT
- * `cmd/alarm` handler so the app can silence the buzzer without leaving
- * Security mode.
- */
-void setAlarmMuted(bool muted);
-
-/**
- * Start the alarm unless it is remotely muted. Used by the FSM in place of
- * `playBuzzer` so the mute flag is honored without adding logic to the FSM.
- */
-void triggerAlarm(Buzzer* buzzer);
-
-/**
- * Stop the alarm and clear the remote mute flag. Used by the FSM in place of
- * `stopBuzzer` when leaving Security mode, so a stale mute never carries over
- * to the next Security session.
- */
-void silenceAlarm(Buzzer* buzzer);
-
 /** Cached weight in grams (0 if no valid sample yet). */
 unsigned int getWeight(WeightSensor* sensor);
 
@@ -85,19 +58,6 @@ bool tryGetStock(WeightSensor* sensor, unsigned int* outStock);
  * anomaly detection. No-op when the cache is invalid.
  */
 void setBaselineWeight(WeightSensor* sensor);
-
-/**
- * Restore a previously saved HX711 zero offset (persisted tare). Skips a fresh
- * `tare()`, so a reboot with product already on the shelf does not corrupt the
- * zero. Runs under `lockWeightSensors()`.
- */
-void setSensorOffset(WeightSensor* weightSensor, int32_t offset);
-
-/**
- * Tare the load cell now and return the resulting zero offset (to be persisted).
- * Runs under `lockWeightSensors()`.
- */
-int32_t tareAndGetOffset(WeightSensor* weightSensor);
 
 /** Light the per-shelf LED if it is currently off. */
 void ledOn(WeightSensor* sensor);

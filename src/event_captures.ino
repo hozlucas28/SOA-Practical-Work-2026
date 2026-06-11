@@ -85,8 +85,3 @@ SystemEvent getAnomalySensorsEvent(SystemStatus systemStatus) {
 
     return NO_ANOMALY;
 }
-
-void getAnomalyLatch(bool* anomaly01Out, bool* anomaly02Out) {
-    *anomaly01Out = anomaly01;
-    *anomaly02Out = anomaly02;
-}
