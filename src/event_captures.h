@@ -1,5 +1,5 @@
-#ifndef SRC_EVENT_CAPTURES_H_INCLUDED
-#define SRC_EVENT_CAPTURES_H_INCLUDED
+#ifndef EVENT_CAPTURES_H_INCLUDED
+#define EVENT_CAPTURES_H_INCLUDED
 
 #include "enums.h"
 
@@ -36,4 +36,4 @@ SystemEvent getSecurityBtnEvent(SystemStatus systemStatus);
  */
 SystemEvent getAnomalySensorEvent(SystemStatus systemStatus);
 
-#endif  // SRC_EVENT_CAPTURES_H_INCLUDED
+#endif  // EVENT_CAPTURES_H_INCLUDED

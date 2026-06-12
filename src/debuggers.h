@@ -1,5 +1,5 @@
-#ifndef SRC_DEBUGGERS_H_INCLUDED
-#define SRC_DEBUGGERS_H_INCLUDED
+#ifndef DEBUGGERS_H_INCLUDED
+#define DEBUGGERS_H_INCLUDED
 
 #include "enums.h"
 
@@ -141,5 +141,5 @@
 #define DEBUG_SYSTEM_EVENT(event, printMethod)   ;
 #define DEBUG_FSM(status, event, nextStatus)     ;
 
-#endif
-#endif  // SRC_DEBUGGERS_H_INCLUDED
+#endif  // DEBUG_MODE
+#endif  // DEBUGGERS_H_INCLUDED

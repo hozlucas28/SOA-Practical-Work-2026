@@ -1,5 +1,5 @@
-#ifndef SRC_ENUMS_H_INCLUDED
-#define SRC_ENUMS_H_INCLUDED
+#ifndef ENUMS_H_INCLUDED
+#define ENUMS_H_INCLUDED
 
 /**
  * Logical button state.
@@ -35,4 +35,4 @@ enum SystemEvent {
     UNKNOWN_SYSTEM_EVENT,
 };
 
-#endif  // SRC_ENUMS_H_INCLUDED
+#endif  // ENUMS_H_INCLUDED

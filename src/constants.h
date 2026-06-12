@@ -1,5 +1,5 @@
-#ifndef SRC_CONSTANTS_H_INCLUDED
-#define SRC_CONSTANTS_H_INCLUDED
+#ifndef CONSTANTS_H_INCLUDED
+#define CONSTANTS_H_INCLUDED
 
 #include "enums.h"
 #include "structs.h"
@@ -93,4 +93,4 @@ extern WeightSensor weightSensor;
  */
 extern volatile SystemStatus Status;
 
-#endif  // SRC_CONSTANTS_H_INCLUDED
+#endif  // CONSTANTS_H_INCLUDED
