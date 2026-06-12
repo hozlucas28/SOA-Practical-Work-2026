@@ -3,35 +3,37 @@
 
 #include "enums.h"
 
-/** Maps the cached `stockBtn.status` to `STOCK_ON` / `STOCK_OFF`. */
+/**
+ * Returns the `stockBtn` events.
+ *
+ *   - `STOCK_ON`: When `stockBtn` is latched.
+ *   - `STOCK_OFF`: Otherwise.
+ */
 SystemEvent getStockBtnEvent(SystemStatus systemStatus);
 
 /**
- * Compares cached stock counts against the per-sensor minimums and returns
- * the matching `STOCK_MISSING_*` / `NO_MISSING_STOCK` event. Returns
- * `NO_MISSING_STOCK` when the FSM is not in `STOCK_MODE` so the dispatcher
- * does nothing in other modes.
+ * Returns the `weightSensor` events.
+ *
+ *   - `STOCK_MISSING_SENSOR`: When the calculated stock is less than the minimum acceptable one.
+ *   - `NO_MISSING_STOCK`: Otherwise.
  */
-SystemEvent getStockSensorsEvent(SystemStatus systemStatus);
+SystemEvent getStockSensorEvent(SystemStatus systemStatus);
 
-/** Maps the cached `securityBtn.status` to `SECURITY_*` events. */
+/**
+ * Returns the `securityBtn` events.
+ *
+ *   - `SECURITY_ON`: When `securityBtn` is latched.
+ *   - `SECURITY_OFF_TO_STOCK`: When the `securityBtn` is not latched, and the `stockBtn` is latched.
+ *   - `SECURITY_OFF`: Otherwise.
+ */
 SystemEvent getSecurityBtnEvent(SystemStatus systemStatus);
 
 /**
- * Latches a per-sensor anomaly when the cached weight diverges from the
- * baseline by more than `ANOMALY_THRESHOLD`. Skips the comparison when the
- * cached sample is invalid (HX711 unready) so a transient unready does not
- * trigger a false alarm. Latches reset whenever the FSM is not in
- * `SECURITY_MODE`.
+ * Returns the `anomalySensor` events.
+ *
+ *   - `ANOMALY_SENSOR`: When the `weight` is greater than or less than `weight +/- ANOMALY_THRESHOLD`.
+ *   - `NO_ANOMALY`: Otherwise.
  */
-SystemEvent getAnomalySensorsEvent(SystemStatus systemStatus);
-
-/**
- * Read-only snapshot of the latched per-sensor anomaly state maintained by
- * `getAnomalySensorsEvent`. Lets `xMqttTask` publish the same security alert
- * the buzzer/LED reflect, without re-deriving the latch logic. Does not modify
- * any state.
- */
-void getAnomalyLatch(bool* anomaly01, bool* anomaly02);
+SystemEvent getAnomalySensorEvent(SystemStatus systemStatus);
 
 #endif  // SRC_EVENT_CAPTURES_H_INCLUDED
