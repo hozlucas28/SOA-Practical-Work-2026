@@ -1,5 +1,5 @@
-#ifndef SRC_STRUCTS_H_INCLUDED
-#define SRC_STRUCTS_H_INCLUDED
+#ifndef STRUCTS_H_INCLUDED
+#define STRUCTS_H_INCLUDED
 
 #include <Arduino.h>
 #include <HX711.h>
@@ -8,24 +8,26 @@
 #include "enums.h"
 
 /**
- * Push button with a paired status LED. Mutable fields are `volatile` because
- * they are written from the buttons FreeRTOS task and read from the FSM loop
- * and event captures.
+ * Button wrapper. Stores button configuration, current state,
+ * and debounce timing.
  */
 struct Button {
+    /** ESP32 pin connected to the button. */
     const uint8_t pin;
+    /** ESP32 pin connected to the status LED. */
     const uint8_t led;
-    volatile int state;
-    volatile ButtonStatus status;
-    volatile int lastState;
+    /** Current electrical state. */
+    int state;
+    /** Current status. */
+    ButtonStatus status;
+    /** Previous electrical state. */
+    int lastState;
+    /** Debounce delay (in milliseconds) to prevent false triggers. */
     const unsigned long debounceDelay;
-    volatile unsigned long lastDebounceTime;
+    /** Timestamp of the last state change for debounce logic. */
+    unsigned long lastDebounceTime;
 };
 
-/**
- * Grove RGB 16x2 LCD wrapper. `line01` and `line02` cache the last printed
- * text so `lcdPrint` can skip a full clear when the content is unchanged.
- */
 struct LCD16x2 {
     rgb_lcd* device;
     String line01;
@@ -33,57 +35,61 @@ struct LCD16x2 {
 };
 
 /**
- * Product placed on a shelf. `weight` is the per-unit mass in grams used to
- * convert raw scale readings into stock counts.
+ * Product information.
  */
 struct Product {
+    /** Product name. */
     String name;
+    /** Weight of one unit of the product. */
     unsigned int weight;
 };
 
-/**
- * Latest sampled weight from a `WeightSensor`. Produced by
- * `xWeightSampleTask`, consumed by the FSM and event captures. `valid` is
- * cleared while the HX711 is unready so consumers can skip stale data
- * instead of treating it as a real `0 g` reading.
- */
 struct WeightSample {
-    volatile unsigned int weight;
-    volatile bool valid;
+    unsigned int weight;
+    bool isValid;
 };
 
 /**
- * HX711 load cell wrapper with cached sample, baseline (used by Security
- * mode anomaly detection) and minimum acceptable stock (used by Stock mode
- * shortage detection).
+ * HX711 load cell wrapper with cached sample, baseline (used by `SECURITY_MODE`) and minimum
+ * acceptable stock (used by `STOCK_MODE`).
  */
 struct WeightSensor {
+    /** HX711 instance. */
     HX711 device;
+    /** ESP32 pin connected to the HX711 data line. */
     const uint8_t dtPin;
+    /** ESP32 pin connected to the HX711 serial clock line. */
     const uint8_t sckPin;
+    /** ESP32 pin connected to the status LED. */
     const uint8_t led;
+    /** Product information associated with the weight sensor. */
     Product product;
+    /** Baseline weight (in grams) for anomaly detection in `SECURITY_MODE`. */
     unsigned int baselineWeight;
+    /** Minimum acceptable stock (in grams) for `STOCK_MODE`. */
     unsigned int minimumAcceptableStock;
+    /** Latest weight sample reading. */
     WeightSample sample;
 };
 
-/** Single tone step in a `Buzzer` melody: frequency in Hz, duration in ms. */
 struct BuzzerStep {
     unsigned int frequency;
     unsigned long duration;
 };
 
 /**
- * Buzzer driven by a dedicated FreeRTOS task. `playing` is the only
- * cross-core signal: it is `volatile` because the FSM toggles it from one
- * core and `xBuzzerTask` reads it from another.
+ * Buzzer control wrapper. Stores the output pin and the melody sequence to
+ * reproduce, plus its current playback state.
  */
 struct Buzzer {
+    /** ESP32 pin connected to the buzzer. */
     const uint8_t pin;
+    /** Melody steps. */
     const BuzzerStep* steps;
+    /** Number of steps in the melody sequence. */
     const size_t stepsLength;
-    volatile bool playing;
+    /** Indicates whether the buzzer is currently playing a melody. */
+    bool playing;
 };
 
-#endif  // SRC_STRUCTS_H_INCLUDED
+#endif  // STRUCTS_H_INCLUDED
