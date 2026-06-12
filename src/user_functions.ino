@@ -137,11 +137,11 @@ void silenceAlarm(Buzzer* buzzer) {
 unsigned int getWeight(WeightSensor* sensor) {
     unsigned int weight = 0;
 
-    lockWeightSensors();
+    lockWeightSensor();
 
     if (sensor->sample.valid) weight = sensor->sample.weight;
 
-    unlockWeightSensors();
+    unlockWeightSensor();
 
     return weight;
 }
@@ -149,13 +149,13 @@ unsigned int getWeight(WeightSensor* sensor) {
 unsigned int getStock(WeightSensor* sensor) {
     unsigned int stock = 0;
 
-    lockWeightSensors();
+    lockWeightSensor();
 
     if (sensor->sample.valid) {
         stock = sensor->sample.weight / sensor->product.weight;
     }
 
-    unlockWeightSensors();
+    unlockWeightSensor();
 
     return stock;
 }
@@ -163,14 +163,14 @@ unsigned int getStock(WeightSensor* sensor) {
 bool tryGetWeight(WeightSensor* sensor, unsigned int* outWeight) {
     bool valid = false;
 
-    lockWeightSensors();
+    lockWeightSensor();
 
     if (sensor->sample.valid) {
         *outWeight = sensor->sample.weight;
         valid = true;
     }
 
-    unlockWeightSensors();
+    unlockWeightSensor();
 
     return valid;
 }
@@ -178,53 +178,53 @@ bool tryGetWeight(WeightSensor* sensor, unsigned int* outWeight) {
 bool tryGetStock(WeightSensor* sensor, unsigned int* outStock) {
     bool valid = false;
 
-    lockWeightSensors();
+    lockWeightSensor();
 
     if (sensor->sample.valid) {
         *outStock = sensor->sample.weight / sensor->product.weight;
         valid = true;
     }
 
-    unlockWeightSensors();
+    unlockWeightSensor();
 
     return valid;
 }
 
 void setBaselineWeight(WeightSensor* sensor) {
-    lockWeightSensors();
+    lockWeightSensor();
 
     if (sensor->sample.valid) {
         sensor->baselineWeight = sensor->sample.weight;
     }
 
-    unlockWeightSensors();
+    unlockWeightSensor();
 }
 
 void setSensorOffset(WeightSensor* weightSensor, int32_t offset) {
-    lockWeightSensors();
+    lockWeightSensor();
     weightSensor->device.set_offset(offset);
-    unlockWeightSensors();
+    unlockWeightSensor();
 }
 
 int32_t tareAndGetOffset(WeightSensor* weightSensor) {
-    lockWeightSensors();
+    lockWeightSensor();
     weightSensor->device.tare();
     int32_t offset = weightSensor->device.get_offset();
-    unlockWeightSensors();
+    unlockWeightSensor();
     return offset;
 }
 
 void setSensorOffset(WeightSensor* weightSensor, int32_t offset) {
-    lockWeightSensors();
+    lockWeightSensor();
     weightSensor->device.set_offset(offset);
-    unlockWeightSensors();
+    unlockWeightSensor();
 }
 
 int32_t tareAndGetOffset(WeightSensor* weightSensor) {
-    lockWeightSensors();
+    lockWeightSensor();
     weightSensor->device.tare();
     int32_t offset = weightSensor->device.get_offset();
-    unlockWeightSensors();
+    unlockWeightSensor();
     return offset;
 }
 

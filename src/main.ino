@@ -193,9 +193,9 @@ void setup() {
     // FreeRTOS tasks
     initSyncObjects();
 
-    lockWeightSensors();
+    lockWeightSensor();
     sampleWeight(&weightSensor);
-    unlockWeightSensors();
+    unlockWeightSensor();
 
     xTaskCreate(xButtonsTask, "Buttons", 2048, NULL, 2, NULL);
     xTaskCreate(xWeightSampleTask, "WeightSample", 2048, NULL, 1, NULL);

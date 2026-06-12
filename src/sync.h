@@ -1,37 +1,22 @@
-#ifndef SRC_SYNC_H_INCLUDED
-#define SRC_SYNC_H_INCLUDED
+#ifndef SYNC_H_INCLUDED
+#define SYNC_H_INCLUDED
 
 #include <freertos/FreeRTOS.h>
 #include <freertos/semphr.h>
 
-/** TODO: Añadir documentación  */
 extern SemaphoreHandle_t buttonsMutex;
-
-/** TODO: Añadir documentación  */
+extern SemaphoreHandle_t buzzerMutex;
 extern SemaphoreHandle_t weightSensorMutex;
 
-/** TODO: Añadir documentación  */
-extern SemaphoreHandle_t buzzerMutex;
+void initMutexs();
 
-/** TODO: Añadir documentación  */
-void initSyncObjects();
-
-/** TODO: Añadir documentación  */
 void lockButtons();
-
-/** TODO: Añadir documentación  */
 void unlockButtons();
 
-/** TODO: Añadir documentación  */
-void lockWeightSensors();
-
-/** TODO: Añadir documentación  */
-void unlockWeightSensors();
-
-/** TODO: Añadir documentación  */
 void lockBuzzer();
-
-/** TODO: Añadir documentación  */
 void unlockBuzzer();
 
-#endif  // SRC_SYNC_H_INCLUDED
+void lockWeightSensor();
+void unlockWeightSensor();
+
+#endif  // SYNC_H_INCLUDED

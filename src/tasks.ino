@@ -18,9 +18,9 @@ void xButtonsTask(void* parameters) {
 
 void xWeightSampleTask(void* parameters) {
     while (true) {
-        lockWeightSensors();
+        lockWeightSensor();
         sampleWeight(&weightSensor);
-        unlockWeightSensors();
+        unlockWeightSensor();
 
         vTaskDelay(pdMS_TO_TICKS(WEIGHT_SAMPLE_TASK_PERIOD_MS));
     }

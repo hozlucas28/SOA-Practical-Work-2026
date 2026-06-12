@@ -5,7 +5,7 @@ SemaphoreHandle_t buttonsMutex = nullptr;
 SemaphoreHandle_t weightSensorMutex = nullptr;
 SemaphoreHandle_t buzzerMutex = nullptr;
 
-void initSyncObjects() {
+void initMutexs() {
     buttonsMutex = xSemaphoreCreateMutex();
     weightSensorMutex = xSemaphoreCreateMutex();
     buzzerMutex = xSemaphoreCreateMutex();
@@ -19,11 +19,11 @@ void unlockButtons() {
     if (buttonsMutex) xSemaphoreGive(buttonsMutex);
 }
 
-void lockWeightSensors() {
+void lockWeightSensor() {
     if (weightSensorMutex) xSemaphoreTake(weightSensorMutex, portMAX_DELAY);
 }
 
-void unlockWeightSensors() {
+void unlockWeightSensor() {
     if (weightSensorMutex) xSemaphoreGive(weightSensorMutex);
 }
 

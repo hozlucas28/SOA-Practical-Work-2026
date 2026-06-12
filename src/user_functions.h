@@ -89,7 +89,7 @@ void setBaselineWeight(WeightSensor* sensor);
 /**
  * Restore a previously saved HX711 zero offset (persisted tare). Skips a fresh
  * `tare()`, so a reboot with product already on the shelf does not corrupt the
- * zero. Runs under `lockWeightSensors()`.
+ * zero. Runs under `lockWeightSensor()`.
  */
 void setSensorOffset(WeightSensor* weightSensor, int32_t offset);
 
