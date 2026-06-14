@@ -16,7 +16,7 @@
 // ---------------------------------------------------------------------------- //
 
 /** Host del broker Mosquitto (IP LAN del host del Docker). */
-#define MQTT_HOST "192.168.0.100"
+#define MQTT_HOST "127.0.0.1"
 
 /** Puerto del broker MQTT. */
 #define MQTT_PORT 1883
