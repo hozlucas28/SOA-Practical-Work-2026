@@ -6,7 +6,6 @@
 #include "debuggers.h"
 #include "event_captures.h"
 #include "mqtt.h"
-#include "secrets.h"
 #include "sync.h"
 #include "user_functions.h"
 
@@ -51,7 +50,7 @@ static void initTopics() {
     TopicCmdSub = prefix + "/cmd/#";
     TopicCmdStock = prefix + "/cmd/stock";
     TopicCmdSecurity = prefix + "/cmd/security";
-    TopicCmdAlarm = prefix + "/cmd/alarm";
+    TopicCmdAlarm = prefix + "/cmd/buzzer";
     TopicCmdTare = prefix + "/cmd/tare";
     TopicTareRequest = prefix + "/tare/request";
     TopicTareState = prefix + "/tare/state";
@@ -81,14 +80,14 @@ struct SecurityCache {
     unsigned int current;
 };
 
-// Indexed by sensor (0 -> WeightSensor01, 1 -> WeightSensor02). Kept as arrays
+// Indexed by sensor (0 -> weightSensor). Kept as arrays
 // so the publish helpers take a plain `int index` instead of a `StockCache*` /
 // `SecurityCache*` in their signature: the Arduino `.ino` prototype generator
 // would otherwise forward-declare them before these types exist.
-// Status reports both mode toggles (what the user activated) plus the mode the
+// status reports both mode toggles (what the user activated) plus the mode the
 // FSM is actually running (`active`), since Security has priority over Stock.
 struct StatusCache {
-    bool valid;
+    bool isValid;
     bool stock;
     bool security;
     SystemStatus active;
@@ -99,7 +98,7 @@ static StockCache StockCaches[2] = { { false, 0, 0, 0, false }, { false, 0, 0, 0
 static SecurityCache SecurityCaches[2] = { { false, false, 0, 0 }, { false, false, 0, 0 } };
 
 static void invalidateCache() {
-    StatusCacheValue.valid = false;
+    StatusCacheValue.isValid = false;
     StockCaches[0].valid = false;
     StockCaches[1].valid = false;
     SecurityCaches[0].valid = false;
@@ -125,13 +124,13 @@ static const char* modeToStr(SystemStatus status) {
 
 static void publishStatus() {
     lockButtons();
-    bool stockOn = (StockBtn.status == ON);
-    bool securityOn = (SecurityBtn.status == ON);
+    bool stockOn = (stockBtn.status == ON);
+    bool securityOn = (securityBtn.status == ON);
     unlockButtons();
 
-    SystemStatus active = Status;
+    SystemStatus active = status;
 
-    if (StatusCacheValue.valid && StatusCacheValue.stock == stockOn && StatusCacheValue.security == securityOn &&
+    if (StatusCacheValue.isValid && StatusCacheValue.stock == stockOn && StatusCacheValue.security == securityOn &&
         StatusCacheValue.active == active) {
         return;
     }
@@ -219,15 +218,12 @@ static void publishHeartbeat() {
 static void publishStateIfChanged() {
     publishStatus();
 
-    publishStock(&WeightSensor01, TopicStock01, 0);
-    publishStock(&WeightSensor02, TopicStock02, 1);
+    publishStock(&weightSensor, TopicStock01, 0);
 
     bool anomaly01 = false;
     bool anomaly02 = false;
-    getAnomalyLatch(&anomaly01, &anomaly02);
 
-    publishSecurity(&WeightSensor01, anomaly01, TopicSecurity01, 0);
-    publishSecurity(&WeightSensor02, anomaly02, TopicSecurity02, 1);
+    publishSecurity(&weightSensor, anomaly01, TopicSecurity01, 0);
 }
 
 // ---------------------------------------------------------------------------- //
@@ -271,18 +267,17 @@ static bool parseShelfOffset(const char* message, const char* shelfKey, int32_t*
 static void resolveShelfTare(WeightSensor* sensor, const char* message, const char* shelfKey, const char* shelf) {
     int32_t offset = 0;
     if (parseShelfOffset(message, shelfKey, &offset)) {
-        setSensorOffset(sensor, offset);
+        setOffset(sensor, offset);
         DEBUG("Tare %s: restored saved offset %ld\r\n", shelf, (long)offset);
     } else {
-        int32_t newOffset = tareAndGetOffset(sensor);
+        int32_t newOffset = tare(sensor);
         publishTareSave(shelf, newOffset);
         DEBUG("Tare %s: tared now, persisting offset %ld\r\n", shelf, (long)newOffset);
     }
 }
 
 static void resolveTare(const char* message) {
-    resolveShelfTare(&WeightSensor01, message, "\"01\"", "01");
-    resolveShelfTare(&WeightSensor02, message, "\"02\"", "02");
+    resolveShelfTare(&weightSensor, message, "\"01\"", "01");
     TareDone = true;
     TareRequested = false;
 }
@@ -313,7 +308,9 @@ static void mqttCallback(char* topic, byte* payload, unsigned int length) {
     if (currentTopic == TopicCmdStock) {
         if (strcmp(message, "ON") == 0 || strcmp(message, "OFF") == 0) {
             lockButtons();
-            applyButtonStatus(&StockBtn, strcmp(message, "ON") == 0 ? ON : OFF);
+            ButtonStatus newStatus = strcmp(message, "ON") == 0 ? ON : OFF;
+            stockBtn.status = newStatus;
+            digitalWrite(stockBtn.led, newStatus);
             unlockButtons();
         }
         return;
@@ -322,7 +319,9 @@ static void mqttCallback(char* topic, byte* payload, unsigned int length) {
     if (currentTopic == TopicCmdSecurity) {
         if (strcmp(message, "ON") == 0 || strcmp(message, "OFF") == 0) {
             lockButtons();
-            applyButtonStatus(&SecurityBtn, strcmp(message, "ON") == 0 ? ON : OFF);
+            ButtonStatus newStatus = strcmp(message, "ON") == 0 ? ON : OFF;
+            securityBtn.status = newStatus;
+            digitalWrite(securityBtn.led, newStatus);
             unlockButtons();
         }
         return;
@@ -330,22 +329,19 @@ static void mqttCallback(char* topic, byte* payload, unsigned int length) {
 
     if (currentTopic == TopicCmdAlarm) {
         if (strcmp(message, "OFF") == 0) {
-            setAlarmMuted(true);
-            stopBuzzer(&Alarm);
+            stopBuzzer(&buzzer);
         } else if (strcmp(message, "ON") == 0) {
-            setAlarmMuted(false);
+            playBuzzer(&buzzer);
         }
         return;
     }
 
     if (currentTopic == TopicCmdTare) {
         if (strstr(message, "all") != nullptr) {
-            setBaselineWeight(&WeightSensor01);
-            setBaselineWeight(&WeightSensor02);
+            setBaselineWeight(&weightSensor);
         } else if (strstr(message, "1") != nullptr) {
-            setBaselineWeight(&WeightSensor01);
+            setBaselineWeight(&weightSensor);
         } else if (strstr(message, "2") != nullptr) {
-            setBaselineWeight(&WeightSensor02);
         }
         return;
     }
@@ -380,7 +376,7 @@ static void mqttReconnect() {
 
     static unsigned long lastAttempt = 0;
     unsigned long now = millis();
-    if (lastAttempt != 0 && (now - lastAttempt) < MQTT_RECONNECT_INTERVAL_MS) return;
+    if (lastAttempt != 0 && (now - lastAttempt) < MQTT_RECONNECTION_DELAY) return;
     lastAttempt = now;
 
     DEBUG("MQTT: connecting to %s:%u...\r\n", MQTT_HOST, MQTT_PORT);
@@ -412,12 +408,14 @@ static void mqttReconnect() {
 //                                     TASK                                     //
 // ---------------------------------------------------------------------------- //
 
-void xMqttTask(void* parameters) {
+void xMQTTTask(void* parameters) {
     initTopics();
 
     mqttClient.setServer(MQTT_HOST, MQTT_PORT);
-    mqttClient.setKeepAlive(MQTT_KEEPALIVE_S);
+    mqttClient.setKeepAlive(MQTT_KEEPALIVE);
     mqttClient.setCallback(mqttCallback);
+
+    uint32_t delay = pdMS_TO_TICKS(100);
 
     while (true) {
         if (WiFi.status() != WL_CONNECTED) connectWifi();
@@ -438,6 +436,6 @@ void xMqttTask(void* parameters) {
             DEBUG("Tare: no response from Node-RED, keeping boot-time tare.\r\n");
         }
 
-        vTaskDelay(pdMS_TO_TICKS(MQTT_TASK_PERIOD_MS));
+        vTaskDelay(delay);
     }
 }

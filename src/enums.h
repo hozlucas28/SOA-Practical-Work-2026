@@ -2,7 +2,7 @@
 #define ENUMS_H_INCLUDED
 
 /**
- * Logical button state.
+ * @brief Logical button state.
  */
 enum ButtonStatus {
     OFF,
@@ -10,7 +10,7 @@ enum ButtonStatus {
 };
 
 /**
- * System status for the FSM.
+ * @brief System status for the FSM.
  */
 enum SystemStatus {
     VIRGIN_EMBEDDED,
@@ -20,7 +20,7 @@ enum SystemStatus {
 };
 
 /**
- * System event consumed by the FSM.
+ * @brief System event consumed by the FSM.
  */
 enum SystemEvent {
     STOCK_ON,

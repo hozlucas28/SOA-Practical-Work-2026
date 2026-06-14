@@ -1,23 +1,31 @@
-#ifndef SRC_TASKS_H_INCLUDED
-#define SRC_TASKS_H_INCLUDED
+#ifndef TASKS_H_INCLUDED
+#define TASKS_H_INCLUDED
 
 /**
- * Polls both push buttons and applies debounce. Param: unused (NULL).
- * Period: `BUTTONS_TASK_PERIOD_MS`.
+ * @brief FreeRTOS task responsible for managing interaction with the buttons.
+ *
+ * @param parameters Generic FreeRTOS parameter for the task.
+ *
+ * @note `parameters` is not used, button controls is done through the global `stockBtn` and `securityBtn` variables.
  */
 void xButtonsTask(void* parameters);
 
 /**
- * Refreshes the cached `WeightSample` for both load cells. Param: unused (NULL).
- * Period: `WEIGHT_SAMPLE_TASK_PERIOD_MS`.
- */
-void xWeightSampleTask(void* parameters);
-
-/**
- * Drives the buzzer through its melody steps while `Buzzer.playing` is
- * true; silences the GPIO when it transitions to false. Param: pointer to
- * the target `Buzzer`.
+ * @brief FreeRTOS task responsible for controlling the buzzer.
+ *
+ * @param parameters Generic FreeRTOS parameter for the task.
+ *
+ * @note `parameters` is not used, buzzer control is done through the global `buzzer` variable.
  */
 void xBuzzerTask(void* parameters);
 
-#endif  // SRC_TASKS_H_INCLUDED
+/**
+ * @brief FreeRTOS task responsible for performing weight sampling.
+ *
+ * @param parameters Generic FreeRTOS parameter for the task.
+ *
+ * @note `parameters` is not used, weight sensor sampling is done through the global `weightSensor` variable.
+ */
+void xWeightSampleTask(void* parameters);
+
+#endif  // TASKS_H_INCLUDED

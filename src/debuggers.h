@@ -8,18 +8,24 @@
 #if DEBUG_MODE
 
 /**
- * Prints a formatted debug message to the serial monitor.
+ * @brief Prints a formatted debug message to the serial monitor.
+ * @param message The format string.
+ * @param ... Optional arguments to format into the message.
  */
 #define DEBUG(message, ...) Serial.printf(message, ##__VA_ARGS__)
 
 /**
- * Prints a signal value (e.g. `Button.state`) as `HIGH`, or `LOW`.
+ * @brief Prints a signal value (e.g. `Button.state`) as `HIGH`, or `LOW`.
+ * @param signal The signal value.
+ * @param printMethod The method to use for printing (e.g. `Serial.println`).
  */
 #define DEBUG_SIGNAL(signal, printMethod) printMethod(signal ? "HIGH" : "LOW")
 
 /**
- * Prints a `ButtonStatus` value as `ON`, or `OFF` to the serial monitor.
- * Defaults to `UNKNOWN_BUTTON_STATUS`.
+ * @brief Prints a `ButtonStatus` value as `ON`, or `OFF` to the serial monitor.
+ * @note Defaults to `UNKNOWN_BUTTON_STATUS`.
+ * @param status The `ButtonStatus` value.
+ * @param printMethod The method to use for printing (e.g. `Serial.println`).
  */
 #define DEBUG_BUTTON_STATUS(status, printMethod)  \
     switch (status) {                             \
@@ -36,7 +42,9 @@
     }
 
 /**
- * Prints each field of a `Button` to the serial monitor.
+ * @brief Prints each field of a `Button` to the serial monitor.
+ * @param name The name of the button (e.g. "button1") to prefix each field with.
+ * @param button The `Button` instance.
  */
 #define DEBUG_BUTTON(name, button)                                            \
     Serial.printf("%s.pin = %u\r\n", name, button.pin);                       \
@@ -51,7 +59,9 @@
     Serial.printf("%s.lastDebounceTime = %ums\r\n", name, button.lastDebounceTime)
 
 /**
- * Prints each field of a `WeightSensor` to the serial monitor.
+ * @brief Prints each field of a `WeightSensor` to the serial monitor.
+ * @param name The name of the weight sensor (e.g. "weightSensor1") to prefix each field with.
+ * @param sensor The `WeightSensor` instance.
  */
 #define DEBUG_WEIGHT_SENSOR(name, sensor)                     \
     Serial.printf("%s.device = %p\r\n", name, sensor.device); \
@@ -60,7 +70,9 @@
     Serial.printf("%s.led = %u\r\n", name, sensor.led)
 
 /**
- * Prints a `SystemStatus` value.
+ * @brief Prints a `SystemStatus` value.
+ * @param status The `SystemStatus` value.
+ * @param printMethod The method to use for printing (e.g. `Serial.println`).
  */
 #define DEBUG_SYSTEM_STATUS(status, printMethod)  \
     switch (status) {                             \
@@ -81,7 +93,9 @@
     }
 
 /**
- * Prints a `SystemEvent` value.
+ * @brief Prints a `SystemEvent` value.
+ * @param event The `SystemEvent` value.
+ * @param printMethod The method to use for printing (e.g. `Serial.println`).
  */
 #define DEBUG_SYSTEM_EVENT(event, printMethod)      \
     switch (event) {                                \
@@ -122,7 +136,10 @@
     }
 
 /**
- * Prints a FSM transition as `<status> <event> --> <nextStatus>`.
+ * @brief Prints a FSM transition as `<status> <event> --> <nextStatus>`.
+ * @param status The current `SystemStatus` value.
+ * @param event The `SystemEvent` value that triggers the transition.
+ * @param nextStatus The next `SystemStatus` value after the transition.
  */
 #define DEBUG_FSM(status, event, nextStatus)   \
     DEBUG_SYSTEM_STATUS(status, Serial.print); \

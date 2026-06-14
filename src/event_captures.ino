@@ -6,48 +6,38 @@
 #include "user_functions.h"
 
 SystemEvent getStockBtnEvent(SystemStatus systemStatus) {
-    ButtonStatus status = OFF;
-
     lockButtons();
-    status = stockBtn.status;
+    ButtonStatus status = stockBtn.status;
     unlockButtons();
 
     return status == ON ? STOCK_ON : STOCK_OFF;
 }
 
-SystemEvent getStockSensorsEvent(SystemStatus systemStatus) {
+SystemEvent getStockSensorEvent(SystemStatus systemStatus) {
     if (systemStatus != STOCK_MODE) return NO_MISSING_STOCK;
 
-    unsigned int stock = 0;
-    unsigned int minimum = 0;
     bool valid = false;
+    unsigned int stock = 0;
 
-    lockWeightSensors();
-
-    if (weightSensor.sample.valid) {
-        stock = weightSensor.sample.weight / weightSensor.product.weight;
+    lockWeightSensor();
+    if (weightSensor.sample.isValid) {
         valid = true;
+        stock = weightSensor.sample.weight / weightSensor.product.weight;
     }
-    minimum = weightSensor.minimumAcceptableStock;
 
-    unlockWeightSensors();
+    unsigned int minimum = weightSensor.minimumAcceptableStock;
+    unlockWeightSensor();
 
     bool missingStock = valid && stock < minimum;
-
     if (missingStock) return STOCK_MISSING_SENSOR;
 
     return NO_MISSING_STOCK;
 }
 
 SystemEvent getSecurityBtnEvent(SystemStatus systemStatus) {
-    ButtonStatus securityStatus = OFF;
-    ButtonStatus stockStatus = OFF;
-
     lockButtons();
-
-    securityStatus = securityBtn.status;
-    stockStatus = stockBtn.status;
-
+    ButtonStatus securityStatus = securityBtn.status;
+    ButtonStatus stockStatus = stockBtn.status;
     unlockButtons();
 
     if (securityStatus == ON) return SECURITY_ON;
@@ -55,38 +45,30 @@ SystemEvent getSecurityBtnEvent(SystemStatus systemStatus) {
     return SECURITY_OFF;
 }
 
-static bool anomaly = false;
+bool anomaly = false;
 
-SystemEvent getAnomalySensorsEvent(SystemStatus systemStatus) {
+SystemEvent getAnomalySensorEvent(SystemStatus systemStatus) {
     if (systemStatus != SECURITY_MODE) {
         anomaly = false;
         return NO_ANOMALY;
     };
 
-    unsigned int weight = 0;
-    unsigned int baseline = 0;
     bool valid = false;
+    unsigned int weight = 0;
 
-    lockWeightSensors();
-
-    if (weightSensor.sample.valid) {
-        weight = weightSensor.sample.weight;
+    lockWeightSensor();
+    if (weightSensor.sample.isValid) {
         valid = true;
+        weight = weightSensor.sample.weight;
     }
-    baseline = weightSensor.baselineWeight;
 
-    unlockWeightSensors();
+    unsigned int baseline = weightSensor.baselineWeight;
+    unlockWeightSensor();
 
     if (valid) {
         anomaly = anomaly || abs((int)weight - (int)baseline) > ANOMALY_THRESHOLD;
     }
 
     if (anomaly) return ANOMALY_SENSOR;
-
     return NO_ANOMALY;
-}
-
-void getAnomalyLatch(bool* anomaly01Out, bool* anomaly02Out) {
-    *anomaly01Out = anomaly01;
-    *anomaly02Out = anomaly02;
 }

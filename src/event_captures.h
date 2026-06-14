@@ -4,34 +4,43 @@
 #include "enums.h"
 
 /**
- * Returns the `stockBtn` events.
+ * @brief Returns the `stockBtn` events.
  *
+ * @return
  *   - `STOCK_ON`: When `stockBtn` is latched.
+ *
  *   - `STOCK_OFF`: Otherwise.
  */
 SystemEvent getStockBtnEvent(SystemStatus systemStatus);
 
 /**
- * Returns the `weightSensor` events.
+ * @brief Returns the `weightSensor` events.
  *
+ * @return
  *   - `STOCK_MISSING_SENSOR`: When the calculated stock is less than the minimum acceptable one.
+ *
  *   - `NO_MISSING_STOCK`: Otherwise.
  */
 SystemEvent getStockSensorEvent(SystemStatus systemStatus);
 
 /**
- * Returns the `securityBtn` events.
+ * @brief Returns the `securityBtn` events.
  *
+ * @return
  *   - `SECURITY_ON`: When `securityBtn` is latched.
+ *
  *   - `SECURITY_OFF_TO_STOCK`: When the `securityBtn` is not latched, and the `stockBtn` is latched.
+ *
  *   - `SECURITY_OFF`: Otherwise.
  */
 SystemEvent getSecurityBtnEvent(SystemStatus systemStatus);
 
 /**
- * Returns the `anomalySensor` events.
+ * @brief Returns the `anomalySensor` events.
  *
+ * @return
  *   - `ANOMALY_SENSOR`: When the `weight` is greater than or less than `weight +/- ANOMALY_THRESHOLD`.
+ *
  *   - `NO_ANOMALY`: Otherwise.
  */
 SystemEvent getAnomalySensorEvent(SystemStatus systemStatus);
