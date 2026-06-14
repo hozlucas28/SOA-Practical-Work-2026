@@ -18,7 +18,7 @@
 #include "tasks.h"
 
 // MQTT integration
-// #include "mqtt.h"
+#include "mqtt.h"
 
 // Event capture functions
 #include "event_captures.h"
@@ -183,7 +183,7 @@ void setup() {
     xTaskCreate(xButtonsTask, "Buttons", 2048, NULL, 2, NULL);
     xTaskCreate(xWeightSampleTask, "WeightSample", 2048, NULL, 1, NULL);
     xTaskCreate(xBuzzerTask, "Alarm", 2048, &buzzer, 1, NULL);
-    // xTaskCreate(xMQTTTask, "MQTT", 8192, NULL, 1, NULL);
+    xTaskCreate(xMQTTTask, "MQTT", 8192, NULL, 1, NULL);
 
     DEBUG("Setup completed.\r\n\n");
 }
