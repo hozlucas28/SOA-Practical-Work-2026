@@ -28,6 +28,8 @@
 
 This repository contains our practical work for the Advanced Operating Systems (SOA) subject at the [National University of La Matanza (UNLaM)](https://www.unlam.edu.ar/). It consists of an embedded system based on an ESP32, which has two operating modes (activated by push buttons):
 
+- **Virgin Embedded:** The system is idle, waiting for a mode to be activated.
+
 - **Stock Mode:** Reports the current stock and alerts if the quantity on the shelves is below the established minimum. It uses an LCD screen to show the existing stock or the shortage, LED lights to visually indicate which shelf needs restocking, and weight sensors to calculate the stock on each shelf.
 
 - **Security Mode:** Detects variations in the weight of the shelves. It employs an LCD screen to report on which shelf the alteration was detected, a buzzer as an audible alarm, LED lights to visually indicate the affected shelf, and weight sensors to register these variations.
@@ -37,37 +39,12 @@ This repository contains our practical work for the Advanced Operating Systems (
 
 ### Features
 
+- Architectural design of a Mosquitto (MQTT broker), bridged to an Android app through Node-RED.
 - Code conventions and standards
 - Design and development of a finite state machine (FSM) to act according to the operating mode.
 - Handling of sensors and actuators on an ESP32.
 - Integration between an embedded system and a mobile application developed in Android.
 - [Real-time monitoring of stock and security alerts](#mqtt-integration) over MQTT, with remote control.
-
-## MQTT integration
-
-The embedded system connects to an **MQTT broker** (Mosquitto, bridged to the Android app through
-Node-RED) to enable **real-time monitoring and remote control**. It is a parallel channel: the two
-physical buttons keep working exactly as before, and a remote command produces the same effect as a
-physical press. The two app screens map one-to-one to the per-shelf topics:
-
-- **Real-time inventory** (Stock mode) → `shelf/{NN}/stock` (weight and availability).
-- **Active security** (Security mode) → `shelf/{NN}/security` (secure / alert).
-
-All topics live under the `soa/{deviceId}/...` prefix.
-
-| Direction   | Topics                                                              | Purpose                                                                                                           |
-| ----------- | ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| ESP32 → app | `availability`, `status`, `shelf/{NN}/stock`, `shelf/{NN}/security` | Telemetry: liveness, mode, per-shelf stock and security state                                                     |
-| app → ESP32 | `cmd/stock`, `cmd/security`, `cmd/alarm`, `cmd/tare`                | Remote control: toggle each mode (both can be on, Security wins), mute/restore the buzzer, re-tare the load cells |
-
-> [!NOTE]
-> The full contract (payload schemas, retain/QoS, credentials and test commands) lives in
-> [docs/mqtt-topics.md](docs/mqtt-topics.md).
-
-> [!IMPORTANT]
-> Copy `src/secrets.example.h` to `src/secrets.h` and fill in your WiFi and broker credentials before
-> building (`src/secrets.h` is git-ignored). In the Wokwi simulator use the `Wokwi-GUEST` network and
-> run the Wokwi Gateway (`wokwigw`) on the host so the virtual ESP32 can reach your broker.
 
 ## Installation
 
@@ -76,7 +53,6 @@ All topics live under the `soa/{deviceId}/...` prefix.
 - Open the repository folder in Visual Studio Code.
 - Reopen the project in a Dev Container, pressing `F1` and selecting `Dev Containers: Rebuild and Reopen in Container`.
 - Wait for the container to be built and started.
-- Copy `src/secrets.example.h` to `src/secrets.h` and fill in your WiFi and MQTT credentials. This file is git-ignored and **required to build** (see [MQTT integration](#mqtt-integration)).
 - Press `F1` and select `Wokwi: Request a new License` option to get a free license for build the project.
 - When you have the license, press `F1` and select `PlatformIO: Build` to build the source code.
 - After the build is finished, press `F1` and select `Wokwi: Start Simulator` to run the project.
@@ -99,6 +75,38 @@ All topics live under the `soa/{deviceId}/...` prefix.
 > [!IMPORTANT]
 > The first time you build the DevContainer, PlatformIO extension will request you to restart Visual Studio Code to finish the installation. Please do so, otherwise you won't be able to build the project.
 
+## Diagrams
+
+### Connection between ESP32 and Android application
+
+```
+                     ┌───────────────────────────────┐
+                     │  Cloudflare tunnel            │
+                     │                               │
+                     │  ┌─────────────────────────┐  │
+                     │  │ Docker (local machine)  │  │
+                     │  │                         │  │
+┌─────────┐    MQTT  │  │   ┌─────────────────┐   │  │  MQTT    ┌───────────────────────┐
+│  ESP32  │ ◄────────│──│──►│    Mosquitto    │◄──│──│────────► │  Android application  │
+└─────────┘          │  │   │  (MQTT broker)  │   │  │          └───────────────────────┘
+                     │  │   └───────▲─────────┘   │  │
+                     │  │           │             │  │
+                     │  │           │             │  │
+                     │  │    ┌──────▼───────┐     │  │
+                     │  │    │   Node-RED   │     │  │
+                     │  │    │  with SQLite │     │  │
+                     │  │    └──────────────┘     │  │
+                     │  └─────────────────────────┘  │
+                     └───────────────────────────────┘
+```
+
+- `ESP32`: The embedded system that monitors the stock and security of the shelves.
+- `Mosquitto`: The MQTT broker that receives the messages from the ESP32 and forwards them to the Android application.
+- `Node-RED`: A flow-based development tool that acts as a bridge between the MQTT broker and the Android application, allowing us to process the messages and store them in a SQLite database.
+
+> [!NOTE]
+> The MQTT broker and Node-RED are running in a Docker container on the local machine, and are exposed to the internet through a Cloudflare tunnel, allowing the Android application to connect to them remotely.
+
 ## Project structure
 
 ```bash
@@ -113,6 +121,12 @@ SOA-Practical-Work-2026/
 │
 ├── docs/                   # Documentation files, such as diagrams, images, and other statics.
 │
+├── infrastructure/         # Infrastructure files related with the MQTT broker and Node-RED.
+│   ├── mosquitto/          # Mosquitto persistence files, such as the configuration file.
+│   ├── node-red/           # Node-RED persistence files, such as the flows and settings files.
+│   │
+│   └── compose.yaml        # Docker Compose file to run the MQTT broker and Node-RED.
+│
 ├── scripts/
 │   └── health-check.sh     # Script to check that the necessary tools are installed.
 │
@@ -124,8 +138,14 @@ SOA-Practical-Work-2026/
 │   ├── event_captures.h    # Definitions of event captures for the FSM.
 │   ├── event_captures.ino  # Implementation of event captures for the FSM.
 │   ├── main.ino            # Entry point.
+│   ├── mqtt.h              # Definitions of MQTT topics and payloads, and functions to publish messages to the MQTT broker.
+│   ├── mqtt.ino            # Implementation of functions to publish messages to the MQTT broker.
 │   ├── pins.h              # ESP32 pin's designations.
 │   ├── structs.h           # Structs for global constants.
+│   ├── sync.h              # Definitions of synchronization functions to handle semaphores and mutexes.
+│   ├── sync.ino            # Implementation of synchronization functions.
+│   ├── tasks.h             # Definitions of FreeRTOS tasks.
+│   ├── tasks.ino           # Implementation of FreeRTOS tasks.
 │   ├── user_functions.h    # Definitions of utility functions for sensors and actuators.
 │   └── user_functions.ino  # Implementation of utility functions for sensors and actuators.
 │
@@ -133,7 +153,7 @@ SOA-Practical-Work-2026/
 ├── .editorconfig           # Configuration to standardize code style across different IDEs.
 ├── .gitattributes          # Configuration for Git attributes.
 ├── .gitignore              # List of all files and folders that Git should ignore.
-├── .oxfmtrc                # Oxfmt configuration (code formatter).
+├── .oxfmtrc.json           # Oxfmt configuration (code formatter).
 ├── cspell.json             # Code Spell Checker extension configuration.
 ├── diagram.json            # Circuit diagram of the project, exported from Wokwi.
 ├── lefthook.yaml           # Lefthook configuration (Git hooks manager).
@@ -150,6 +170,10 @@ SOA-Practical-Work-2026/
 - [Farias Maira](https://github.com/maifarias)
 - [Hoz Lucas](https://github.com/hozlucas28)
 - [Massa Valentin](https://github.com/ValentinMassa)
+
+## Additional material
+
+- [Repository with the source code of the Android application](https://github.com/maifarias/SOA-Stock-Security-App)
 
 ## License
 
