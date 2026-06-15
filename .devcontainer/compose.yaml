@@ -5,5 +5,9 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+      - "1880:1880"
     volumes:
       - ../:/workspaces/SOA-Practical-Work-2026:cached
