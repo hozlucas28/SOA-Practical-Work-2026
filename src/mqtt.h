@@ -22,10 +22,10 @@
 #define MQTT_PORT 1883
 
 /** Usuario MQTT (creado con `mosquitto_passwd`). */
-#define MQTT_USER "esp32"
+#define MQTT_USER "grupo-l5"
 
 /** Contraseña MQTT. */
-#define MQTT_PASS "changeme"
+#define MQTT_PASS "secretl5"
 
 /** Identificador único del dispositivo. Se usa como clientId y como `{id}` de los topics. */
 #define MQTT_CLIENT_ID "gondola-01"
