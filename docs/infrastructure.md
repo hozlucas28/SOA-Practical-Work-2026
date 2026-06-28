@@ -4,55 +4,161 @@
 
 Mosquitto is a message broker that implements the MQTT protocol, allowing devices to communicate with each other by publishing and subscribing to topics. In this project, Mosquitto is connected to the ESP32 using the MQTT protocol, enabling real-time data exchange and control commands between devices through Node-RED.
 
+> [!TIP]
+> If you want to test the MQTT topics, you need to have the [VSMqtt](https://marketplace.visualstudio.com/items?itemName=rpdswtk.vsmqtt) extension installed; It is installed automatically installed if you are in the DevContainer. Then, click in the MQTT icon in the left sidebar of Visual Studio Code to open the MQTT Explorer, where you can connect to the Mosquitto broker and test the topics.
+
 ### Topics published by ESP32
 
-| Topic                 | Description                              | When it is published                                         |
-| --------------------- | ---------------------------------------- | ------------------------------------------------------------ |
-| `{id}/health`         |                                          | On connect (`online`) and as **Last Will (LWT)** (`offline`) |
-| `{id}/status`         | Reports the operating mode of the ESP32. | On every FSM transition (on-change)                          |
-| `{id}/shelf/stock`    | Reports the status of the stock          | On-change of weight/stock/health                             |
-| `{id}/shelf/security` | Reports the status of the stock          | On-change of the security state                              |
+| Topic                         | Description                                                                                                                                |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `:device/health`              | Provides the health status of the device, indicating whether it is online or offline.                                                      |
+| `:device/system`              | Provides the current system status of the device, indicating whether it is in virgin mode, stock mode, security mode, or an unknown state. |
+| `:device/alarm`               | Provides the status of the alarm system, indicating whether it is muted or playing.                                                        |
+| `:device/:shelf/stock`        | Provides the current stock information for a specific shelf.                                                                               |
+| `:device/:shelf/security`     | Provides the current security information for a specific shelf, anomaly detection status.                                                  |
+| `:device/:shelf/tare/request` | Request the tare offset value for a specific shelf.                                                                                        |
+| `:device/:shelf/tare/save`    | Provides the tare offset value for a specific shelf to be saved.                                                                           |
 
-### Request and responses examples
+> [!NOTE]
+> `:device` is a placeholder for the device identifier (e.g., `corridor-01`), and `:shelf` is a placeholder for the shelf identifier (e.g., `shelf-01`).
+
+#### Examples of messages
 
 <details>
-<summary><code>gondola-01/status</code></summary>
+<summary><code>corridor-01/health</code></summary>
 
 ```jsonc
-// Response...
 {
-  "stock": true, // boolean
-  "security": true, // boolean
-  "active": "security" // "none" | "stock" | "security"
+  "status": "online" // "online" | "offline"
 }
 ```
 
 </details>
 
 <details>
-<summary><code>gondola-01/shelf/stock</code></summary>
+<summary><code>corridor-01/system</code></summary>
 
 ```jsonc
-// Response...
 {
-  "available": true, // boolean - Derived from `stock >= min`
-  "min": 1, // int - Minimum stock threshold
-  "stock": 3, // int - Derived from weight and unit weight (e.g., 3000 g / 1000 g per unit = 3 units)
-  "weight": 3000 // int - Current weight (in grams)
+  "status": "VIRGIN_EMBEDDED" // "VIRGIN_EMBEDDED" | "STOCK_MODE" | "SECURITY_MODE" | "UNKNOWN_SYSTEM_STATUS"
 }
 ```
 
 </details>
 
 <details>
-<summary><code>gondola-01/shelf/security</code></summary>
+<summary><code>corridor-01/alarm</code></summary>
 
 ```jsonc
-// Response...
 {
-  "baseline": 3000, // int - Reference weight (in grams)
-  "current": 3000, // int - Current weight (in grams)
-  "secure": true // boolean - `true` = no anomaly, `false` = anomaly detected
+  "muted": false, // boolean
+  "playing": false // boolean
+}
+```
+
+</details>
+
+<details>
+<summary><code>corridor-01/shelf-01/stock</code></summary>
+
+```jsonc
+{
+  "name": "Apples", // String
+  "weight": 1000, // int - Current weight (in grams)
+  "weightPerUnit": 0, // int - Weight of a single unit (in grams)
+  "stock": 0, // int - Current stock
+  "minimumAcceptableStock": 1 // int - Minimum stock threshold
+}
+```
+
+</details>
+
+<details>
+<summary><code>corridor-01/shelf-01/security</code></summary>
+
+```jsonc
+{
+  "weight": 0, // int - Current weight (in grams)
+  "anomaly": false, // boolean - `true` = anomaly detected, `false` = no anomaly
+  "baselineWeight": 0 // int - Reference weight (in grams)
+}
+```
+
+</details>
+
+<details>
+<summary><code>corridor-01/shelf-01/tare/request</code></summary>
+
+```jsonc
+
+```
+
+</details>
+
+<details>
+<summary><code>corridor-01/shelf-01/tare/save</code></summary>
+
+```jsonc
+{
+  "offset": 0 // int - Tare offset (in grams)
+}
+```
+
+</details>
+
+### Topics subscribed by ESP32
+
+| Topic                    | Description                                                                           |
+| ------------------------ | ------------------------------------------------------------------------------------- |
+| `:device/stock`          | Provides the command to activate or deactivate stock mode on the device.              |
+| `:device/security`       | Provides the command to activate or deactivate security mode on the device.           |
+| `:device/security/alarm` | Provides the command to mute or unmute the alarm on the device.                       |
+| `:device/:shelf/tare`    | Provides the command to set the tare offset value for a specific shelf on the device. |
+
+> `:device` is a placeholder for the device identifier (e.g., `corridor-01`), and `:shelf` is a placeholder for the shelf identifier (e.g., `shelf-01`).
+
+#### Examples of messages
+
+<details>
+<summary><code>corridor-01/stock</code></summary>
+
+```jsonc
+{
+  "status": "ON" // "ON" | "OFF"
+}
+```
+
+</details>
+
+<details>
+<summary><code>corridor-01/security</code></summary>
+
+```jsonc
+{
+  "status": "ON" // "ON" | "OFF"
+}
+```
+
+</details>
+
+<details>
+<summary><code>corridor-01/security/alarm</code></summary>
+
+```jsonc
+{
+  "status": "MUTE" // "MUTE" | "UNMUTE"
+}
+```
+
+</details>
+
+<details>
+<summary><code>corridor-01/shelf-01/tare</code></summary>
+
+```jsonc
+{
+  "offset": 0, // int - Tare offset (in grams)
+  "lastUpdate": 0 // int - Timestamp of the last update (in milliseconds elapsed since midnight, January 1, 1970 Universal Coordinated Time [UTC])
 }
 ```
 
@@ -60,55 +166,59 @@ Mosquitto is a message broker that implements the MQTT protocol, allowing device
 
 ## Node-RED
 
-Node-RED is a flow-based development tool for visual programming, used to connect and orchestrate various services and devices. In this project, Node-RED serves as the central hub for processing data from the ESP32 and sending commands back to it via MQTT, and vice versa.
+Node-RED is a flow-based development tool for visual programming, used to connect and orchestrate various services and devices. In this project, Node-RED serves as the central hub for processing data from the ESP32 and sending commands back to it via MQTT, and vice versa. It also exposes HTTP endpoints that allow external applications, such as the Android app, to interact with the system.
 
-### Endpoints
+> [!TIP]
+> If you want to test the HTTP endpoints, open `infrastructure/endpoints.http` file in Visual Studio Code and click on the `Send Request` button above each request. You need to have the [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) extension installed; It is installed automatically installed if you are in the DevContainer.
 
-| Endpoint                            | Description                        | Request                  |
-| ----------------------------------- | ---------------------------------- | ------------------------ |
-| `GET {host}/api/{id}/state`         | Get state of `{id}`.               |                          |
-| `POST {host}/api/{id}/cmd/stock`    | Activate/Deactivate stock mode.    | `{"on": bool}`           |
-| `POST {host}/api/{id}/cmd/security` | Activate/Deactivate security mode. | `{"on": bool}`           |
-| `POST {host}/api/{id}/cmd/alarm`    | Play/Mute the alarm.               | `{"alarm": "ON"\|"OFF"}` |
+### HTTP endpoints
 
-#### Request and responses examples
+| Method | Endpoint                               | Description                                           |
+| ------ | -------------------------------------- | ----------------------------------------------------- |
+| GET    | `:hostname/api/:device`                |
+| POST   | `:hostname/api/:device/stock`          | Activates or deactivates stock mode on the device.    |
+| POST   | `:hostname/api/:device/security`       | Activates or deactivates security mode on the device. |
+| POST   | `:hostname/api/:device/security/alarm` | Mutes or unmutes the alarm on the device.             |
+
+> `:hostname` is a placeholder for the hostname or IP address of the machine running the Node-RED server (e.g., `localhost`), and `:device` is a placeholder for the device identifier (e.g., `corridor-01`).
+
+#### Responses examples
 
 <details>
-<summary><code>GET http://localhost:1880/api/gondola-01/state</code></summary>
+<summary><code>GET http://localhost:1880/api/corridor-01</code></summary>
 
 ```jsonc
-// Response...
+// Response body...
 {
-  "availability": "online",
-  "status": {
-    "stock": false,
-    "security": false,
-    "active": "IDLE"
+  "health": {
+    "status": "online"
   },
-  "shelf": {
-    "01": {
+  "lastUpdate": 1782670749047,
+  "system": {
+    "status": "VIRGIN_EMBEDDED"
+  },
+  "alarm": {
+    "muted": false,
+    "playing": false
+  },
+  "shelves": {
+    "shelf-01": {
       "stock": {
+        "name": "Apples",
         "weight": 0,
+        "weightPerUnit": 1000,
         "stock": 0,
-        "min": 1,
-        "available": false
+        "minimumAcceptableStock": 1
       },
       "security": {
-        "secure": true,
-        "baseline": 0,
-        "current": 0,
-        "delta": 0
+        "weight": 0,
+        "anomaly": false,
+        "baselineWeight": 0
+      },
+      "tare": {
+        "offset": 0,
+        "lastUpdate": 1782670724391
       }
-    }
-  },
-  "updatedAt": 1781553219269,
-  "tare": {
-    "01": {
-      "done": true,
-      "ts": 1781551801990
-    },
-    "02": {
-      "done": false
     }
   }
 }
@@ -116,65 +226,40 @@ Node-RED is a flow-based development tool for visual programming, used to connec
 
 </details>
 
+#### Request examples
+
 <details>
-<summary><code>POST http://localhost:1880/api/gondola-01/cmd/stock</code></summary>
+<summary><code>POST http://localhost:1880/api/corridor-01/stock</code></summary>
 
 ```jsonc
-// Request...
+// Request body...
 {
-  "on": true
-}
-
-// Response...
-{
-  "ok": true,
-  "topic": "gondola-01/cmd/stock",
-  "payload": "ON"
+  "status": "ON" // "ON" | "OFF"
 }
 ```
 
 </details>
 
 <details>
-<summary><code>POST http://localhost:1880/api/gondola-01/cmd/security</code></summary>
+<summary><code>POST http://localhost:1880/api/corridor-01/security</code></summary>
 
 ```jsonc
-// Request...
+// Request body...
 {
-  "on": true
-}
-
-// Response...
-{
-  "ok": true,
-  "topic": "gondola-01/cmd/security",
-  "payload": "OFF"
+  "status": "ON" // "ON" | "OFF"
 }
 ```
 
 </details>
 
 <details>
-<summary><code>POST http://localhost:1880/api/gondola-01/cmd/alarm</code></summary>
+<summary><code>POST http://localhost:1880/api/corridor-01/security/alarm</code></summary>
 
 ```jsonc
-// Request...
+// Request body...
 {
-  "alarm": "ON"
-}
-
-// Response...
-{
-  "ok": true,
-  "topic": "gondola-01/cmd/alarm",
-  "payload": "OFF"
+  "status": "MUTE" // "MUTE" | "UNMUTE"
 }
 ```
 
 </details>
-
-## How to test manually Mosquitto topics and Node-RED endpoints
-
-1. Inside the DevContainer, open a terminal and execute `docker compose up --file infrastructure/compose.yaml --detach` to start Mosquitto and Node-RED services.
-<!-- TODO: Cómo testear los tópico de Mosquitto  -->
-2. To test Node-RED endpoints, open [infrastructure/endpoints.http](../infrastructure/endpoints.http) file and click on `Send Request` (above each endpoint) provided by the REST Client extension in VSCode. If you need, you can change declared variables at the top of the file (e.g., `hostname` or `id`) to match your testing environment.
