@@ -35,7 +35,6 @@ const SystemEvent getStockSensorEvent(const SystemStatus status);
  */
 const SystemEvent getSecurityBtnEvent(const SystemStatus status);
 
-<<<<<<< HEAD
 /**
  * @brief Returns the `anomalySensor` events.
  *
@@ -46,7 +45,4 @@ const SystemEvent getSecurityBtnEvent(const SystemStatus status);
  */
 const SystemEvent getAnomalySensorEvent(const SystemStatus status);
 
-#endif  // EVENT_CAPTURES_H_INCLUDED
-=======
 #endif  // SRC_EVENT_CAPTURES_H_INCLUDED
-    >>>>>>> origin/main

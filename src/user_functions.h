@@ -17,23 +17,11 @@
 void switchBtn(Button* btn);
 
 /**
-<<<<<<< HEAD
  * @brief Print a single line on the LCD, clearing only what is needed.
  *
  * @param lcd Pointer to the LCD struct.
  * @param line The line to print on the LCD.
  */
-=======
-*Read 10 raw HX711 samples and write the averaged weight(in grams
-) into* `weightSensor->sample`.Sets `sample.valid = false` while the device is * unready;
-sets it `true` after a successful read.Called from* `xWeightSampleTask` and once during `setup()` to prime the cache.* /
-    void sampleWeight(WeightSensor* sensor);
-
-/** Clear the LCD and the cached `line01`/`line02`. */
-void lcdClear(LCD16x2* lcd);
-
-/** Print a single line on the LCD, clearing only what is needed. */
->>>>>>> origin/main
 void lcdPrint(LCD16x2* lcd, const String line);
 
 /**
@@ -68,7 +56,6 @@ void playBuzzer(Buzzer* buzzer);
  */
 void stopBuzzer(Buzzer* buzzer);
 
-<<<<<<< HEAD
 /**
  * @brief Mute the buzzer, preventing it from playing any sound.
  *
@@ -91,13 +78,6 @@ void unmuteBuzzer(Buzzer* buzzer);
  * @return The weight in grams if the sample is valid; otherwise, returns `0`.
  */
 const int32_t getOffset(WeightSensor* sensor);
-=======
-/** Cached weight in grams (0 if no valid sample yet). */
-unsigned int getWeight(WeightSensor* sensor);
-
-/** Cached stock count derived from the cached weight. 0 if no valid sample. */
-unsigned int getStock(WeightSensor* sensor);
->>>>>>> origin/main
 
 /**
  * @brief Get the valid weight reading from the sensor's sample.
@@ -172,7 +152,6 @@ void setWeight(WeightSensor* sensor);
  */
 void setBaselineWeight(WeightSensor* sensor);
 
-<<<<<<< HEAD
 /**
  * @brief Tare the weight sensor.
  *
@@ -198,9 +177,5 @@ void ledOn(const WeightSensor* sensor);
  * @param sensor Pointer to the weight sensor.
  */
 void ledOff(const WeightSensor* sensor);
-=======
-/** Light the per-shelf LED if it is currently off. */
-void ledOn(WeightSensor* sensor);
->>>>>>> origin/main
 
 #endif  // USER_FUNCTIONS_H_INCLUDED
