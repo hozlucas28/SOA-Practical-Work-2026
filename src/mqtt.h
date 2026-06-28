@@ -8,7 +8,7 @@
 
 #define MQTT_DEVICE_ID "corridor-01"  // Must be unique across all clients connecting to the same broker.
 
-#define MQTT_BROKER_HOST "172.22.32.1"  // IP address of the machine running the Mosquitto broker and Node-RED server.
+#define MQTT_BROKER_HOST "localhost"  // IP address of the machine running the Mosquitto broker and Node-RED server.
 #define MQTT_BROKER_PORT 1883
 
 #define MQTT_BROKER_USER     "grupo-l5"
