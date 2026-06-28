@@ -11,8 +11,6 @@
 <p align="center">
     <a href="#summary">Summary</a> •
     <a href="#installation">Installation</a> •
-    <a href="#diagrams">Diagrams</a> •
-    <a href="#mqtt-integration">MQTT integration</a>
     <br>
     <a href="#project-structure">Project structure</a> •
     <a href="#development-team">Development team</a> •
@@ -32,10 +30,10 @@ This repository contains our practical work for the Advanced Operating Systems (
 
 - **Stock Mode:** Reports the current stock and alerts if the quantity on the shelves is below the established minimum. It uses an LCD screen to show the existing stock or the shortage, LED lights to visually indicate which shelf needs restocking, and weight sensors to calculate the stock on each shelf.
 
-- **Security Mode:** Detects variations in the weight of the shelves. It employs an LCD screen to report on which shelf the alteration was detected, a buzzer as an audible alarm, LED lights to visually indicate the affected shelf, and weight sensors to register these variations.
+- **Security Mode:** Detects variations in the weight of the shelves. It employs an LCD screen to report on which shelf the alteration was detected, a buzzer as an audible alarm, LED lights to visually indicate the affected shelf, and weight sensors to register these variations. It has a higher priority than stock mode, so if both modes are activated at the same time, the system will execute security mode.
 
-> [!NOTE]
-> Security mode has a higher priority than stock mode, so if both modes are activated at the same time, the system will execute security mode.
+> [!TIP]
+> Check the [infrastructure documentation](docs/infrastructure.md) for more information about the MQTT topics and HTTP endpoints used in this project.
 
 ### Features
 
@@ -44,6 +42,8 @@ This repository contains our practical work for the Advanced Operating Systems (
 - Design and development of a finite state machine (FSM) to act according to the operating mode.
 - Handling of sensors and actuators on an ESP32.
 - Integration between an embedded system and a mobile application developed in Android.
+- MQTT and HTTP testing.
+- MQTT integration between the ESP32 and an Android application through Node-RED.
 - [Real-time monitoring of stock and security alerts](#mqtt-integration) over MQTT, with remote control.
 
 ## Installation
@@ -53,33 +53,44 @@ This repository contains our practical work for the Advanced Operating Systems (
 - Open the repository folder in Visual Studio Code.
 - Reopen the project in a Dev Container, pressing `F1` and selecting `Dev Containers: Rebuild and Reopen in Container`.
 - Wait for the container to be built and started.
+- Get the IP of your local machine and replace the `MQTT_BROKER_HOST` macro inside `src/mqtt.h` file with it.
+- Execute `docker compose up --file infrastructure/compose.yaml --detach` to start the MQTT broker and Node-RED.
 - Press `F1` and select `Wokwi: Request a new License` option to get a free license for build the project.
 - When you have the license, press `F1` and select `PlatformIO: Build` to build the source code.
 - After the build is finished, press `F1` and select `Wokwi: Start Simulator` to run the project.
-- That's it! You should see the project running in the Wokwi simulator.
+- That's it! You should see the project running in the Wokwi simulator connected.
 
 <details>
-<summary>How can I upload the project to a physical ESP32?</summary>
+<summary>How can I turn on the debug mode?</summary>
 
-1. Open the project in Visual Studio Code and make sure you are in the Dev Container.
-2. Connect your ESP32 to your computer using a USB cable.
-3. Press `F1` and select `PlatformIO: Upload` to upload the project to the ESP32.
-4. Wait for the upload process to finish.
-5. Once the upload is complete, the project should start running on the ESP32.
+1. Open `src/debuggers.h` file and change the value of `DEBUG_MODE` macro to `true`.
+2. Press `F1` and select `PlatformIO: Build` to rebuild the project.
+3. After the build is finished, press `F1` and select `Wokwi: Start Simulator` to run the project.
+4. That's it! Now the project will print debug messages to the serial monitor.
 
 </details>
 
 <details>
-<summary>How can I connect ESP32 and the Android application to the MQTT broker?</summary>
+<summary>How can I upload the project to a physical ESP32?</summary>
 
-1. Inside the DevContainer, open a terminal and execute `docker compose up --file infrastructure/compose.yaml --detach` to start the MQTT broker and Node-RED.
-2. Outside the DevContainer, install [Cloudflared](https://github.com/cloudflare/cloudflared).
-3. Then, open a terminal and execute `cloudflared tunnel --url http://localhost:1883` to create a Cloudflare tunnel.
-4. Replace `MQTT_BROKER_HOST` macro inside `src/mqtt.h` with the generated public URL (e.g.,`https://random-id.cloudflare-tunnel.com`) of the previous step, and rebuild the project.
-5. [LO MISMO QUE EL PASO ANTERIOR PERO EN LA APLICACIÓN DE ANDROID]
-6. Start the Wokwi simulator and test the MQTT integration.
+1. Make sure you are in the Dev Container.
+2. Open `src/mqtt.h` file and replace the `WIFI_SSID` and `WIFI_PASSWORD` macros with the credentials of the Wi-Fi network you want to connect to.
+3. Press `F1` and select `PlatformIO: Build` to rebuild the project.
+4. Connect your ESP32 to your computer using a USB cable.
+5. After the build is finished, press `F1` and select `PlatformIO: Upload` to upload the project to the ESP32.
+6. Wait for the upload process to finish.
+7. Once the upload is complete, the project should start running on the ESP32.
 
-> In a physical ESP32, you need to replace `WIFI_SSID` and `WIFI_PASSWORD` macros inside `src/mqtt.h` with the credentials of the Wi-Fi network you want to connect to, and then upload the project to the ESP32.
+</details>
+
+<details>
+<summary>How can I connect the Android application with the ESP32?</summary>
+
+1. Make sure you have the Android application installed on your mobile device.
+2. Open the Android application and go to settings.
+3. Enter the IP address of your local machine (the same one you used in the `MQTT_BROKER_HOST` macro inside `src/mqtt.h`) in the `MQTT broker host` field.
+4. Press the "Connect" button to establish a connection with the MQTT broker.
+5. Once connected, you should be able to receive real-time security and stock alerts through the Android application and control the system remotely.
 
 </details>
 
