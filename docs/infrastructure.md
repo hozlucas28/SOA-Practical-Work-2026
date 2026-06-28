@@ -1,24 +1,23 @@
 # Infrastructure
 
-```
-                     ┌──────────────────────────────────────┐
-                     │  WiFi (local network)                │
-                     │                                      │
-                     │  ┌────────────────────────────────┐  │
-                     │  │ Docker compose (local machine) │  │
-                     │  │                                │  │
-┌─────────┐    MQTT  │  │      ┌─────────────────┐       │  │  HTTP    ┌───────────────────────┐
-│  ESP32  │ ◄────────│──│─────►│    Mosquitto    │◄──────│──│────────► │  Android application  │
-└─────────┘          │  │      │  (MQTT broker)  │       │  │          └───────────────────────┘
-                     │  │      └───────▲─────────┘       │  │
-                     │  │              │                 │  │
-                     │  │              │                 │  │
-                     │  │       ┌──────▼───────┐         │  │
-                     │  │       │   Node-RED   │         │  │
-                     │  │       │  with SQLite │         │  │
-                     │  │       └──────────────┘         │  │
-                     │  └────────────────────────────────┘  │
-                     └──────────────────────────────────────┘
+```mermaid
+---
+config:
+  theme: base
+---
+
+architecture-beta
+  group localNetwork(logos:wifi)["Local network"]
+  group localMachine(logos:docker-icon)["Docker compose (local machine)"] in localNetwork
+
+  service esp32(logos:aws-ec2)["ESP32"]
+  service mqtt(server)["Mosquitto (MQQ broker)"] in localMachine
+  service nodered(server)["Node-RED with SQLite"] in localMachine
+  service android(logos:android-icon)["Android application"]
+
+  esp32:R <--> L:mqtt
+  mqtt:B <--> T:nodered
+  android:L <--> R:mqtt
 ```
 
 The MQTT broker and Node-RED are running as a Docker compose container on the local machine, and are exposed to the local network through the local IP of the local machine. This connection allows the ESP32 and Android application to communicate with the MQTT broker and Node-RED, enabling real-time data exchange and control commands between devices.
