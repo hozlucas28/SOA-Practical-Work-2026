@@ -11,17 +11,17 @@
  *
  *   - `STOCK_OFF`: Otherwise.
  */
-SystemEvent getStockBtnEvent(SystemStatus systemStatus);
+const SystemEvent getStockBtnEvent(const SystemStatus status);
 
 /**
- * @brief Returns the `weightSensor` events.
+ * @brief Returns the `weightSensor`'s events.
  *
  * @return
- *   - `STOCK_MISSING_SENSOR`: When the calculated stock is less than the minimum acceptable one.
+ *   - `STOCK_MISSING_SENSOR_01`: When the calculated stock is less than the minimum acceptable one.
  *
  *   - `NO_MISSING_STOCK`: Otherwise.
  */
-SystemEvent getStockSensorEvent(SystemStatus systemStatus);
+const SystemEvent getStockSensorEvent(const SystemStatus status);
 
 /**
  * @brief Returns the `securityBtn` events.
@@ -33,16 +33,16 @@ SystemEvent getStockSensorEvent(SystemStatus systemStatus);
  *
  *   - `SECURITY_OFF`: Otherwise.
  */
-SystemEvent getSecurityBtnEvent(SystemStatus systemStatus);
+const SystemEvent getSecurityBtnEvent(const SystemStatus status);
 
 /**
  * @brief Returns the `anomalySensor` events.
  *
  * @return
- *   - `ANOMALY_SENSOR`: When the `weight` is greater than or less than `weight +/- ANOMALY_THRESHOLD`.
+ *   - `ANOMALY_SENSOR_01`: When the `weight` is greater than or less than `weight +/- ANOMALY_THRESHOLD`.
  *
  *   - `NO_ANOMALY`: Otherwise.
  */
-SystemEvent getAnomalySensorEvent(SystemStatus systemStatus);
+const SystemEvent getAnomalySensorEvent(const SystemStatus status);
 
 #endif  // EVENT_CAPTURES_H_INCLUDED

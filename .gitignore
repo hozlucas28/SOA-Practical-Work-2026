@@ -110,6 +110,7 @@ web_modules/
 .vscode/*
 !.vscode/tasks.json
 !.vscode/*.code-snippets
+!.vscode/settings.json
 
 # Local history
 .history

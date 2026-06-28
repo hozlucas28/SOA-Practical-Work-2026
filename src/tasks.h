@@ -24,7 +24,7 @@ void xBuzzerTask(void* parameters);
  *
  * @param parameters Generic FreeRTOS parameter for the task.
  *
- * @note `parameters` is not used, weight sensor sampling is done through the global `weightSensor` variable.
+ * @note `parameters` is not used, weight sensor sampling is done through the global `weightSensor`'s variables.
  */
 void xWeightSampleTask(void* parameters);
 

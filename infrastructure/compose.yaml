@@ -8,9 +8,9 @@ services:
       - "1883:1883"
       - "9001:9001"
     volumes:
-      - ./mosquitto/config:/mosquitto/config
       - mosquitto_data:/mosquitto/data
       - mosquitto_log:/mosquitto/log
+      - ./mosquitto/config:/mosquitto/config
     restart: unless-stopped
 
   node-red:
@@ -21,10 +21,7 @@ services:
     ports:
       - "1880:1880"
     volumes:
-      - node_red_data:/data
-      - ./node-red/settings.js:/data/settings.js
-      - ./node-red/flows.json:/data/flows.json
-      - ./node-red/flows_cred.json:/data/flows_cred.json
+      - ./node-red:/data
     environment:
       - TZ=America/Argentina/Buenos_Aires
     restart: unless-stopped
@@ -34,4 +31,3 @@ services:
 volumes:
   mosquitto_data:
   mosquitto_log:
-  node_red_data:

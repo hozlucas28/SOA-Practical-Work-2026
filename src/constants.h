@@ -7,6 +7,7 @@
 #define LCD_ROWS 2
 #define LCD_COLS 16
 
+#define WEIGHT_SENSOR_ID                       "shelf-01"
 #define WEIGHT_SENSOR_PRODUCT_NAME             "Apples"
 #define WEIGHT_SENSOR_PRODUCT_WEIGHT           1000
 #define WEIGHT_SENSOR_MINIMUM_ACCEPTABLE_STOCK 1
@@ -23,28 +24,6 @@
  */
 #define ANOMALY_THRESHOLD 200
 
-/**
- * @brief MQTT keepalive, in seconds.
- */
-#define MQTT_KEEPALIVE 30
-
-/**
- * @brief Delay (in milliseconds) between broker reconnection attempts.
- */
-#define MQTT_RECONNECTION_DELAY 5000
-
-/**
- * @brief Period between forced "availability=online" heartbeats, in milliseconds. Guarantees frequent outbound activity
- * (well under the keepalive window) so the broker never times the client out, even when the simulation clock is slow.
- */
-#define MQTT_HEARTBEAT_MS 5000
-
-/**
- * @brief Time to wait for the persisted tare offsets (`tare/state` from Node-RED) after requesting them on connect, in
- * milliseconds. On timeout the boot-time tare stands and the handshake is given up (retried on the next boot).
- */
-#define TARE_RESPONSE_TIMEOUT_MS 4000
-
 extern Button stockBtn;
 extern Button securityBtn;
 
@@ -52,8 +31,8 @@ extern LCD16x2 LCD;
 
 extern Buzzer buzzer;
 
-extern WeightSensor weightSensor;
+extern WeightSensor weightSensor01;
 
-extern SystemStatus status;
+extern SystemStatus systemStatus;
 
 #endif  // CONSTANTS_H_INCLUDED

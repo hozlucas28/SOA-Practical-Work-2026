@@ -44,6 +44,8 @@ void lcdClear(LCD16x2* lcd);
  * @brief Request the buzzer FreeRTOS task to start playing the melody.
  *
  * @param buzzer Pointer to the target `Buzzer` struct.
+ *
+ * @note If the buzzer is muted, this function will have no effect.
  */
 void playBuzzer(Buzzer* buzzer);
 
@@ -55,13 +57,36 @@ void playBuzzer(Buzzer* buzzer);
 void stopBuzzer(Buzzer* buzzer);
 
 /**
+ * @brief Mute the buzzer, preventing it from playing any sound.
+ *
+ * @param buzzer Pointer to the target `Buzzer` struct.
+ */
+void muteBuzzer(Buzzer* buzzer);
+
+/**
+ * @brief Unmute the buzzer, allowing it to play sound again.
+ *
+ * @param buzzer Pointer to the target `Buzzer` struct.
+ */
+void unmuteBuzzer(Buzzer* buzzer);
+
+/**
  * @brief Get the valid weight reading from the sensor's sample.
  *
  * @param sensor Pointer to the weight sensor.
  *
  * @return The weight in grams if the sample is valid; otherwise, returns `0`.
  */
-unsigned int getWeight(WeightSensor* sensor);
+const int32_t getOffset(WeightSensor* sensor);
+
+/**
+ * @brief Get the valid weight reading from the sensor's sample.
+ *
+ * @param sensor Pointer to the weight sensor.
+ *
+ * @return The weight in grams if the sample is valid; otherwise, returns `0`.
+ */
+const unsigned int getWeight(const WeightSensor* sensor);
 
 /**
  * @brief Get the current stock level based on the weight sensor's sample and the associated product.
@@ -70,20 +95,45 @@ unsigned int getWeight(WeightSensor* sensor);
  *
  * @return The calculated stock level (number of units) if the sample is valid; otherwise, returns `0`.
  */
-unsigned int getStock(WeightSensor* sensor);
+const unsigned int getStock(const WeightSensor* sensor);
+
+/**
+ * @brief Get the product name associated with the given weight sensor.
+ *
+ * @param sensor Pointer to the weight sensor.
+ *
+ * @return A pointer to the product name string associated with the weight sensor.
+ */
+const String* getProductName(WeightSensor* sensor);
+
+/**
+ * @brief Get the product minimum acceptable stock associated with the given weight sensor.
+ *
+ * @param sensor Pointer to the weight sensor.
+ *
+ * @return The minimum acceptable stock (in units) associated with the weight sensor.
+ */
+const unsigned int getMinimumAcceptableStock(const WeightSensor* sensor);
+
+/**
+ * @brief Check if the weight sensor has an anomaly based on the current weight reading and the baseline weight.
+ *
+ * @param sensor Pointer to the weight sensor.
+ */
+bool hasAnomaly(const WeightSensor* sensor);
 
 /**
  * @brief Set the weight sensor offset.
  *
  * It should be called with a valid offset value, which can be obtained from a previous
  * tare operation or from persisted storage. By setting the sensor offset, future weight readings will be adjusted
- * accordingly, allowing for accurate measurements even when there is already a product on the shelf at startup or after
- * a reboot.
+ * accordingly, allowing for accurate measurements even when there is already a product on the weight sensor at
+ * startup or after a reboot.
  *
  * @param sensor Pointer to the weight sensor.
  * @param offset Offset value to set.
  */
-void setOffset(WeightSensor* sensor, int32_t offset);
+void setOffset(WeightSensor* sensor, const int32_t offset);
 
 /**
  * @brief Read the current weight from the sensor.
@@ -111,23 +161,21 @@ void setBaselineWeight(WeightSensor* sensor);
  * "zero" point.
  *
  * @param sensor Pointer to the weight sensor.
- *
- * @return The zero offset resulting from the tare operation.
  */
-int32_t tare(WeightSensor* sensor);
+void tare(WeightSensor* sensor);
 
 /**
  * @brief Turn on the LED associated with the given weight sensor.
  *
  * @param sensor Pointer to the weight sensor.
  */
-void ledOn(WeightSensor* sensor);
+void ledOn(const WeightSensor* sensor);
 
 /**
  * @brief Turn off the LED associated with the given weight sensor.
  *
  * @param sensor Pointer to the weight sensor.
  */
-void ledOff(WeightSensor* sensor);
+void ledOff(const WeightSensor* sensor);
 
 #endif  // USER_FUNCTIONS_H_INCLUDED

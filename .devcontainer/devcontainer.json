@@ -33,7 +33,8 @@
                 "redhat.vscode-yaml",
                 "tamasfe.even-better-toml",
                 "oxc.oxc-vscode",
-                "rpdswtk.vsmqtt"
+                "rpdswtk.vsmqtt",
+                "humao.rest-client"
             ],
             "settings": {
                 "telemetry.telemetryLevel": "off",
@@ -70,6 +71,8 @@
                 "[cpp]": {
                     "editor.defaultFormatter": "ms-vscode.cpptools"
                 },
+                "rest-client.enableTelemetry": false,
+                "rest-client.previewOption": "exchange",
                 "chat.agent.enabled": true,
                 "chat.editing.confirmEditRequestRemoval": false,
                 "docker.extension.enableComposeLanguageServer": true,

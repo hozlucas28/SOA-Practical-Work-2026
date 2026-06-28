@@ -14,7 +14,7 @@
  */
 struct Button {
     const uint8_t pin;                  ///< ESP32 pin connected to the button.
-    const uint8_t led;                  ///< ESP32 pin connected to the status LED.
+    const uint8_t ledPin;               ///< ESP32 pin connected to the status LED.
     int state;                          ///< Current electrical state.
     ButtonStatus status;                ///< Current status.
     int lastState;                      ///< Previous electrical state.
@@ -32,8 +32,9 @@ struct LCD16x2 {
  * @brief Product information.
  */
 struct Product {
-    String name;          ///< Product name.
-    unsigned int weight;  ///< Weight of one unit of the product.
+    String name;                          ///< Product name.
+    unsigned int weight;                  ///< Weight of one unit of the product.
+    unsigned int minimumAcceptableStock;  ///< Minimum acceptable stock (in units) for `STOCK_MODE`.
 };
 
 struct WeightSample {
@@ -48,14 +49,15 @@ struct WeightSample {
  * thresholds, and the latest weight sample.
  */
 struct WeightSensor {
-    HX711 device;                         ///< HX711 instance.
-    const uint8_t dtPin;                  ///< ESP32 pin connected to the HX711 data line.
-    const uint8_t sckPin;                 ///< ESP32 pin connected to the HX711 serial clock line.
-    const uint8_t led;                    ///< ESP32 pin connected to the status LED.
-    Product product;                      ///< Product information associated with the weight sensor.
-    unsigned int baselineWeight;          ///< Baseline weight (in grams) for anomaly detection in `SECURITY_MODE`.
-    unsigned int minimumAcceptableStock;  ///< Minimum acceptable stock (in grams) for `STOCK_MODE`.
-    WeightSample sample;                  ///< Latest weight sample reading.
+    String id;                    ///< Unique identifier for the weight sensor.
+    HX711 device;                 ///< HX711 instance.
+    const uint8_t dtPin;          ///< ESP32 pin connected to the HX711 data line.
+    const uint8_t sckPin;         ///< ESP32 pin connected to the HX711 serial clock line.
+    const uint8_t ledPin;         ///< ESP32 pin connected to the status LED.
+    Product product;              ///< Product information associated with the weight sensor.
+    WeightSample sample;          ///< Latest weight sample reading.
+    unsigned int baselineWeight;  ///< Baseline weight (in grams) for anomaly detection in `SECURITY_MODE`.
+    bool anomaly;                 ///< Indicates whether an anomaly has been detected in `SECURITY_MODE`.
 };
 
 struct BuzzerStep {
@@ -72,6 +74,7 @@ struct Buzzer {
     const uint8_t pin;         ///< ESP32 pin connected to the buzzer.
     const BuzzerStep* steps;   ///< Melody steps.
     const size_t stepsLength;  ///< Number of steps in the melody sequence.
+    bool muted;                ///< Indicates whether the buzzer is muted (no sound will be produced).
     bool playing;              ///< Indicates whether the buzzer is currently playing a melody.
 };
 

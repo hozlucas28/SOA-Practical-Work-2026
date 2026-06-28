@@ -6,13 +6,13 @@
 
 Button stockBtn = {
     .pin = STOCK_BUTTON_PIN,
-    .led = STOCK_LED_PIN,
+    .ledPin = STOCK_LED_PIN,
     .debounceDelay = 25,
 };
 
 Button securityBtn = {
     .pin = SECURITY_BUTTON_PIN,
-    .led = SECURITY_LED_PIN,
+    .ledPin = SECURITY_LED_PIN,
     .debounceDelay = 25,
 };
 
@@ -35,20 +35,23 @@ Buzzer buzzer = {
     .pin = BUZZER_PIN,
     .steps = buzzerSteps,
     .stepsLength = sizeof(buzzerSteps) / sizeof(buzzerSteps[0]),
+    .muted = false,
     .playing = false,
 };
 
-WeightSensor weightSensor = {
+WeightSensor weightSensor01 = {
+    .id = WEIGHT_SENSOR_ID,
     .dtPin = WEIGHT_SENSOR_DT_PIN,
     .sckPin = WEIGHT_SENSOR_SCK_PIN,
-    .led = WEIGHT_SENSOR_LED_PIN,
+    .ledPin = WEIGHT_SENSOR_LED_PIN,
     .product = {
         .name = WEIGHT_SENSOR_PRODUCT_NAME,
         .weight = WEIGHT_SENSOR_PRODUCT_WEIGHT,
+        .minimumAcceptableStock = WEIGHT_SENSOR_MINIMUM_ACCEPTABLE_STOCK,
     },
-    .minimumAcceptableStock = WEIGHT_SENSOR_MINIMUM_ACCEPTABLE_STOCK,
     .sample = {
         .weight = 0,
         .isValid = false,
     },
+    .anomaly = false,
 };

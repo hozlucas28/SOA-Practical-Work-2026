@@ -5,70 +5,52 @@
 #include "sync.h"
 #include "user_functions.h"
 
-SystemEvent getStockBtnEvent(SystemStatus systemStatus) {
+const SystemEvent getStockBtnEvent(const SystemStatus status) {
     lockButtons();
-    ButtonStatus status = stockBtn.status;
+    const ButtonStatus btnStatus = stockBtn.status;
     unlockButtons();
 
-    return status == ON ? STOCK_ON : STOCK_OFF;
+    return btnStatus == ButtonStatus::ON ? SystemEvent::STOCK_ON : SystemEvent::STOCK_OFF;
 }
 
-SystemEvent getStockSensorEvent(SystemStatus systemStatus) {
-    if (systemStatus != STOCK_MODE) return NO_MISSING_STOCK;
+const SystemEvent getStockSensorEvent(const SystemStatus status) {
+    if (status != SystemStatus::STOCK_MODE) return SystemEvent::NO_MISSING_STOCK;
 
     bool valid = false;
     unsigned int stock = 0;
 
-    lockWeightSensor();
-    if (weightSensor.sample.isValid) {
+    lockWeightSensors();
+    if (weightSensor01.sample.isValid) {
         valid = true;
-        stock = weightSensor.sample.weight / weightSensor.product.weight;
+        stock = weightSensor01.sample.weight / weightSensor01.product.weight;
     }
 
-    unsigned int minimum = weightSensor.minimumAcceptableStock;
-    unlockWeightSensor();
+    const unsigned int minimum = weightSensor01.product.minimumAcceptableStock;
+    unlockWeightSensors();
 
-    bool missingStock = valid && stock < minimum;
-    if (missingStock) return STOCK_MISSING_SENSOR;
+    const bool missingStockSensor01 = valid && stock < minimum;
+    if (missingStockSensor01) return SystemEvent::STOCK_MISSING_SENSOR_01;
 
-    return NO_MISSING_STOCK;
+    return SystemEvent::NO_MISSING_STOCK;
 }
 
-SystemEvent getSecurityBtnEvent(SystemStatus systemStatus) {
+const SystemEvent getSecurityBtnEvent(const SystemStatus status) {
     lockButtons();
-    ButtonStatus securityStatus = securityBtn.status;
-    ButtonStatus stockStatus = stockBtn.status;
+    const ButtonStatus securityStatus = securityBtn.status;
+    const ButtonStatus stockStatus = stockBtn.status;
     unlockButtons();
 
-    if (securityStatus == ON) return SECURITY_ON;
-    if (systemStatus == SECURITY_MODE && stockStatus == ON) return SECURITY_OFF_TO_STOCK;
-    return SECURITY_OFF;
+    if (securityStatus == ButtonStatus::ON) return SystemEvent::SECURITY_ON;
+    if (status == SystemStatus::SECURITY_MODE && stockStatus == ButtonStatus::ON)
+        return SystemEvent::SECURITY_OFF_TO_STOCK;
+    return SystemEvent::SECURITY_OFF;
 }
 
-bool anomaly = false;
+const SystemEvent getAnomalySensorEvent(const SystemStatus status) {
+    if (status != SystemStatus::SECURITY_MODE) return SystemEvent::NO_ANOMALY;
 
-SystemEvent getAnomalySensorEvent(SystemStatus systemStatus) {
-    if (systemStatus != SECURITY_MODE) {
-        anomaly = false;
-        return NO_ANOMALY;
-    };
+    bool anomalySensor01 = hasAnomaly(&weightSensor01);
 
-    bool valid = false;
-    unsigned int weight = 0;
-
-    lockWeightSensor();
-    if (weightSensor.sample.isValid) {
-        valid = true;
-        weight = weightSensor.sample.weight;
-    }
-
-    unsigned int baseline = weightSensor.baselineWeight;
-    unlockWeightSensor();
-
-    if (valid) {
-        anomaly = anomaly || abs((int)weight - (int)baseline) > ANOMALY_THRESHOLD;
-    }
-
-    if (anomaly) return ANOMALY_SENSOR;
-    return NO_ANOMALY;
+    if (anomalySensor01) return SystemEvent::ANOMALY_SENSOR_01;
+    return SystemEvent::NO_ANOMALY;
 }

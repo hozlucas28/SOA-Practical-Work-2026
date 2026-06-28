@@ -5,7 +5,7 @@
 #include "user_functions.h"
 
 void xButtonsTask(void* parameters) {
-    uint32_t delay = pdMS_TO_TICKS(5);
+    const uint32_t delay = pdMS_TO_TICKS(5);
 
     while (true) {
         lockButtons();
@@ -18,12 +18,12 @@ void xButtonsTask(void* parameters) {
 }
 
 void xWeightSampleTask(void* parameters) {
-    uint32_t delay = pdMS_TO_TICKS(200);
+    const uint32_t delay = pdMS_TO_TICKS(150);
 
     while (true) {
-        lockWeightSensor();
-        setWeight(&weightSensor);
-        unlockWeightSensor();
+        lockWeightSensors();
+        setWeight(&weightSensor01);
+        unlockWeightSensors();
 
         vTaskDelay(delay);
     }
@@ -35,10 +35,11 @@ void xBuzzerTask(void* parameters) {
 
     while (true) {
         lockBuzzer();
-        bool isPlaying = buzzer.playing;
+        const bool isMuted = buzzer.muted;
+        const bool isPlaying = buzzer.playing;
         unlockBuzzer();
 
-        if (isPlaying) {
+        if (!isMuted && isPlaying) {
             tone(buzzer.pin, buzzer.steps[currentStep].frequency);
             vTaskDelay(pdMS_TO_TICKS(buzzer.steps[currentStep].duration));
 
@@ -51,7 +52,7 @@ void xBuzzerTask(void* parameters) {
             }
 
             currentStep = 0;
-            vTaskDelay(pdMS_TO_TICKS(10));
+            vTaskDelay(pdMS_TO_TICKS(150));
         }
     }
 }

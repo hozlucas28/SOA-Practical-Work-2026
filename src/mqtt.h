@@ -1,42 +1,45 @@
 #ifndef MQTT_H_INCLUDED
 #define MQTT_H_INCLUDED
 
-// ---------------------------------------------------------------------------- //
-//                                     WIFI                                     //
-// ---------------------------------------------------------------------------- //
+#include <PubSubClient.h>
 
-/** SSID de la red WiFi. En Wokwi usar "Wokwi-GUEST". */
-#define WIFI_SSID "Wokwi-GUEST"
+#define WIFI_SSID     "Wokwi-GUEST"  // WiFi SSID of the network to which the ESP32 should connect.
+#define WIFI_PASSWORD ""
 
-/** Contraseña de la red WiFi. En Wokwi dejar vacío. */
-#define WIFI_PASS ""
+#define MQTT_DEVICE_ID "corridor-01"  // Must be unique across all clients connecting to the same broker.
 
-// ---------------------------------------------------------------------------- //
-//                                     MQTT                                     //
-// ---------------------------------------------------------------------------- //
+#define MQTT_BROKER_HOST "172.22.32.1"  // IP address of the machine running the Mosquitto broker and Node-RED server.
+#define MQTT_BROKER_PORT 1883
 
-/** Host del broker Mosquitto (IP LAN del host del Docker). */
-#define MQTT_HOST "127.0.0.1"
-
-/** Puerto del broker MQTT. */
-#define MQTT_PORT 1883
-
-/** Usuario MQTT (creado con `mosquitto_passwd`). */
-#define MQTT_USER "grupo-l5"
-
-/** Contraseña MQTT. */
-#define MQTT_PASS "secretl5"
-
-/** Identificador único del dispositivo. Se usa como clientId y como `{id}` de los topics. */
-#define MQTT_CLIENT_ID "gondola-01"
+#define MQTT_BROKER_USER     "grupo-l5"
+#define MQTT_BROKER_PASSWORD "secretl5"
 
 /**
- * Owns the WiFi + MQTT connection. The only task that touches the network, so
- * the FSM never blocks on it. Connects to the broker (with a Last Will of
- * `availability=offline`), subscribes to the `cmd/#` topics and translates each
- * command into the same shared state a physical button/sensor would produce;
- * and publishes the device state (mode, per-shelf stock and security) on-change.
- * Param: unused (NULL).
+ * @brief MQTT keepalive (in seconds).
+ */
+#define MQTT_KEEPALIVE 15
+
+/**
+ * @brief Interval between periodic MQTT publishes (in milliseconds).
+ */
+#define MQTT_PUBLISH_INTERVAL 150
+
+extern WiFiClient espClient;
+extern PubSubClient mqttClient;
+
+/**
+ * @brief Callback function for handling incoming MQTT messages. This function is called whenever a message is received
+ * on a subscribed topic.
+ *
+ * @param topic Topic on which the message was received.
+ * @param payload Payload of the message.
+ * @param length Length of the payload.
+ */
+void mqttCallback(char* topic, byte* payload, unsigned int length);
+
+/**
+ * @brief FreeRTOS task responsible for managing MQTT communication, including connecting to the broker, subscribing to
+ * topics, and publishing messages.
  */
 void xMQTTTask(void* parameters);
 

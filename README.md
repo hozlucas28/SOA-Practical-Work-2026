@@ -69,6 +69,20 @@ This repository contains our practical work for the Advanced Operating Systems (
 
 </details>
 
+<details>
+<summary>How can I connect ESP32 and the Android application to the MQTT broker?</summary>
+
+1. Inside the DevContainer, open a terminal and execute `docker compose up --file infrastructure/compose.yaml --detach` to start the MQTT broker and Node-RED.
+2. Outside the DevContainer, install [Cloudflared](https://github.com/cloudflare/cloudflared).
+3. Then, open a terminal and execute `cloudflared tunnel --url http://localhost:1883` to create a Cloudflare tunnel.
+4. Replace `MQTT_BROKER_HOST` macro inside `src/mqtt.h` with the generated public URL (e.g.,`https://random-id.cloudflare-tunnel.com`) of the previous step, and rebuild the project.
+5. [LO MISMO QUE EL PASO ANTERIOR PERO EN LA APLICACIÓN DE ANDROID]
+6. Start the Wokwi simulator and test the MQTT integration.
+
+> In a physical ESP32, you need to replace `WIFI_SSID` and `WIFI_PASSWORD` macros inside `src/mqtt.h` with the credentials of the Wi-Fi network you want to connect to, and then upload the project to the ESP32.
+
+</details>
+
 > [!NOTE]
 > When rebuilding the DevContainer, you might encounter an error such as `The container already exists or is in use`. Don't worry, it's a known bug, simply ignore it and rebuild it again.
 
@@ -173,6 +187,7 @@ SOA-Practical-Work-2026/
 
 ## Additional material
 
+- [Infrastructure documentation (Mosquitto topics, Node-RED endpoints, etc.)](docs/infrastructure.md)
 - [Repository with the source code of the Android application](https://github.com/maifarias/SOA-Stock-Security-App)
 
 ## License

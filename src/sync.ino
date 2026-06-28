@@ -1,14 +1,14 @@
 
 #include "sync.h"
 
-SemaphoreHandle_t buttonsMutex = nullptr;
-SemaphoreHandle_t buzzerMutex = nullptr;
-SemaphoreHandle_t weightSensorMutex = nullptr;
+static SemaphoreHandle_t buttonsMutex = nullptr;
+static SemaphoreHandle_t buzzerMutex = nullptr;
+static SemaphoreHandle_t weightSensorsMutex = nullptr;
 
 void initMutexs() {
     buttonsMutex = xSemaphoreCreateMutex();
     buzzerMutex = xSemaphoreCreateMutex();
-    weightSensorMutex = xSemaphoreCreateMutex();
+    weightSensorsMutex = xSemaphoreCreateMutex();
 }
 
 void lockButtons() {
@@ -31,12 +31,12 @@ void unlockBuzzer() {
     xSemaphoreGive(buzzerMutex);
 }
 
-void lockWeightSensor() {
-    if (!weightSensorMutex) return;
-    xSemaphoreTake(weightSensorMutex, portMAX_DELAY);
+void lockWeightSensors() {
+    if (!weightSensorsMutex) return;
+    xSemaphoreTake(weightSensorsMutex, portMAX_DELAY);
 }
 
-void unlockWeightSensor() {
-    if (!weightSensorMutex) return;
-    xSemaphoreGive(weightSensorMutex);
+void unlockWeightSensors() {
+    if (!weightSensorsMutex) return;
+    xSemaphoreGive(weightSensorsMutex);
 }

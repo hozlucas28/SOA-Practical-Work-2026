@@ -3,6 +3,7 @@
     "useGitignore": true,
     "language": "es, es-ES, en, en-us, en-gb, lorem, lorem-ipsum",
     "words": [
+        "arduino",
         "choosealicense",
         "Farias",
         "getopt",
@@ -21,7 +22,10 @@
         "oxfmt",
         "oxfmtrc",
         "Raimo",
+        "secretl5",
         "sqlite",
+        "unmute",
+        "UNMUTE",
         "wokwi",
         "workdir",
         "zizmor",
