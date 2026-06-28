@@ -18,9 +18,6 @@
 #include "sync.h"
 #include "tasks.h"
 
-// MQTT integration
-#include "mqtt.h"
-
 // Event capture functions
 #include "event_captures.h"
 
@@ -66,6 +63,7 @@ static void xFSMTask(void* parameters) {
     while (true) {
         xQueueReceive(xSystemEventsQueue, &event, waitTime);
 
+<<<<<<< HEAD
         switch (systemStatus) {
             case SystemStatus::VIRGIN_EMBEDDED:
                 switch (event) {
@@ -103,6 +101,32 @@ static void xFSMTask(void* parameters) {
                         lcdPrint(&LCD, "Stock missing", "on sensor!");
                         DEBUG_FSM(SystemStatus::STOCK_MODE, event, systemStatus);
                         break;
+=======
+        case SECURITY_MODE:
+            switch (event) {
+                case SECURITY_OFF:
+                    stopBuzzer(&buzzer);
+                    ledOff(&weightSensor);
+                    lcdClear(&LCD);
+                    status = VIRGIN_EMBEDDED;
+                    DEBUG_FSM(SECURITY_MODE, event, status);
+                    break;
+
+                case SECURITY_OFF_TO_STOCK:
+                    stopBuzzer(&buzzer);
+                    ledOff(&weightSensor);
+                    lcdClear(&LCD);
+                    status = STOCK_MODE;
+                    DEBUG_FSM(SECURITY_MODE, event, status);
+                    break;
+
+                case ANOMALY_SENSOR:
+                    ledOn(&weightSensor);
+                    playBuzzer(&buzzer);
+                    lcdPrint(&LCD, "Security alert", "on sensor!");
+                    DEBUG_FSM(SECURITY_MODE, event, status);
+                    break;
+>>>>>>> origin/main
 
                     case SystemEvent::NO_MISSING_STOCK:
                         ledOff(&weightSensor01);
@@ -236,6 +260,7 @@ void setup() {
     setWeight(&weightSensor01);
     unlockWeightSensors();
 
+<<<<<<< HEAD
     xTaskCreatePinnedToCore(xButtonsTask, "Buttons", 2048, NULL, 1, NULL, 1);
     xTaskCreatePinnedToCore(xWeightSampleTask, "WeightSample", 2048, NULL, 2, NULL, 1);
     xTaskCreatePinnedToCore(xBuzzerTask, "Alarm", 2048, &buzzer, 2, NULL, 1);
@@ -243,6 +268,11 @@ void setup() {
 
     xTaskCreatePinnedToCore(xSystemEventTask, "SystemEvent", 2048, NULL, 4, NULL, 1);
     xTaskCreatePinnedToCore(xFSMTask, "FSM", 2048, NULL, 4, NULL, 1);
+=======
+    xTaskCreate(xButtonsTask, "Buttons", 2048, NULL, 2, NULL);
+    xTaskCreate(xWeightSampleTask, "WeightSample", 2048, NULL, 1, NULL);
+    xTaskCreate(xBuzzerTask, "buzzer", 2048, &buzzer, 1, NULL);
+>>>>>>> origin/main
 
     DEBUG("Setup completed.\r\n\n");
 }

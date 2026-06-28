@@ -1,7 +1,6 @@
 #ifndef CONSTANTS_H_INCLUDED
 #define CONSTANTS_H_INCLUDED
 
-#include "enums.h"
 #include "structs.h"
 
 #define LCD_ROWS 2
@@ -24,7 +23,11 @@
  */
 #define ANOMALY_THRESHOLD 200
 
-extern Button stockBtn;
+<<<<<<< HEAD
+=======
+/** Push button that toggles Stock mode on/off. */
+>>>>>>> origin/main
+    extern Button stockBtn;
 extern Button securityBtn;
 
 extern LCD16x2 LCD;
@@ -33,6 +36,10 @@ extern Buzzer buzzer;
 
 extern WeightSensor weightSensor01;
 
+<<<<<<< HEAD
 extern SystemStatus systemStatus;
 
 #endif  // CONSTANTS_H_INCLUDED
+=======
+#endif  // SRC_CONSTANTS_H_INCLUDED
+    >>>>>>> origin/main
