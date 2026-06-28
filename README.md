@@ -89,38 +89,6 @@ This repository contains our practical work for the Advanced Operating Systems (
 > [!IMPORTANT]
 > The first time you build the DevContainer, PlatformIO extension will request you to restart Visual Studio Code to finish the installation. Please do so, otherwise you won't be able to build the project.
 
-## Diagrams
-
-### Connection between ESP32 and Android application
-
-```
-                     ┌───────────────────────────────┐
-                     │  Cloudflare tunnel            │
-                     │                               │
-                     │  ┌─────────────────────────┐  │
-                     │  │ Docker (local machine)  │  │
-                     │  │                         │  │
-┌─────────┐    MQTT  │  │   ┌─────────────────┐   │  │  MQTT    ┌───────────────────────┐
-│  ESP32  │ ◄────────│──│──►│    Mosquitto    │◄──│──│────────► │  Android application  │
-└─────────┘          │  │   │  (MQTT broker)  │   │  │          └───────────────────────┘
-                     │  │   └───────▲─────────┘   │  │
-                     │  │           │             │  │
-                     │  │           │             │  │
-                     │  │    ┌──────▼───────┐     │  │
-                     │  │    │   Node-RED   │     │  │
-                     │  │    │  with SQLite │     │  │
-                     │  │    └──────────────┘     │  │
-                     │  └─────────────────────────┘  │
-                     └───────────────────────────────┘
-```
-
-- `ESP32`: The embedded system that monitors the stock and security of the shelves.
-- `Mosquitto`: The MQTT broker that receives the messages from the ESP32 and forwards them to the Android application.
-- `Node-RED`: A flow-based development tool that acts as a bridge between the MQTT broker and the Android application, allowing us to process the messages and store them in a SQLite database.
-
-> [!NOTE]
-> The MQTT broker and Node-RED are running in a Docker container on the local machine, and are exposed to the internet through a Cloudflare tunnel, allowing the Android application to connect to them remotely.
-
 ## Project structure
 
 ```bash
@@ -139,7 +107,8 @@ SOA-Practical-Work-2026/
 │   ├── mosquitto/          # Mosquitto persistence files, such as the configuration file.
 │   ├── node-red/           # Node-RED persistence files, such as the flows and settings files.
 │   │
-│   └── compose.yaml        # Docker Compose file to run the MQTT broker and Node-RED.
+│   ├── compose.yaml        # Docker Compose file to run the MQTT broker and Node-RED.
+│   └── endpoints.http      # HTTP endpoints testing file for the REST Client extension.
 │
 ├── scripts/
 │   └── health-check.sh     # Script to check that the necessary tools are installed.
@@ -149,6 +118,7 @@ SOA-Practical-Work-2026/
 │   ├── constants.ino       # Implementation of global constants.
 │   ├── debuggers.h         # Debugging macros.
 │   ├── enums.h             # Global enums, and system status and events.
+│   ├── enums.ino           # Implementation of utility functions to convert enums to strings and vice versa.
 │   ├── event_captures.h    # Definitions of event captures for the FSM.
 │   ├── event_captures.ino  # Implementation of event captures for the FSM.
 │   ├── main.ino            # Entry point.
@@ -187,7 +157,7 @@ SOA-Practical-Work-2026/
 
 ## Additional material
 
-- [Infrastructure documentation (Mosquitto topics, Node-RED endpoints, etc.)](docs/infrastructure.md)
+- [Infrastructure documentation (infrastructure diagram, MQTT topics and HTTP endpoints)](docs/infrastructure.md)
 - [Repository with the source code of the Android application](https://github.com/maifarias/SOA-Stock-Security-App)
 
 ## License

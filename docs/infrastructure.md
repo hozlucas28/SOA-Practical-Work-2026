@@ -1,5 +1,28 @@
 # Infrastructure
 
+```
+                     ┌──────────────────────────────────────┐
+                     │  WiFi (local network)                │
+                     │                                      │
+                     │  ┌────────────────────────────────┐  │
+                     │  │ Docker compose (local machine) │  │
+                     │  │                                │  │
+┌─────────┐    MQTT  │  │      ┌─────────────────┐       │  │  HTTP    ┌───────────────────────┐
+│  ESP32  │ ◄────────│──│─────►│    Mosquitto    │◄──────│──│────────► │  Android application  │
+└─────────┘          │  │      │  (MQTT broker)  │       │  │          └───────────────────────┘
+                     │  │      └───────▲─────────┘       │  │
+                     │  │              │                 │  │
+                     │  │              │                 │  │
+                     │  │       ┌──────▼───────┐         │  │
+                     │  │       │   Node-RED   │         │  │
+                     │  │       │  with SQLite │         │  │
+                     │  │       └──────────────┘         │  │
+                     │  └────────────────────────────────┘  │
+                     └──────────────────────────────────────┘
+```
+
+The MQTT broker and Node-RED are running as a Docker compose container on the local machine, and are exposed to the local network through the local IP of the local machine. This connection allows the ESP32 and Android application to communicate with the MQTT broker and Node-RED, enabling real-time data exchange and control commands between devices.
+
 ## Mosquitto
 
 Mosquitto is a message broker that implements the MQTT protocol, allowing devices to communicate with each other by publishing and subscribing to topics. In this project, Mosquitto is connected to the ESP32 using the MQTT protocol, enabling real-time data exchange and control commands between devices through Node-RED.
@@ -22,7 +45,7 @@ Mosquitto is a message broker that implements the MQTT protocol, allowing device
 > [!NOTE]
 > `:device` is a placeholder for the device identifier (e.g., `corridor-01`), and `:shelf` is a placeholder for the shelf identifier (e.g., `shelf-01`).
 
-#### Examples of messages
+#### Examples of output messages
 
 <details>
 <summary><code>corridor-01/health</code></summary>
@@ -117,7 +140,7 @@ Mosquitto is a message broker that implements the MQTT protocol, allowing device
 
 > `:device` is a placeholder for the device identifier (e.g., `corridor-01`), and `:shelf` is a placeholder for the shelf identifier (e.g., `shelf-01`).
 
-#### Examples of messages
+#### Examples of incoming messages
 
 <details>
 <summary><code>corridor-01/stock</code></summary>
@@ -182,7 +205,7 @@ Node-RED is a flow-based development tool for visual programming, used to connec
 
 > `:hostname` is a placeholder for the hostname or IP address of the machine running the Node-RED server (e.g., `localhost`), and `:device` is a placeholder for the device identifier (e.g., `corridor-01`).
 
-#### Responses examples
+#### Examples of responses
 
 <details>
 <summary><code>GET http://localhost:1880/api/corridor-01</code></summary>
@@ -226,7 +249,7 @@ Node-RED is a flow-based development tool for visual programming, used to connec
 
 </details>
 
-#### Request examples
+#### Examples of requests
 
 <details>
 <summary><code>POST http://localhost:1880/api/corridor-01/stock</code></summary>
