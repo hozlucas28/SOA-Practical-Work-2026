@@ -11,7 +11,6 @@ void switchBtn(Button* btn) {
     if ((millis() - btn->lastDebounceTime) > btn->debounceDelay && read != btn->state) {
         btn->state = read;
 
-<<<<<<< HEAD
         if (btn->state == HIGH) {
             const ButtonStatus newStatus = btn->status == ButtonStatus::ON ? ButtonStatus::OFF : ButtonStatus::ON;
             btn->status = newStatus;
@@ -20,40 +19,6 @@ void switchBtn(Button* btn) {
     }
 
     btn->lastState = read;
-=======
-        if (btn->state == HIGH) {
-            btn->status = (btn->status == ON) ? OFF : ON;
-            digitalWrite(btn->led, btn->status == ON ? HIGH : LOW);
-        }
-    }
-}
-
-btn->lastState = btnRead;
-}
-
-void sampleWeight(WeightSensor* sensor) {
-    if (!sensor->device.is_ready()) {
-        sensor->sample.valid = false;
-        return;
-    }
-
-    float weight = sensor->device.get_units(WEIGHT_SENSORS_SAMPLES);
-
-    // HX711 noise can dip slightly below zero near the tared baseline. Casting
-    // a negative float to `unsigned int` wraps around to ~UINT_MAX, which then
-    // makes `stock = weight / product.weight` huge and breaks both the stock
-    // display and the "below minimum" check. Clamp before the cast.
-    if (weight < 0.0f) weight = 0.0f;
-
-    sensor->sample.weight = (unsigned int)floor(weight);
-    sensor->sample.valid = true;
-}
-
-void lcdClear(LCD16x2* lcd) {
-    lcd->device->clear();
-    lcd->line01 = "";
-    lcd->line02 = "";
->>>>>>> origin/main
 }
 
 void lcdPrint(LCD16x2* lcd, const String line) {
@@ -99,7 +64,6 @@ void stopBuzzer(Buzzer* buzzer) {
     unlockBuzzer();
 }
 
-<<<<<<< HEAD
 void muteBuzzer(Buzzer* buzzer) {
     lockBuzzer();
     buzzer->muted = true;
@@ -121,9 +85,6 @@ const int32_t getOffset(WeightSensor* sensor) {
 }
 
 const unsigned int getWeight(const WeightSensor* sensor) {
-=======
-unsigned int getWeight(WeightSensor* sensor) {
->>>>>>> origin/main
     unsigned int weight = 0;
 
     lockWeightSensors();
@@ -193,7 +154,6 @@ void setBaselineWeight(WeightSensor* sensor) {
     unlockWeightSensors();
 }
 
-<<<<<<< HEAD
 void tare(WeightSensor* sensor) {
     lockWeightSensors();
     sensor->device.tare();
@@ -208,14 +168,4 @@ void ledOn(const WeightSensor* sensor) {
 void ledOff(const WeightSensor* sensor) {
     if (digitalRead(sensor->ledPin) == LOW) return;
     digitalWrite(sensor->ledPin, LOW);
-=======
-void ledOn(WeightSensor* sensor) {
-    if (digitalRead(sensor->led) == HIGH) return;
-    digitalWrite(sensor->led, HIGH);
-}
-
-void ledOff(WeightSensor* sensor) {
-    if (digitalRead(sensor->led) == LOW) return;
-    digitalWrite(sensor->led, LOW);
->>>>>>> origin/main
 }
