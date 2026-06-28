@@ -18,6 +18,9 @@
 #include "sync.h"
 #include "tasks.h"
 
+// MQTT integration
+#include "mqtt.h"
+
 // Event capture functions
 #include "event_captures.h"
 

@@ -34,4 +34,4 @@ extern WeightSensor weightSensor01;
 
 extern SystemStatus systemStatus;
 
-#endif  // SRC_CONSTANTS_H_INCLUDED
+#endif  // CONSTANTS_H_INCLUDED

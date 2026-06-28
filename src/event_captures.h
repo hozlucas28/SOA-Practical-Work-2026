@@ -45,4 +45,4 @@ const SystemEvent getSecurityBtnEvent(const SystemStatus status);
  */
 const SystemEvent getAnomalySensorEvent(const SystemStatus status);
 
-#endif  // SRC_EVENT_CAPTURES_H_INCLUDED
+#endif  // EVENT_CAPTURES_H_INCLUDED
