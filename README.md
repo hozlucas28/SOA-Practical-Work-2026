@@ -33,7 +33,7 @@ This repository contains our practical work for the Advanced Operating Systems (
 - **Security Mode:** Detects variations in the weight of the shelves. It employs an LCD screen to report on which shelf the alteration was detected, a buzzer as an audible alarm, LED lights to visually indicate the affected shelf, and weight sensors to register these variations. It has a higher priority than stock mode, so if both modes are activated at the same time, the system will execute security mode.
 
 > [!TIP]
-> Check the [infrastructure documentation](docs/infrastructure.md) for more information about the MQTT topics and HTTP endpoints used in this project.
+> Check out the [infrastructure documentation](docs/infrastructure.md) for more information about the MQTT topics and HTTP endpoints used in this project.
 
 ### Features
 
@@ -168,7 +168,7 @@ SOA-Practical-Work-2026/
 
 ## Additional material
 
-- [Infrastructure documentation (infrastructure diagram, MQTT topics and HTTP endpoints)](docs/infrastructure.md)
+- [Infrastructure documentation (diagram, MQTT topics and HTTP endpoints)](docs/infrastructure.md)
 - [Repository with the source code of the Android application](https://github.com/maifarias/SOA-Stock-Security-App)
 
 ## License
