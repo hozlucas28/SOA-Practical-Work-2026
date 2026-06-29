@@ -210,7 +210,6 @@ Node-RED is a flow-based development tool for visual programming, used to connec
 <summary><code>GET http://localhost:1880/api/corridor-01</code></summary>
 
 ```jsonc
-// Response body...
 {
   "health": {
     "status": "online"
@@ -254,7 +253,6 @@ Node-RED is a flow-based development tool for visual programming, used to connec
 <summary><code>POST http://localhost:1880/api/corridor-01/stock</code></summary>
 
 ```jsonc
-// Request body...
 {
   "status": "ON" // "ON" | "OFF"
 }
@@ -266,7 +264,6 @@ Node-RED is a flow-based development tool for visual programming, used to connec
 <summary><code>POST http://localhost:1880/api/corridor-01/security</code></summary>
 
 ```jsonc
-// Request body...
 {
   "status": "ON" // "ON" | "OFF"
 }
@@ -278,7 +275,6 @@ Node-RED is a flow-based development tool for visual programming, used to connec
 <summary><code>POST http://localhost:1880/api/corridor-01/security/alarm</code></summary>
 
 ```jsonc
-// Request body...
 {
   "status": "MUTE" // "MUTE" | "UNMUTE"
 }
