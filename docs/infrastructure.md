@@ -7,20 +7,20 @@ config:
 ---
 
 architecture-beta
-  group localNetwork(logos:wifi)["Local network"]
-  group localMachine(logos:docker-icon)["Docker compose (local machine)"] in localNetwork
+  group local_network(internet)["Local network"]
+  group local_machine(server)["Docker compose"] in local_network
 
-  service esp32(logos:aws-ec2)["ESP32"]
-  service mqtt(server)["Mosquitto (MQQ broker)"] in localMachine
-  service nodered(server)["Node-RED with SQLite"] in localMachine
-  service android(logos:android-icon)["Android application"]
+  service esp32(server)["ESP32"]
+  service mosquitto(server)["Mosquitto"] in local_machine
+  service node_red(server)["Node-RED with SQLite"] in local_machine
+  service android(server)["Android application"]
 
-  esp32:R <--> L:mqtt
-  mqtt:B <--> T:nodered
-  android:L <--> R:mqtt
+  esp32:R <--> L:mosquitto
+  mosquitto:B <--> T:node_red
+  android:L <--> R:mosquitto
 ```
 
-The MQTT broker and Node-RED are running as a Docker compose container on the local machine, and are exposed to the local network through the local IP of the local machine. This connection allows the ESP32 and Android application to communicate with the MQTT broker and Node-RED, enabling real-time data exchange and control commands between devices.
+The Mosquitto (MQTT broker) and Node-RED are running as a services of a Docker compose on the local machine, and are exposed to the local network through the local IP of the local machine. This connection allows the ESP32 and Android application to communicate with the Mosquitto (MQTT broker) and Node-RED, enabling real-time data exchange and control commands between devices.
 
 ## Mosquitto
 
