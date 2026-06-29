@@ -53,7 +53,7 @@ This repository contains our practical work for the Advanced Operating Systems (
 1. Open the repository folder in Visual Studio Code.
 1. Reopen the project in a Dev Container, pressing `F1` and selecting `Dev Containers: Rebuild and Reopen in Container`.
 1. Wait for the container to be built and started.
-1. Get the IP of your local machine and replace the `MQTT_BROKER_HOST` macro inside `src/mqtt.h` file with it. You can get the IP by executing `scripts/get-local-ip.sh` script in the terminal.
+1. Get the IP of your local machine and replace the `MQTT_BROKER_HOST` macro inside `src/mqtt.h` file with it.
 1. Execute `docker compose up --file infrastructure/compose.yaml --detach` to start the MQTT broker and Node-RED.
 1. Press `F1` and select `Wokwi: Request a new License` option to get a free license for build the project.
 1. When you have the license, press `F1` and select `PlatformIO: Build` to build the source code.
