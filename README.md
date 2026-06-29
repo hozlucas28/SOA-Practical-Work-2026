@@ -48,17 +48,17 @@ This repository contains our practical work for the Advanced Operating Systems (
 
 ## Installation
 
-- Clone the repository.
-- Install [Visual Studio Code](https://code.visualstudio.com/), [Docker](https://www.docker.com/), and [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) (VSCode extension).
-- Open the repository folder in Visual Studio Code.
-- Reopen the project in a Dev Container, pressing `F1` and selecting `Dev Containers: Rebuild and Reopen in Container`.
-- Wait for the container to be built and started.
-- Get the IP of your local machine and replace the `MQTT_BROKER_HOST` macro inside `src/mqtt.h` file with it.
-- Execute `docker compose up --file infrastructure/compose.yaml --detach` to start the MQTT broker and Node-RED.
-- Press `F1` and select `Wokwi: Request a new License` option to get a free license for build the project.
-- When you have the license, press `F1` and select `PlatformIO: Build` to build the source code.
-- After the build is finished, press `F1` and select `Wokwi: Start Simulator` to run the project.
-- That's it! You should see the project running in the Wokwi simulator connected.
+1. Clone the repository.
+1. Install [Visual Studio Code](https://code.visualstudio.com/), [Docker](https://www.docker.com/), and [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) (VSCode extension).
+1. Open the repository folder in Visual Studio Code.
+1. Reopen the project in a Dev Container, pressing `F1` and selecting `Dev Containers: Rebuild and Reopen in Container`.
+1. Wait for the container to be built and started.
+1. Get the IP of your local machine and replace the `MQTT_BROKER_HOST` macro inside `src/mqtt.h` file with it. You can get the IP by executing `scripts/get-local-ip.sh` script in the terminal.
+1. Execute `docker compose up --file infrastructure/compose.yaml --detach` to start the MQTT broker and Node-RED.
+1. Press `F1` and select `Wokwi: Request a new License` option to get a free license for build the project.
+1. When you have the license, press `F1` and select `PlatformIO: Build` to build the source code.
+1. After the build is finished, press `F1` and select `Wokwi: Start Simulator` to run the project.
+1. That's it! You should see the project running in the Wokwi simulator connected.
 
 <details>
 <summary>How can I turn on the debug mode?</summary>
