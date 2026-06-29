@@ -32,7 +32,9 @@
                 "bierner.markdown-mermaid",
                 "redhat.vscode-yaml",
                 "tamasfe.even-better-toml",
-                "oxc.oxc-vscode"
+                "oxc.oxc-vscode",
+                "rpdswtk.vsmqtt",
+                "humao.rest-client"
             ],
             "settings": {
                 "telemetry.telemetryLevel": "off",
@@ -46,7 +48,8 @@
                     "**/.pnpm-store": true,
                     "**/node_modules": true,
                     "package.json": true,
-                    "pnpm-lock.yaml": true
+                    "pnpm-lock.yaml": true,
+                    "pnpm-workspace.yaml": true
                 },
                 "search.exclude": {
                     "**/.DS_Store": true,
@@ -60,13 +63,16 @@
                     "**/.pio": true,
                     "**/.pnpm-store": true,
                     "package.json": true,
-                    "pnpm-lock.yaml": true
+                    "pnpm-lock.yaml": true,
+                    "pnpm-workspace.yaml": true
                 },
                 "oxc.requireConfig": true,
                 "C_Cpp.copilotHover": "disabled",
                 "[cpp]": {
                     "editor.defaultFormatter": "ms-vscode.cpptools"
                 },
+                "rest-client.enableTelemetry": false,
+                "rest-client.previewOption": "exchange",
                 "chat.agent.enabled": true,
                 "chat.editing.confirmEditRequestRemoval": false,
                 "docker.extension.enableComposeLanguageServer": true,

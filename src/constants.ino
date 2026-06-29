@@ -6,14 +6,14 @@
 
 Button stockBtn = {
     .pin = STOCK_BUTTON_PIN,
-    .led = STOCK_LED_PIN,
-    .debounceDelay = BUTTONS_DEBOUNCE_DELAY,
+    .ledPin = STOCK_LED_PIN,
+    .debounceDelay = 25,
 };
 
 Button securityBtn = {
     .pin = SECURITY_BUTTON_PIN,
-    .led = SECURITY_LED_PIN,
-    .debounceDelay = BUTTONS_DEBOUNCE_DELAY,
+    .ledPin = SECURITY_LED_PIN,
+    .debounceDelay = 25,
 };
 
 rgb_lcd lcdDevice;
@@ -24,7 +24,7 @@ LCD16x2 LCD = {
     .line02 = "",
 };
 
-const BuzzerStep AlarmSteps[] = {
+const BuzzerStep buzzerSteps[] = {
     { .frequency = 700, .duration = 500 },
     { .frequency = 560, .duration = 500 },
     { .frequency = 700, .duration = 500 },
@@ -33,19 +33,25 @@ const BuzzerStep AlarmSteps[] = {
 
 Buzzer buzzer = {
     .pin = BUZZER_PIN,
-    .steps = AlarmSteps,
-    .stepsLength = sizeof(AlarmSteps) / sizeof(AlarmSteps[0]),
+    .steps = buzzerSteps,
+    .stepsLength = sizeof(buzzerSteps) / sizeof(buzzerSteps[0]),
+    .muted = false,
     .playing = false,
 };
 
-WeightSensor weightSensor = {
+WeightSensor weightSensor01 = {
+    .id = WEIGHT_SENSOR_ID,
     .dtPin = WEIGHT_SENSOR_DT_PIN,
     .sckPin = WEIGHT_SENSOR_SCK_PIN,
-    .led = WEIGHT_SENSOR_LED_PIN,
+    .ledPin = WEIGHT_SENSOR_LED_PIN,
     .product = {
         .name = WEIGHT_SENSOR_PRODUCT_NAME,
         .weight = WEIGHT_SENSOR_PRODUCT_WEIGHT,
+        .minimumAcceptableStock = WEIGHT_SENSOR_MINIMUM_ACCEPTABLE_STOCK,
     },
-    .minimumAcceptableStock = WEIGHT_SENSOR_MINIMUM_ACCEPTABLE_STOCK,
-    .sample = { .weight = 0, .valid = false },
+    .sample = {
+        .weight = 0,
+        .isValid = false,
+    },
+    .anomaly = false,
 };

@@ -5,51 +5,54 @@
 #include "user_functions.h"
 
 void xButtonsTask(void* parameters) {
+    const uint32_t delay = pdMS_TO_TICKS(5);
+
     while (true) {
         lockButtons();
-
-        switchBtnState(&stockBtn);
-        switchBtnState(&securityBtn);
-
+        switchBtn(&stockBtn);
+        switchBtn(&securityBtn);
         unlockButtons();
-        vTaskDelay(pdMS_TO_TICKS(BUTTONS_TASK_PERIOD_MS));
+
+        vTaskDelay(delay);
     }
 }
 
 void xWeightSampleTask(void* parameters) {
+    const uint32_t delay = pdMS_TO_TICKS(150);
+
     while (true) {
         lockWeightSensors();
-        sampleWeight(&weightSensor);
+        setWeight(&weightSensor01);
         unlockWeightSensors();
 
-        vTaskDelay(pdMS_TO_TICKS(WEIGHT_SAMPLE_TASK_PERIOD_MS));
+        vTaskDelay(delay);
     }
 }
 
 void xBuzzerTask(void* parameters) {
-    Buzzer* buzzer = (Buzzer*)parameters;
-    size_t currentStep = 0;
     bool wasPlaying = false;
+    size_t currentStep = 0;
 
     while (true) {
         lockBuzzer();
-
-        bool isPlaying = buzzer->playing;
-
+        const bool isMuted = buzzer.muted;
+        const bool isPlaying = buzzer.playing;
         unlockBuzzer();
 
-        if (isPlaying) {
-            applyTone(buzzer, buzzer->steps[currentStep].frequency);
-            vTaskDelay(pdMS_TO_TICKS(buzzer->steps[currentStep].duration));
-            currentStep = (currentStep + 1) % buzzer->stepsLength;
+        if (!isMuted && isPlaying) {
+            tone(buzzer.pin, buzzer.steps[currentStep].frequency);
+            vTaskDelay(pdMS_TO_TICKS(buzzer.steps[currentStep].duration));
+
             wasPlaying = true;
+            currentStep = (currentStep + 1) % buzzer.stepsLength;
         } else {
             if (wasPlaying) {
-                applyTone(buzzer, 0);
                 wasPlaying = false;
+                noTone(buzzer.pin);
             }
+
             currentStep = 0;
-            vTaskDelay(pdMS_TO_TICKS(10));
+            vTaskDelay(pdMS_TO_TICKS(150));
         }
     }
 }

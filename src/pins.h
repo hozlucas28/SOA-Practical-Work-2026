@@ -1,5 +1,5 @@
-#ifndef SRC_PINS_H_INCLUDED
-#define SRC_PINS_H_INCLUDED
+#ifndef PINS_H_INCLUDED
+#define PINS_H_INCLUDED
 
 #define STOCK_BUTTON_PIN 2
 #define STOCK_LED_PIN    4
@@ -13,4 +13,4 @@
 #define WEIGHT_SENSOR_SCK_PIN 12
 #define WEIGHT_SENSOR_LED_PIN 14
 
-#endif  // SRC_PINS_H_INCLUDED
+#endif  // PINS_H_INCLUDED

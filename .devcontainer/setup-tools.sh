@@ -49,6 +49,10 @@ cd $(cd "$(dirname "$0")/.." && pwd)
 # Install packages (formatters, and git hooks manager)
 echo -e "\e[90m\nInstalling project tools (formatters, and git hooks manager)...\n\e[0m"
 
+echo "allowBuilds:
+  lefthook: true
+" > pnpm-workspace.yaml
+
 pnpm install -D \
 	oxfmt@^0 \
 	lefthook@^2
