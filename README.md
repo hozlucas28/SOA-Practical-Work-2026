@@ -44,7 +44,7 @@ This repository contains our practical work for the Advanced Operating Systems (
 - Integration between an embedded system and a mobile application developed in Android.
 - MQTT and HTTP testing.
 - MQTT integration between the ESP32 and an Android application through Node-RED.
-- [Real-time monitoring of stock and security alerts](#mqtt-integration) over MQTT, with remote control.
+- Real-time monitoring of stock and security alerts over MQTT, with remote control.
 
 ## Installation
 
