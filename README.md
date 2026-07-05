@@ -10,10 +10,11 @@
 
 <p align="center">
     <a href="#summary">Summary</a> •
-    <a href="#installation">Installation</a>
+    <a href="#installation">Installation</a> •
+    <a href="#project-structure">Project structure</a>
     <br>
-    <a href="#project-structure">Project structure</a> •
     <a href="#development-team">Development team</a> •
+    <a href="#additional-material">Additional material</a> •
     <a href="#license">License</a> •
     <a href="#acknowledgments">Acknowledgments</a>
 </p>
