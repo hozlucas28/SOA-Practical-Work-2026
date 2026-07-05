@@ -50,7 +50,7 @@
     Serial.printf("%s.ledPin = %u\r\n", name, sensor.ledPin);
 
 /**
- * @brief
+ * @brief Prints the WiFi connection status to the serial monitor.
  */
 #define DEBUG_WIFI()                                                                        \
     if (WiFi.status() == WL_CONNECTED) {                                                    \
