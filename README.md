@@ -10,7 +10,7 @@
 
 <p align="center">
     <a href="#summary">Summary</a> •
-    <a href="#installation">Installation</a> •
+    <a href="#installation">Installation</a>
     <br>
     <a href="#project-structure">Project structure</a> •
     <a href="#development-team">Development team</a> •
