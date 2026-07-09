@@ -192,8 +192,8 @@ void setup() {
     DEBUG("\r\n");
 
     // LCD
-    LCD.device->begin(LCD_COLS, LCD_ROWS);
-    LCD.device->setRGB(255, 255, 255);
+    LCD.device->init();
+    LCD.device->backlight();
 
     // Alarm
     pinMode(buzzer.pin, OUTPUT);

@@ -1,6 +1,8 @@
 #ifndef CONSTANTS_H_INCLUDED
 #define CONSTANTS_H_INCLUDED
 
+#include <LiquidCrystal_I2C.h>
+
 #include "structs.h"
 
 #define LCD_ROWS 2

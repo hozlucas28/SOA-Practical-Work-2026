@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 #include <HX711.h>
-#include <rgb_lcd.h>
+#include <LiquidCrystal_I2C.h>
 
 #include "enums.h"
 
@@ -23,7 +23,7 @@ struct Button {
 };
 
 struct LCD16x2 {
-    rgb_lcd* device;
+    LiquidCrystal_I2C* device;
     String line01;
     String line02;
 };
