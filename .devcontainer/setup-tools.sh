@@ -1,35 +1,29 @@
 #! /bin/bash
 
 # Parse options
-options=$(getopt -o "h" --long "help" -- "$@")
-
-if [ $? -ne 0 ]; then
-	echo -e "\e[31mAn error occurred on parsing options.\e[0m" >&2
-	exit 1
-fi
-
-eval set -- "$options"
-
-while true; do
+while [[ $# -gt 0 ]]; do
 	case "$1" in
-		"-h" | "--help")
-			need_help="true"
+		-h | --help)
+			need_help='true'
 			shift 1
 			break
 			;;
-		"--")
-			shift
+
+		--)
+			shift 1
 			break
 			;;
-		*)
-			echo -e "\e[31mAn internal error occurred!\e[0m" >&2
+
+		-*)
+			printf "\e[31mAn invalid option was found!\e[0m\n" >&2
 			exit 1
 			;;
+
+        *)
+            break
+            ;;
 	esac
 done
-
-# Exit on any command error
-set -e
 
 # Show help if needed
 if [ -n "$need_help" ]; then
@@ -46,8 +40,16 @@ fi
 # Change from script directory to project root directory
 cd $(cd "$(dirname "$0")/.." && pwd)
 
+if [[ $? -ne 0 ]]; then
+	printf "\e[31mFailed to change directory to project root.\e[0m\n" >&2
+	exit 1
+fi
+
+# Exit on any command failure
+set -e
+
 # Install packages (formatters, and git hooks manager)
-echo -e "\e[90m\nInstalling project tools (formatters, and git hooks manager)...\n\e[0m"
+printf "\e[90m\nInstalling project tools (formatters, and git hooks manager)...\e[0m\n\n"
 
 echo "allowBuilds:
   lefthook: true
@@ -57,16 +59,16 @@ pnpm install -D \
 	oxfmt@^0 \
 	lefthook@^2
 
-echo -e "\e[32m\nProject tools installed successfully.\e[0m"
+printf "\e[32m\nProject tools installed successfully.\e[0m\n"
 
 # Pull images
-zizmor_image="ghcr.io/zizmorcore/zizmor:1.22.0" # Linter for GitHub Actions workflows.
+zizmor_image='ghcr.io/zizmorcore/zizmor:1.22.0' # Linter for GitHub Actions workflows.
 
-echo -e "\e[90m\nPulling docker images project tools...\n\e[0m"
+printf "\e[90m\nPulling docker images project tools...\e[0m\n\n"
 
 docker pull "$zizmor_image"
 
-echo -e "\e[32m\nDocker images pulled successfully.\e[0m"
+printf "\e[32m\nDocker images pulled successfully.\e[0m\n"
 
 # Create bin scripts
 echo "#! /bin/bash
@@ -85,20 +87,20 @@ chmod +x /usr/local/bin/zizmor
 chmod +x /workspaces/SOA-Practical-Work-2026/scripts/*.sh
 
 # Set git configuration and hooks
-echo -e "\e[90m\nSetting up git configuration and hooks...\e[0m"
+printf "\e[90m\nSetting up git configuration and hooks...\e[0m\n"
 
 git config --global --add safe.directory /workspaces/SOA-Practical-Work-2026
 
 pnpm exec lefthook install
 
-echo -e "\e[32m\nGit configuration and hooks set successfully.\e[0m"
+printf "\e[32m\nGit configuration and hooks set successfully.\e[0m\n"
 
 # Health check
-echo -e "\e[90m\nRunning health check...\n\e[0m"
+printf "\e[90m\nRunning health check...\e[0m\n\n"
 
 bash scripts/health-check.sh
 
-echo -e "\e[32m\nAll tools are installed and working correctly.\e[0m"
+printf "\e[32m\nAll tools are installed and working correctly.\e[0m\n"
 
 # Final step
-echo -e "\e[33m\nAs a final step, you have to press \`F1\` and select \"Wokwi: Request a new License\" option.\e[0m"
+printf "\e[33m\nAs a final step, you have to press \`F1\` and select \"Wokwi: Request a new License\" option.\e[0m\n"
