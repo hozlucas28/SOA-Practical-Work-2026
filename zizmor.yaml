@@ -1,7 +1,7 @@
 rules:
   artipacked:
     ignore:
-      - copyright.yml
+      - copyright.yaml
 
   unpinned-uses:
     config:
