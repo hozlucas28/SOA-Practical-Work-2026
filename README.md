@@ -20,7 +20,11 @@
 </p>
 
 <p align="center">
-    <img src="docs/statics/billboard.png" alt="Billboard" width="800">
+    <a href="https://youtu.be/6xtBlLZ9x-g?si=_qteSNDPvNFBOMjM" target="_blank">
+			<img src="docs/statics/billboard.png" alt="Billboard" width="800">
+			<br />
+			(demonstration video)
+		</a>
 </p>
 
 ## Summary
