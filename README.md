@@ -3,7 +3,7 @@
 </h1>
 
 <p align="center">
-    <strong>Practical work repository for the Advanced Operating Systems (SOA) subject</strong>
+    <strong>Practical work repository for the Advanced Operating Systems (SOA) course</strong>
     <br>
     <strong>- <a href="https://www.unlam.edu.ar/">UNLaM</a> (National University of La Matanza) -</strong>
 </p>
@@ -29,7 +29,7 @@
 
 ## Summary
 
-This repository contains our practical work for the Advanced Operating Systems (SOA) subject at the [National University of La Matanza (UNLaM)](https://www.unlam.edu.ar/). It consists of an embedded system based on an ESP32, which has two operating modes (activated by push buttons):
+This repository contains our practical work for the Advanced Operating Systems (SOA) course at the [National University of La Matanza (UNLaM)](https://www.unlam.edu.ar/). It consists of an embedded system based on an ESP32, which has two operating modes (activated by push buttons):
 
 - **Virgin Embedded:** The system is idle, waiting for a mode to be activated.
 
@@ -182,4 +182,4 @@ This repository is under the [MIT license](LICENSE). For more information about 
 
 ## Acknowledgments
 
-We would like to thank the teachers from the [UNLaM](https://www.unlam.edu.ar/) Advanced Operating Systems (SOA) subject for their support and guidance.
+We would like to thank the teachers from the [UNLaM](https://www.unlam.edu.ar/) Advanced Operating Systems (SOA) course for their support and guidance.
